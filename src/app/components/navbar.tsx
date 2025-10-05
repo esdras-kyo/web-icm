@@ -15,7 +15,7 @@ contato
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const links = [
-    { href: "/", label: "NOSSA HISTORIA" },
+    { href: "/historia", label: "NOSSA HISTORIA" },
     { href: "/", label: "MINISTÉRIOS" },
     { href: "/", label: "PROGRAMAÇÃO" },
     { href: "/", label: "CONTATO" },
