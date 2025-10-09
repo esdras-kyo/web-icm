@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MenuIcon, X } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import ProfBtn from "./ProfBtn";
 /*
 ministerios
 historia
@@ -16,32 +17,41 @@ export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const links = [
     { href: "/historia", label: "NOSSA HISTORIA" },
-    { href: "/", label: "MINISTÉRIOS" },
+    { href: "/ministerios", label: "MINISTÉRIOS" },
     { href: "/", label: "PROGRAMAÇÃO" },
     { href: "/", label: "CONTATO" },
-    { href: "/", label: "CONTRIBUA" },
-    { href: "/", label: "EVENTOS" },
+    { href: "/contribua", label: "CONTRIBUA" },
+    { href: "/events", label: "EVENTOS" },
   ];
   return (
-    <div className="fixed top-0 left-0 w-full z-5 shadow-md">
-      <div className=" md:bg-transparent  max-w-7xl mx-auto flex items-center justify-between p-6">
-        <div className="text-xl font-bold">
-          <Link href="/" className="hover:text-gray-300">
-            Logo
+    <div className="top-0 left-0 w-full shadow-md sticky text-white  z-40 backdrop-blur supports-[backdrop-filter]:bg-black/60">
+      <div className=" md:bg-transparent w-full mx-auto flex items-center justify-between p-6">
+        <div className="text-xl font-bold  flex flex-row gap-2">
+          
+          <Link href="/" className="hover:text-gray-300 cursor-pointer flex flex-row items-center">
+          {/* <img src="images/logo.png" width={20} height={20} />  */}
+          {/* <h1 className="ml-2 text-sm md:text-xl">ICM</h1>  */}
           </Link>
+          
         </div>
+
+        <div className="flex items-center gap-4">
         <div className=" flex md:hidden " onClick={() => setIsOpen(!isOpen)}>
           {!isOpen ? <MenuIcon /> : <X />}
         </div>
-
         <div className="hidden md:flex space-x-8 text-xs font-mono">
           {links.map((link) => (
             <Link key={link.label} href={link.href} className="hover:text-gray-300">
               {link.label}
             </Link>
           ))}
+         
         </div>
+<ProfBtn/>
+</div>
+        
         </div>
+
       <AnimatePresence initial={false}
       mode="wait">
         {isOpen && (
