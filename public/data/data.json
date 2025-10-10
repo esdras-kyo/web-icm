@@ -1,0 +1,36 @@
+{
+    "sidebarItems": [
+      {
+        "name": "Painel",
+        "href": "/leader/sudoDash",
+        "icon": "House"
+      },
+    
+      {
+        "name": "Membros",
+        "href": "/leader/members",
+        "icon": "Users"
+      },
+      {
+        "name": "Departamentos",
+        "href": "/leader/departments",
+        "icon": "Castle"
+      },
+      {
+        "name": "Pedidos",
+        "href": "/leader/requests",
+        "icon": "Mail"
+      },
+      {
+        "name": "Notifications",
+        "href": "/notifications",
+        "icon": "Bell"
+      },
+      {
+        "name": "Settings",
+        "href": "/settings",
+        "icon": "Settings"
+      }
+
+    ]
+  }
