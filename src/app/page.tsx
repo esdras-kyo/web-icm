@@ -1,174 +1,186 @@
 'use client'
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Church, Heart, Users, Music, Baby, HandHeart, MapPin, Play, Youtube, Facebook, Instagram, Clock, Cross, CrossIcon } from "lucide-react";
+import { Calendar, Church, Heart, Users, Music, Baby, HandHeart, MapPin, Play, Youtube, Facebook, Instagram, Clock, Cross, CrossIcon, ChevronRight } from "lucide-react";
 import YouTubeCard from "./components/YoutubeCard";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-// --- Helpers ---
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  hover: { y: 10, opacity: 0.6, transition: { duration: 0.6 } },
 };
 
-const Section = ({ id, title, subtitle, children }: any) => (
-  <section id={id} className="max-w-6xl mx-auto px-4 md:px-6 py-16">
-    <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}>
-      {title && (
-        <div className="mb-8">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">{title}</h2>
-          {subtitle && <p className=" mt-2 max-w-2xl text-gray-200">{subtitle}</p>}
+const Section = ({ id, title, subtitle, children, img, clickable }: any) => (
+  <section id={id} className="max-w-6xl mx-auto px-4 md:px-6 py-6 ">
+    <motion.div
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={fadeUp}
+      whileHover={clickable ? "hover" : ""}
+      className={`relative max-w-6xl mx-auto px-4 md:px-6 pt-16 pb-8 rounded-md bg-gradient-to-bl from-transparent ${
+        clickable ? "cursor-pointer" : ""
+      } to-black/60`}
+    >
+      {img && (
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={img}
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-all duration-500 group-hover:brightness-110 group-hover:scale-100 rounded-2xl"
+            priority={false}
+          />
+          {/* Scrim leve só embaixo para legibilidade */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-black/70 via-transparent to-transparent" />
         </div>
       )}
-      {children}
+      {title && (
+        <div className="mb-8 relative z-10">
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className=" mt-2 max-w-2xl text-gray-200">{subtitle}</p>
+          )}
+        </div>
+      )}
+      <div className="relative z-10">{children}</div>
     </motion.div>
   </section>
 );
 
-// --- Mock Data ---
-const ministries = [
-  {
-    icon: Users,
-    title: "Jovens FIRE",
-    desc: "Crescendo em Santidade, Obediencia e Unidade.",
-  },
-  {
-    icon: Baby,
-    title: "Kids",
-    desc: "Evangelho na linguagem das crianças.",
-  },
-  {
-    icon: Music,
-    title: "Adoradores por Exelência",
-    desc: "Adoração sincera para o céu descer na terra.",
-  },
-  
-];
+function formatarData(dataString: string) {
+  const data = new Date(dataString);
 
-const events = [
-  { title: "Culto de Domingo", date: "Todo domingo, 9h e 19h", detail: "Celebração presencial e online." },
-  { title: "Células da Semana", date: "Quartas, 20h", detail: "Pequenos grupos em diversos bairros." },
- // { title: "Encontro de Casais", date: "12 de outubro, 20h", detail: "Uma noite para fortalecer o casamento." },
-];
+  const dia = String(data.getDate()).padStart(2, "0");
+  const mes = String(data.getMonth() + 1).padStart(2, "0"); // +1 porque começa em 0
+  const hora = String(data.getHours()).padStart(2, "0");
+  const minuto = String(data.getMinutes()).padStart(2, "0");
 
+  return `${dia}/${mes} ${hora}:${minuto}`; // se quiser segundos: `${hora}:${minuto}:${segundo}`
+}
+
+type Mini = {
+  id: string;
+  title: string | null;
+  description: string | null;
+  price: number
+  image_key: string
+  starts_at: string
+};
 export default function ChurchHome() {
+  const route = useRouter()
+  const [events, setEvents] = useState<Mini[]>([]);
+  const [loading, setLoading] = useState(true);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black to-sky-700 text-white">
-      {/* Header */}
-      {/* <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-black/60 ">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-4 md:px-6 h-16">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-sky-400 grid place-items-center text-white shadow">
-              <Church className="h-5 w-5" />
-            </div>
-            <span className="font-semibold  text-white tracking-tight">Igreja Esperança Viva</span>
-          </div>
-          <nav className="hidden md:flex text-white items-center gap-6 text-sm">
-            <a href="#sobre" className="hover:underline">Sobre</a>
-            <a href="#ministerios" className="hover:underline">Ministérios</a>
-            <a href="#eventos" className="hover:underline">Eventos</a>
-            <a href="#midia" className="hover:underline">Mídia</a>
-            <a href="#contato" className="hover:underline">Contato</a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" className="hidden sm:inline-flex">Assista ao vivo</Button>
-            <Button className="rounded-2xl">Contribuir</Button>
-          </div>
-        </div>
-      </header> */}
-
-      {/* Hero */}
-      <section className=" relative overflow-hidden mb-24 bg-cover bg-start before:absolute before:inset-0 before:bg-gradient-to-br before:from-black/80 before:to-sky-900/60 before:z-10" style={{ backgroundImage: "url('images/bg-igreja.jpeg')", height: "70vh" }}>
+    <div className="min-h-screen bg-gradient-to-br from-black to-sky-800 text-white">
+      <section
+        className=" relative overflow-hidden mb-24 bg-cover bg-start before:absolute before:inset-0 before:bg-gradient-to-br before:from-black/80 before:to-sky-800/60 before:z-10"
+        style={{ backgroundImage: "url('images/bg.jpeg')", height: "70vh" }}
+      >
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_0%,rgba(99,102,241,0.20),transparent_70%)] " />
         <div className="max-w-6xl w-full mx-auto px-4 md:px-6 py-20 md:py-28 flex  justify-center gap-10 items-center relative z-20 ">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-
-            <Badge className="mb-4 gap-2 bg-transparent rounded-full px-3 py-1">Seja bem-vindo</Badge>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <Badge className="mb-4 gap-2 bg-transparent rounded-full px-3 py-1">
+              Seja bem-vindo
+            </Badge>
             <div className="items-center justify-center mb-2 w-full flex">
-            <img src="images/logo.png" width={64} height={64}/>
+               <img src="images/logo.png" width={64} height={64}/> 
             </div>
-            <h1 className="text-4xl md:text-7xl font-semibold leading-tight">Igreja de Cristo Maranata</h1>
-            
+            <h1 className="text-4xl md:text-7xl font-semibold leading-tight">
+            Igreja de Cristo Maranata
+            </h1>
+
             <p className="text-muted-foreground mt-4 max-w-prose">
-              Junte-se a nós para adorar, aprender a Palavra e servir em Goiânia.
+            Junte-se a nós para adorar, aprender a Palavra e servir em Goiânia.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button size="lg" className="rounded-2xl cursor-pointer">Visite-nos neste domingo</Button>
+              <Button
+                size="lg"
+                className="rounded-2xl cursor-pointer hover:text-gray-300 hover:from-black/50 hover:to-black/70 bg-gradient-to-tl from-[#8B0101] to-black/20"
+              >
+                Visite-nos neste domingo
+              </Button>
             </div>
           </motion.div>
-          {/* <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }}>
-            <Card className="rounded-3xl shadow-xl">
-              <CardContent className="p-0">
-                <div className="aspect-video w-full grid place-items-center">
-                  <div className="w-full h-full grid place-items-center">
-                    <div className="relative w-11/12 h-5/6 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-400 grid place-items-center text-white">
-                      <Play className="h-10 w-10" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-              <div className="px-6 pb-6 -mt-4">
-                <div className="text-sm text-muted-foreground">Última mensagem</div>
-                <div className="font-medium">Esperança que transforma – Pr. João</div>
-              </div>
-            </Card>
-          </motion.div> */}
         </div>
       </section>
 
       {/* Sobre */}
-      <Section id="sobre" title="Sobre nós" subtitle="Há mais de 25 anos compartilhando a Palavra e servindo com amor.">
-        <div className="grid md:grid-cols-3 gap-6">
-          <Card className="rounded-2xl bg-gradient-to-br border-none text-white from-slate-800 to-sky-800"><CardContent className="p-6"><p>Somos uma igreja que crê no Evangelho de Jesus Cristo e na transformação de vidas pela graça.</p></CardContent></Card>
-          <Card className="rounded-2xl bg-gradient-to-br border-none text-white from-slate-800 to-sky-800"><CardContent className="p-6"><p>Nossos cultos são momentos de adoração, ensino bíblico e comunhão para toda a família.</p></CardContent></Card>
-        </div>
-        <div className="mt-6"><Button variant="outline" className="rounded-2xl cursor-pointer bg-black">Conheça nossa história</Button></div>
+      <Section
+        id="sobre"
+        title="Sobre nós"
+        subtitle="Há mais de 25 anos compartilhando a Palavra e servindo com amor."
+        clickable={true}
+        img="/images/velhos.jpeg"
+      >
+        <button
+          onClick={() => {route.push("/historia")}}
+          className="flex cursor-pointer flex-row w-full justify-end"
+        >
+          <ChevronRight width={50} height={50} />
+        </button>
       </Section>
 
-      {/* Ministérios */}
-      <Section id="ministerios" title="Ministérios" subtitle="Descubra onde você pode se conectar e servir.">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {ministries.map((m) => (
-            <Card key={m.title} className="rounded-2xl hover:shadow-lg bg-gradient-to-br from-slate-800 to-sky-800 border-none transition-shadow">
-              <CardHeader className="pb-2">
-                {/* <div className="h-11 w-11 rounded-xl bg-indigo-50 text-indigo-600 grid place-items-center"><m.icon className="h-5 w-5" /></div> */}
-              </CardHeader>
-              <CardContent className="pt-0 text-white">
-                <CardTitle className="text-lg mb-1">{m.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">{m.desc}</p>
-                <div className="mt-4"><Button variant="ghost" className="px-2">Saiba mais →</Button></div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      <Section
+        id="ministerios"
+        title="Ministérios"
+        subtitle="Descubra onde você pode se conectar e servir."
+        clickable={true}
+        img="/images/sonicpray.jpg"
+      >
+        <button
+          onClick={() => {route.push("/ministerios")}}
+          className="flex cursor-pointer flex-row w-full justify-end"
+        >
+          <ChevronRight width={50} height={50} />
+        </button>
       </Section>
 
       {/* Eventos */}
-      <Section id="eventos" title="Próximos eventos" subtitle="Participe do que Deus está fazendo entre nós.">
+      <Section
+        id="eventos"
+        title="Próximos eventos"
+        subtitle="Participe do que Deus está fazendo entre nós."
+      >
         <div className="grid md:grid-cols-3 gap-6">
-          {events.map((e) => (
-            <Card key={e.title} className="rounded-2xl border-none bg-gradient-to-br text-white from-black to-sky-700">
+          {events.slice(0, 2).map((e) => (
+            <Card
+              key={e.title}
+              className="rounded-2xl border-none bg-gradient-to-br text-white from-black to-sky-700"
+            >
               <CardHeader>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" /> {e.date}
+                  <Calendar className="h-4 w-4" /> {formatarData(e.starts_at)}
                 </div>
                 <CardTitle className="text-xl mt-2">{e.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{e.detail}</p>
-                <div className="mt-4 flex gap-2">
-                  <Button size="sm" className="rounded-xl">Ver detalhes</Button>
-                  
-                </div>
+                <p className="text-sm text-muted-foreground">{e.description}</p>
               </CardContent>
             </Card>
           ))}
+          <div className="flex h-full w-full items-end justify-end">
+            <button className="flex-row flex items-center  hover:from-black/50 cursor-pointer rounded-xl pl-6 hover:text-white text-gray-300/50 hover:to-black/70 bg-gradient-to-tl "
+            onClick={()=>{route.push("/events")}}>
+              <h1 className="text-xl">Ver mais</h1>{" "}
+              <ChevronRight width={40} height={40} />
+            </button>
+          </div>
         </div>
       </Section>
 
-      {/* Mensagem do Pastor */}
       <Section title="Mensagem do Pastor" subtitle="Uma palavra ao seu coração.">
         <Card className="rounded-3xl overflow-hidden bg-gradient-to-b border-none from-slate-700">
           <CardContent className="p-6 md:p-10">
@@ -217,7 +229,6 @@ export default function ChurchHome() {
         </div>
       </Section>
 
-      {/* Contato / Visite-nos */}
       <Section id="contato" title="Visite-nos" subtitle="Estamos ansiosos para receber você e sua família.">
         <Card className="rounded-2xl">
           <CardContent className="p-6">
@@ -240,7 +251,6 @@ export default function ChurchHome() {
         </Card>
       </Section>
 
-      {/* Footer */}
       <footer className="border-t">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-10 grid md:grid-cols-3 gap-8 items-start">
           <div>
@@ -256,7 +266,6 @@ export default function ChurchHome() {
             <h4 className="font-medium mb-3">Links rápidos</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><a href="#eventos" className="hover:underline">Agenda</a></li>
-              <li><a href="#ministerios" className="hover:underline">Servir</a></li>
               <li><a href="#midia" className="hover:underline">Mensagens</a></li>
               <li><a href="#contato" className="hover:underline">Contato</a></li>
             </ul>
