@@ -4,15 +4,7 @@ import { MenuIcon, X } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import ProfBtn from "./ProfBtn";
-/*
-ministerios
-historia
-programaçao
-eventos
-contribua
-contato
 
-*/
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const links = [
@@ -27,10 +19,10 @@ export default function NavBar() {
     <div className="top-0 left-0 w-full shadow-md sticky text-white  z-40 backdrop-blur supports-[backdrop-filter]:bg-black/60">
       <div className=" md:bg-transparent w-full mx-auto flex items-center justify-between p-6">
         <div className="text-xl font-bold  flex flex-row gap-2">
-          
+        <img src="/images/logo.png" width={20} height={20} />  
           <Link href="/" className="hover:text-gray-300 cursor-pointer flex flex-row items-center">
-          {/* <img src="images/logo.png" width={20} height={20} />  */}
-          {/* <h1 className="ml-2 text-sm md:text-xl">ICM</h1>  */}
+          
+           <h1 className="ml-2 text-sm md:text-xl">ICM</h1> 
           </Link>
           
         </div>

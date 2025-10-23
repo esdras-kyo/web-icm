@@ -2,6 +2,8 @@ import "./globals.css";
 import NavBar from "./components/navbar";
 import { Providers } from "./providers";
 import { getServerSession } from "next-auth"
+import { ClerkProvider } from '@clerk/nextjs';
+import { ptBR } from "@clerk/localizations"; 
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -15,15 +17,25 @@ export default async function RootLayout({
 }>) {
   const session = await getServerSession();
   return (
-    <html lang="en">
+    <ClerkProvider
+    signInUrl="/sign-in"
+    signUpUrl="/sign-up"
+    afterSignInUrl="/leader"
+    localization={ptBR}
+
+    >
+    <html lang="pt-BR">
       <body
         className={`bg-black`}
       >
          <Providers session={session}>
+         
         <NavBar/>
         {children}
+       
         </Providers>
       </body>
     </html>
+     </ClerkProvider>
   );
 }
