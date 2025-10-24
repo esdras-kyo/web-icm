@@ -1,74 +1,41 @@
-'use client'
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { headers } from "next/headers";
 
-  type Mini = {
-    id: string;
-    name: string | null;
-  };
+type Mini = { id: string; name: string | null };
 
+export default async function DepartmentsPage() {
+  const h = await headers();
+  const cookie = h.get("cookie") ?? "";
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/departments`,  {
+    method: "GET",
+    cache: "force-cache",
+    headers: { cookie }, 
+    next: { revalidate: 1,  },
+  });
+  const data = await res.json();
+  const minis: Mini[] = Array.isArray(data) ? data : [];
 
-  
-export default function Members(){
-    const { data } = useSession()
-    const [minis, setMinis] = useState<Mini[]>([]);
-    const [loading, setLoading] = useState(true);
-    const route = useRouter()
-
-    function useRoles() {
-        const roles = (data?.user as any)?.roles as Array<{ role: string; scope?: string }> | undefined
-        const isAdmin = !!roles?.some(r => r.role === 'ADMIN' && (r.scope === 'ORG' || r.scope == null))
-        const isLeader = !!roles?.some(r => r.role === 'LEADER')
-        return { isAdmin, isLeader }
-      }
-
-    useEffect(() => {
-        async function fetchUsers() {
-          try {
-            const res = await fetch("/api/departments", { cache: "no-store" });
-            const data = await res.json();
-            setMinis(data);
-          } catch (err) {
-            console.error("Erro ao carregar departamentos:", err);
-          } finally {
-            setLoading(false);
-          }
-        }
-        fetchUsers();
-      }, []);
-      
-      if (loading)
-        return (
-          <main className="p-10 text-white text-center">
-            <p>Carregando departamentos...</p>
-          </main>
-        );
-    
-    return(
-        <main className="mx-auto max-w-7xl px-2 py-2">
-     <h1 className="text-xl font-bold text-white mb-8">Lista de Departamentos</h1>
-        <ul className="space-y-4">
-        {minis.map((mini) => (
+  return (
+    <main className="mx-auto max-w-7xl px-2 py-2">
+      <h1 className="text-xl font-bold text-white mb-8">Lista de Departamentos</h1>
+      <ul className="space-y-4">
+        {minis?.map((mini) => (
           <li
             key={mini.id}
             className="rounded-xl border border-white/10 bg-white/5 hover:bg-gray-600 cursor-pointer"
           >
-            <button onClick={()=>{route.push(`/leader/departments/${mini.id}`)}} className="cursor-pointer p-4 w-full flex items-center justify-between">
-              <div>
-                <p className="text-lg font-semibold text-white">
-                  {mini.name || "Sem nome"}
-                </p>
-
-              </div>
-
-            </button>
+            <Link
+              href={`/leader/departments/${mini.id}`}
+              className="block p-4 hover:bg-zinc-400 rounded"
+            >
+              <h2 className="text-lg text-white hover:text-black font-medium">{mini.name}</h2>
+            </Link>
           </li>
         ))}
       </ul>
       {minis.length === 0 && (
         <p className="text-white/60 mt-6 text-center">Nenhum Departamento encontrado.</p>
       )}
-        </main>
-    )
+    </main>
+  );
 }

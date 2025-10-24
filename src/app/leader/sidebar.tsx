@@ -1,9 +1,8 @@
 'use client'
 import { Bell, DollarSign, House, Info, Mail, Menu, Settings, ShoppingBag, ShoppingCart, Users, Castle, Ticket } from "lucide-react"
-import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 
 type SidebarItem = {
@@ -33,23 +32,15 @@ const ICONS = {
     Ticket
 }
 
-function useRoles() {
-    const { data } = useSession()
-    const roles = (data?.user as any)?.roles as Array<{ role: string; scope?: string }> | undefined
-    const isAdmin = !!roles?.some(r => r.role === 'ADMIN' && (r.scope === 'ORG' || r.scope == null))
-    const isLeader = !!roles?.some(r => r.role === 'LEADER')
-    return { isAdmin, isLeader }
-  }
 
 const Sidebar = () =>{
-    const { isAdmin, isLeader } = useRoles()
     const [isSidebaropen, setSidebarOpen] = useState(true)
     const visibleItems: SidebarItem[] = (() => {
-        if (isAdmin) return ALL_ITEMS
-        if (isLeader) {
+      //  if (isAdmin) return ALL_ITEMS
+
           const blocked = new Set(['/leader/members', '/leader/events'])
           return ALL_ITEMS.filter(i => !blocked.has(i.href))
-        }
+        
         // visitante/sem role
         return ALL_ITEMS.filter(i => i.href === "/leader/sudoDash")
       })()
