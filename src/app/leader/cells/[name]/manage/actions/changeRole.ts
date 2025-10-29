@@ -6,8 +6,14 @@ import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { clerkClient } from "@clerk/nextjs/server";
 
 const VALID_ROLES = new Set(["LEADER", "ASSISTANT", "MEMBER"]);
-
-export async function changeRoleAction(formData: FormData) {
+type Feedback ={
+  success: boolean,
+  message: string,
+  data?: {
+    id: string
+  }
+}
+export async function changeRoleAction(formData: FormData):Promise<Feedback> {
   const supabase = createSupabaseAdmin();
 
   const membershipId = String(formData.get("membershipId") ?? "");

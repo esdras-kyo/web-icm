@@ -79,21 +79,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 500 });
     }
 
-    // Buscar (no máx.) uma única célula do usuário para popular primary_cell_id e cell_role
-    // const { data: membershipRows, error: membershipErr } = await supabase
-    //   .from("cells_memberships")
-    //   .select("cell_id, role")
-    //   .eq("user_id", userRow.id)
-    //   .limit(1);
+  //  Buscar (no máx.) uma única célula do usuário para popular primary_cell_id e cell_role
+    const { data: membershipRows, error: membershipErr } = await supabase
+      .from("cell_memberships")
+      .select("cell_id, role")
+      .eq("user_id", userRow.id)
+      .limit(1);
 
-    // if (membershipErr) {
-    //   console.error("Erro ao buscar membership de célula:", membershipErr);
-    //   return NextResponse.json({ ok: false }, { status: 500 });
-    // }
+    if (membershipErr) {
+      console.error("Erro ao buscar membership de célula:", membershipErr);
+      return NextResponse.json({ ok: false }, { status: 500 });
+    }
 
-    // const membership = Array.isArray(membershipRows) && membershipRows.length > 0 ? membershipRows[0] : null;
-    // const primary_cell_id = membership?.cell_id ?? null;
-    // const cell_role = membership?.role ?? null;
+    const membership = Array.isArray(membershipRows) && membershipRows.length > 0 ? membershipRows[0] : null;
+    const primary_cell_id = membership?.cell_id ?? null;
+    const cell_role = membership?.role ?? null;
 
     await (await clerkClient()).users.updateUser(u.id, {
       publicMetadata: {
@@ -105,8 +105,8 @@ export async function POST(req: Request) {
           department_id: r.department_id,
         })),
         app_meta_version: 1,
-        // primary_cell_id,
-        // cell_role,
+        primary_cell_id,
+        cell_role,
       },
     });
   }

@@ -5,7 +5,15 @@ import { revalidatePath } from "next/cache";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { clerkClient } from "@clerk/nextjs/server";
 
-export async function removeMemberAction(formData: FormData) {
+type Feedback ={
+  success: boolean,
+  message: string,
+  data?: {
+    id: string
+  }
+}
+
+export async function removeMemberAction(formData: FormData): Promise<Feedback>  {
   const supabase = createSupabaseAdmin();
 
   const membershipId = String(formData.get("membershipId") ?? "");
@@ -15,28 +23,37 @@ export async function removeMemberAction(formData: FormData) {
     return { success: false, message: "Identificador inválido." };
   }
 
-  const { error } = await supabase
+  const { data: deletedRow, error: delErr } = await supabase
     .from("cell_memberships")
     .delete()
-    .eq("id", membershipId);
+    .eq("id", membershipId)
+    .select("user_id")
+    .single();
 
-  if (error) {
-    console.error("removeMemberAction error:", error);
+  if (delErr) {
+    console.error("removeMemberAction delete error:", delErr);
     return { success: false, message: "Não foi possível remover o membro." };
   }
 
+  if (!deletedRow) {
+    revalidatePath(`/leader/cells/${cellId}/manage`);
+    return { success: true, message: "Nada a remover (já não existia)." };
+  }
+
+  const removedUserId = deletedRow.user_id as string;
+
   try {
-    // Buscar clerk_user_id do usuário removido
     const { data: userData, error: userErr } = await supabase
       .from("users")
       .select("clerk_user_id")
-      .eq("id", formData.get("userId"))
+      .eq("id", removedUserId)
       .single();
 
     if (userErr) {
       console.error("Erro ao buscar clerk_user_id:", userErr);
     } else if (userData?.clerk_user_id) {
-      await (await clerkClient()).users.updateUser(userData.clerk_user_id, {
+      const client = await clerkClient();
+      await client.users.updateUser(userData.clerk_user_id, {
         publicMetadata: {
           primary_cell_id: null,
           cell_role: null,

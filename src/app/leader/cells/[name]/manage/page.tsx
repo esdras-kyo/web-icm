@@ -6,6 +6,7 @@ import { changeRoleAction } from "./actions/changeRole";
 import { removeMemberAction } from "./actions/removeMember";
 import { MeetingForm } from "../../_components/MeetingForm";
 import { CollapsibleCard } from "../../_components/CollapsibleCard";
+import type { PostgrestError } from "@supabase/supabase-js";
 
 type MemberRow = {
   id: string;                 // membership id
@@ -13,16 +14,46 @@ type MemberRow = {
   user: { id: string; name: string; email: string | null };
 };
 
+export type MemberUser = {
+  id: string;    
+  email: string;    
+  name: string | null; 
+};
+
+export type CellRole = "LEADER" | "ASSISTANT" | "MEMBER";
+
+export type CellMembershipWithUser = {
+  id: string; 
+  role: CellRole;  
+  user: MemberUser;   
+};
+
 export default async function ManageCellPage({
   params,
 }: {
-  // 👇 importante: params é Promise agora
+
   params: Promise<{ name: string }>;
 }) {
   const { name } = await params;                  // <-- aguarda params
   const cellName = decodeURIComponent(name);
 
   const supabase = createSupabaseAdmin();
+
+
+  const onAddMember = async (formData: FormData): Promise<void> => {
+    "use server";
+    await addMemberAction(formData);
+  };
+
+  const onChangeRole = async (formData: FormData): Promise<void> => {
+    "use server";
+    await changeRoleAction(formData);
+  };
+
+  const onRemoveMember = async (formData: FormData): Promise<void> => {
+    "use server";
+    await removeMemberAction(formData);
+  };
 
   // 1) Buscar célula por name
   const { data: cell, error: cellErr } = await supabase
@@ -44,23 +75,24 @@ export default async function ManageCellPage({
     );
   }
 
-  // 2) Buscar TODOS usuários
   const { data: users, error: usersErr } = await supabase
     .from("users")
     .select("id, name, email")
     .order("name", { ascending: true });
 
-  // 3) Buscar membros da célula (com user em join)
   const { data: members, error: membersErr } = await supabase
     .from("cell_memberships")
     .select("id, role, user:users(id, name, email)")
     .eq("cell_id", cell.id)
-    .order("role", { ascending: true });
+    .order("role", { ascending: true }) as {
+      data: CellMembershipWithUser[] | null;
+      error: PostgrestError | null;
+    };
 
   const memberOptions =
     members?.map((m) => ({
       userId: m.user?.id,
-      name: m.user?.name,
+      name: m.user?.name ?? "",
     })) ?? [];
 
     const currentUserId = "14607714-5f33-4be3-97e0-8156a74a8736";
@@ -79,7 +111,6 @@ export default async function ManageCellPage({
         </div>
       </div>
 
-      {/* ERROS SIMPLES */}
       {(usersErr || membersErr) && (
         <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           Não foi possível carregar {usersErr ? "usuários" : "membros"}.
@@ -87,14 +118,11 @@ export default async function ManageCellPage({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* COLUNA: TODOS OS USUÁRIOS */}
+
         <CollapsibleCard
   title="Adicionar membro"
   subtitle="Adicione alguém à célula e escolha o papel."
 >
-  {/* aqui vem o conteúdo atual do bloco */}
-
-
           <div className="p-4 border-b">
             <h2 className="font-medium">Todos os usuários</h2>
             <p className="text-xs text-muted-foreground">
@@ -124,7 +152,7 @@ export default async function ManageCellPage({
                     </div>
 
                     {/* Form simples para adicionar membro */}
-                    <form action={addMemberAction} className="flex items-center gap-2">
+                    <form action={onAddMember} className="flex items-center gap-2">
                       <input type="hidden" name="cellId" value={cell.id} />
                       <input type="hidden" name="userId" value={u.id} />
 
@@ -186,7 +214,7 @@ export default async function ManageCellPage({
 
                   <div className="flex items-center gap-2">
                     {/* Trocar papel */}
-                    <form action={changeRoleAction} className="flex items-center gap-2">
+                    <form action={onChangeRole} className="flex items-center gap-2">
                       <input type="hidden" name="membershipId" value={m.id} />
                       <input type="hidden" name="cellId" value={cell.id} />
                       <select
@@ -204,7 +232,7 @@ export default async function ManageCellPage({
                     </form>
 
                     {/* Remover */}
-                    <form action={removeMemberAction}>
+                    <form action={onRemoveMember}>
                       <input type="hidden" name="membershipId" value={m.id} />
                       <input type="hidden" name="cellId" value={cell.id} />
                       <button

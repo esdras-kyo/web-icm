@@ -7,7 +7,15 @@ import { clerkClient } from "@clerk/nextjs/server";
 
 const VALID_ROLES = new Set(["LEADER", "ASSISTANT", "MEMBER"]);
 
-export async function addMemberAction(formData: FormData) {
+type Feedback ={
+  success: boolean,
+  message: string,
+  data?: {
+    id: string
+  }
+}
+
+export async function addMemberAction(formData: FormData): Promise<Feedback> {
   const supabase = createSupabaseAdmin();
 
   const cellId = String(formData.get("cellId") ?? "");
