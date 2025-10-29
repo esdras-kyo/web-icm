@@ -24,7 +24,6 @@ export async function GET(req: Request) {
     const { data, error } = await query;
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    // Retorna só PDFs (garante por prefixo se você padronizou "pdfs/")
     const rows = (data ?? []).filter((r) => r.file_key?.toLowerCase().endsWith(".pdf"));
 
     return NextResponse.json({ files: rows });

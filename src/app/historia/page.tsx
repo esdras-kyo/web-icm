@@ -1,11 +1,7 @@
-import { Tally1 } from "lucide-react";
+import ImageTextBlock from "../components/ImageTextBlock"
+import TextBlockReveal from "../components/TextBlockReveal";
 
-const Vertical =({h}:{h: number})=>{
-  return(
 
-      <div style={{ height: `${h}px` }} className={`w-1 bg-gradient-to-b from-transparent  via-sky-200/30 to-transparent `}/>
-  )
-}
 const TitleLined = ({text}:{text: string}) =>{
   return(
   <div className="flex-row gap-12 flex items-center justify-center w-full">
@@ -27,7 +23,7 @@ export default function HistorySection() {
         />
         <div className="absolute inset-0 bg-black opacity-60" />
         <div className="relative flex flex-col items-center justify-center h-full p-8">
-          <h2 className="text-gray-400 text-xl font-mono">Nossa História</h2>
+          <h2 className="text-gray-400 text-xl">Nossa História</h2>
           <h1 className="text-white text-4xl font-bold">
             IGREJA DE CRISTO MARANATA
           </h1>
@@ -35,80 +31,30 @@ export default function HistorySection() {
         </div>
       </div>
       <div className="w-full px-2 mt-2 items-center flex flex-col justify-center">
-        {/* <h1 className="text-white text-4xl font-bold">mega title wo</h1> */}
-        <TitleLined text="1999" />
-        <h2 className="text-gray-300 text-xl mb-12">Casa da irmã Edia</h2>
-        <Vertical h={0}/>
 
-        <div className="flex flex-col md:flex-row justify-between items-center w-full mb-12">
-          <div className="md:w-1/2 px-2 md:px-12">
-            <p className="text-lg text-center text-gray-300 ">
-            A história começou em abril de 1999, com reuniões realizadas na casa da irmã Edia, localizada na Rua 11 de Janeiro, no setor Vila Aurora Oeste. Era um tempo de oração, comunhão e esperança. Os irmãos que ali se reuniam sonhavam com uma igreja que refletisse a pureza do Evangelho e a força da comunhão cristã.
-            </p>
-          </div>
-          <div className="flex w-1/2 px-12 justify-center ">
-            <img src="images/velhos.jpeg" ></img>
-          </div>
-        </div>
-        <Vertical h={150}/>
+        <h2 className="text-gray-300 text-xl mb-12">Casa da irmã Edia</h2>
+        <ImageTextBlock img="images/velhos.jpeg" text=" A história começou em abril de 1999, com reuniões realizadas na casa da irmã Edia, localizada na Rua 11 de Janeiro, no setor Vila Aurora Oeste. Era um tempo de oração, comunhão e esperança. Os irmãos que ali se reuniam sonhavam com uma igreja que refletisse a pureza do Evangelho e a força da comunhão cristã." />
+        
         <h1 className="text-4xl  font-bold mt-8 text-gray-300 font-mono">
           2001
         </h1>
         <h2 className="text-gray-300 text-xl mb-12">Tudo era pequeno, mas já carregava algo eterno</h2>
 
-        <div className="flex  justify-between items-center w-full mb-12">
-        <div className="flex w-1/2 px-12 justify-center ">
-            <img src="images/galpao.jpg" ></img>
-          </div>
-          <div className="w-1/2 px-16 m">
-            <p className="text-lg text-gray-300  text-center">
-            No final de 2000, o grupo se mudou para a Rua Leão XIII, no Setor Rodoviário, onde a igreja começou a ganhar corpo e identidade. Em 19 de agosto de 2001, foi oficialmente fundada a Igreja de Cristo Maranata. A consolidação do trabalho veio com a mudança para o galpão na Rua da Imprensa, também no setor Rodoviário, em novembro de 2004 
-            </p>
-          </div>
-        </div>
-        <Vertical h={150}/>
+       <ImageTextBlock reverse img="images/galpao.jpg" text=" No final de 2000, o grupo se mudou para a Rua Leão XIII, no Setor Rodoviário, onde a igreja começou a ganhar corpo e identidade. Em 19 de agosto de 2001, foi oficialmente fundada a Igreja de Cristo Maranata. A consolidação do trabalho veio com a mudança para o galpão na Rua da Imprensa, também no setor Rodoviário, em novembro de 2004 "/>
+
+        
         <h1 className="text-4xl  font-bold mt-8 text-gray-300 font-mono">
           2005
         </h1>
         <h2 className="text-gray-300 text-xl mb-12">Um templo para o Senhor</h2>
 
-        <div className="flex  justify-between items-center w-full mb-12">
-        
-          <div className="w-1/2 px-16 m">
-            <p className="text-lg text-gray-300  text-center">
-             Em dia tal de tal ano 2000 e alguma coisa a igreja se muda para o seu novo endereço, na Avenida Abel Coimbra, Cidade Jardim, onde permanece até os dias de hoje
-            </p>
-          </div>
-          <div className="flex w-1/2 px-12 justify-center ">
-            <img src="images/templo1.jpeg" ></img>
-          </div>
-        </div>
+        <ImageTextBlock img="images/templo1.jpeg" text="Em dia tal de tal ano 2000 e alguma coisa a igreja se muda para o seu novo endereço, na Avenida Abel Coimbra, Cidade Jardim, onde permanece até os dias de hoje"/>
 
-        <div className="flex  justify-between items-center w-full mb-12">
-        <div className="flex w-1/2 px-12 justify-center ">
-          <img src="images/templo2.jpeg" ></img>
-        </div>
-        
-        <div className="w-1/2 px-16 m">
-          <p className="text-lg text-gray-300  text-center">
-          Com a contribuição e propósito de todos os irmãos, em sintonia e unidade, o templo foi erguido, e continuou com melhorias constantes.
-          </p>
-        </div>
+        <ImageTextBlock reverse img="images/templo2.jpeg" text=" Com a contribuição e propósito de todos os irmãos, em sintonia e unidade, o templo foi erguido, e continuou com melhorias constantes." />
 
-      </div>
+        <ImageTextBlock  text="Nossa casa, que antes era um galpão, se tornou um templo aconchegante para a melhor experiência de adoração e comunhão. Mas ainda asssim, mantendo a simplicidade e a mensagem do Evangelho." img="images/templo-out.jpeg"/>
+  
 
-      <div className="flex  justify-between items-center w-full mb-12">
-        
-        <div className="w-1/2 px-16 m">
-          <p className="text-lg text-gray-300  text-center">
-         Nossa casa, que antes era um galpão, se tornou um templo aconchegante para a melhor experiência de adoração e comunhão. Mas ainda asssim, mantendo a simplicidade e a mensagem do Evangelho.
-          </p>
-        </div>
-        <div className="flex w-1/2 px-12 justify-center ">
-          <img src="images/templo-out.jpeg" ></img>
-        </div>
-      </div>
-      <Vertical h={300}/>
       <h1 className="text-4xl  font-bold mt-8 text-gray-300 font-mono">
           Os pioneiros
         </h1>
@@ -118,16 +64,20 @@ export default function HistorySection() {
           <img src="images/icmpioneiros.jpeg" ></img>
         </div>
         <div className="w-1/2 px-16 m">
-          <p className="text-lg text-gray-300  text-center">
-          Entre os primeiros irmãos que ajudaram a edificar essa obra estavam: Edimar Santos, Geneci Coutinho, Edia Bueno, Roberta Braga, Rones Marques, Meire e Neomarcio, Simone Pinheiro, Gleisson Marcos, Ediberto Camilo, Carmem Pinheiro, Fabiana e Jodeilton, Júnior e Alessandra, Kenia Saraiva, Márcio Moreno, Rosane e suas crianças.
-Homens e mulheres que, com fé, coragem e zelo, plantaram as sementes de uma comunidade comprometida com a verdade bíblica, o discipulado relacional e a comunhão entre os santos.
-          </p>
+        <TextBlockReveal text=" Entre os primeiros irmãos que ajudaram a edificar essa obra estavam: Edimar Santos, Geneci Coutinho, Edia Bueno, Roberta Braga, Rones Marques, Meire e Neomarcio, Simone Pinheiro, Gleisson Marcos, Ediberto Camilo, Carmem Pinheiro, Fabiana e Jodeilton, Júnior e Alessandra, Kenia Saraiva, Márcio Moreno, Rosane e suas crianças.
+Homens e mulheres que, com fé, coragem e zelo, plantaram as sementes de uma comunidade comprometida com a verdade bíblica, o discipulado relacional e a comunhão entre os santos." /> 
         </div>
         <div className="flex w-1/2 px-12 justify-center ">
           <img src="images/pioneiras.jpeg" ></img>
         </div>
        
       </div>
+
+      <TextBlockReveal text=" Entre os primeiros irmãos que ajudaram a edificar essa obra estavam: Edimar Santos, Geneci Coutinho, Edia Bueno, Roberta Braga, Rones Marques, Meire e Neomarcio, Simone Pinheiro, Gleisson Marcos, Ediberto Camilo, Carmem Pinheiro, Fabiana e Jodeilton, Júnior e Alessandra, Kenia Saraiva, Márcio Moreno, Rosane e suas crianças.
+Homens e mulheres que, com fé, coragem e zelo, plantaram as sementes de uma comunidade comprometida com a verdade bíblica, o discipulado relacional e a comunhão entre os santos." /> 
+      
+
+      
       </div>
     </div>
   );

@@ -170,7 +170,7 @@ export default function EventoInscricaoCard() {
 
 
             {/* Formulário */}
-            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 md:p-6 flex flex-col w-1/2">
+            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 md:p-6 flex flex-col w-full md:w-1/2">
               <h2 className="text-xl md:text-2xl font-semibold mb-4 text-gray-200">Inscrição</h2>
               {show && (
                 <form className="flex flex-col gap-3" onSubmit={(e)=>{e.preventDefault(); handleFinalizar();}}>
