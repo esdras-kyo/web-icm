@@ -1,5 +1,5 @@
 'use client'
-import { Bell, DollarSign, House, Info, Mail, Menu, Settings, ShoppingBag, ShoppingCart, Users, Castle, Ticket } from "lucide-react"
+import { Bell, DollarSign, House, Info, Mail, Menu, Settings, ShoppingBag, ShoppingCart, Users, Castle, Ticket, HeartHandshake } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -11,8 +11,9 @@ type SidebarItem = {
     href: string
 }
 const ALL_ITEMS: SidebarItem[] = [
-    { name: "Painel",         href: "/leader/sudoDash",   icon: "House" },
+    { name: "Painel",         href: "/leader",   icon: "House" },
     { name: "Membros",        href: "/leader/members",    icon: "Users" },
+    { name: "Cells",           href: "/leader/cells",     icon: "HeartHandshake"},
     { name: "Departamentos",  href: "/leader/departments",icon: "Castle" },
     { name: "Pedidos",        href: "/leader/requests",   icon: "Mail" },
     { name: "Eventos",        href: "/leader/events",     icon: "Ticket" },
@@ -29,12 +30,13 @@ const ICONS = {
     ShoppingBag,
     ShoppingCart,
     Castle,
-    Ticket
+    Ticket,
+    HeartHandshake
 }
 
 
 const Sidebar = () =>{
-    const [isSidebaropen, setSidebarOpen] = useState(true)
+    const [isSidebaropen, setSidebarOpen] = useState(false)
     const visibleItems: SidebarItem[] = (() => {
       //  if (isAdmin) return ALL_ITEMS
 

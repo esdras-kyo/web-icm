@@ -16,7 +16,7 @@ export default function Members(){
     useEffect(() => {
         async function fetchUsers() {
           try {
-            const res = await fetch("/api/getRequests", { cache: "no-store" });
+            const res = await fetch("/api/getRequests", { cache: "force-cache", next: { revalidate: 120 }  });
             const data = await res.json();
             setReques(data);
           } catch (err) {

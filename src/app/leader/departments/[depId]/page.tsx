@@ -2,10 +2,10 @@
 import BackButton from "../../components/BackButton";
 import { MeetingFormSimple } from "../../components/MeetingForm";
 
-export default function DepartmentDetailPage({
+export default async function DepartmentDetailPage({
     params,
   }: { params: { depId: string } }) {
-    const { depId } = params;
+    const { depId } = await params;
 
   return (
     <div className="w-full mx-auto p-6 space-y-6 text-white">

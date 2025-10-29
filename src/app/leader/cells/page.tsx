@@ -55,7 +55,7 @@ export default async function CellsPage() {
 
               <div className="flex items-center gap-2">
                 <Link href={`/leader/cells/${encodeURIComponent(cell.name)}/manage`}>
-                  <Button variant="outline" size="sm">Gerenciar</Button>
+                  <Button size="sm" className="cursor-pointer">Gerenciar</Button>
                 </Link>
               </div>
             </li>

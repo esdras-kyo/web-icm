@@ -3,6 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
+import { clerkClient } from "@clerk/nextjs/server";
 
 const VALID_ROLES = new Set(["LEADER", "ASSISTANT", "MEMBER"]);
 
@@ -35,6 +36,28 @@ export async function addMemberAction(formData: FormData) {
       : "Não foi possível adicionar o usuário.";
     console.error("addMemberAction error:", error);
     return { success: false, message: msg };
+  }
+
+  try {
+    // Buscar clerk_user_id do usuário adicionado
+    const { data: userData, error: userErr } = await supabase
+      .from("users")
+      .select("clerk_user_id")
+      .eq("id", userId)
+      .single();
+  
+    if (userErr) {
+      console.error("Erro ao buscar clerk_user_id:", userErr);
+    } else if (userData?.clerk_user_id) {
+      await (await clerkClient()).users.updateUser(userData.clerk_user_id, {
+        publicMetadata: {
+          primary_cell_id: cellId,
+          cell_role: role,
+        },
+      });
+    }
+  } catch (err) {
+    console.error("Erro ao atualizar Clerk publicMetadata:", err);
   }
 
   revalidatePath(`/leader/cells/${cellId}/manage`);

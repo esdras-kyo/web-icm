@@ -3,7 +3,7 @@ import Sidebar from "./sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen overflow-hidden pt-20">
+    <div className="flex h-screen overflow-hidden bg-[#0f0f0f] ">
         <Sidebar/>
     <div className="flex-col flex flex-1 overflow-auto">
     <div className="max-w-7xl mx-auto w-full flex flex-col">
