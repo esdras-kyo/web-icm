@@ -1,5 +1,5 @@
 'use client'
-import { Bell, DollarSign, House, Info, Mail, Menu, Settings, ShoppingBag, ShoppingCart, Users, Castle, Ticket, HeartHandshake } from "lucide-react"
+import { Bell, DollarSign, House, Info, Mail, Menu, Settings, ShoppingBag, ShoppingCart, Users, Castle, Ticket, HeartHandshake, CalendarPlus2, FileText } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -12,6 +12,8 @@ type SidebarItem = {
 }
 const ALL_ITEMS: SidebarItem[] = [
     { name: "Painel",         href: "/leader",   icon: "House" },
+    { name: "Agenda", href: "/leader/agenda", icon: "CalendarPlus2"},
+    { name: "Materiais", href: "/leader/files", icon: "FileText"},
     { name: "Membros",        href: "/leader/members",    icon: "Users" },
     { name: "Cells",           href: "/leader/cells",     icon: "HeartHandshake"},
     { name: "Departamentos",  href: "/leader/departments",icon: "Castle" },
@@ -31,7 +33,9 @@ const ICONS = {
     ShoppingCart,
     Castle,
     Ticket,
-    HeartHandshake
+    HeartHandshake,
+    CalendarPlus2,
+    FileText
 }
 
 
