@@ -59,11 +59,12 @@ export async function getFilesAction(params: { api: string; visibility: Visibili
     res = await fetch(url, {
       next: { revalidate: REVALIDATE_SECONDS, tags: [tagFor(visibility)] },
     });
-  } catch (err: any) {
-    throw new Error(`Falha de rede ao buscar arquivos: ${err?.message || String(err)}`);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Falha de rede ao buscar arquivos: ${msg}`);
   }
 
-  let json: any;
+  let json: unknown;
   try {
     json = await res.json();
   } catch {
@@ -71,10 +72,18 @@ export async function getFilesAction(params: { api: string; visibility: Visibili
   }
 
   if (!res.ok) {
-    throw new Error(json?.error || `Falha ao listar PDFs (HTTP ${res.status})`);
+    const errMsg =
+      typeof json === "object" && json !== null && "error" in json
+        ? String((json as { error?: unknown }).error || "")
+        : "";
+    throw new Error(errMsg || `Falha ao listar PDFs (HTTP ${res.status})`);
   }
 
-  return (json.files || []) as FileRow[];
+  if (typeof json === "object" && json !== null && "files" in json) {
+    const files = (json as { files?: unknown }).files;
+    if (Array.isArray(files)) return files as FileRow[];
+  }
+  return [] as FileRow[];
 }
 
 export async function refreshFilesAction(visibility: Visibility) {
