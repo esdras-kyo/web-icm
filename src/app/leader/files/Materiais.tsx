@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
-  FileText, Search, RefreshCcw, ExternalLink, Download, LinkIcon, SlidersHorizontal, Loader2
+  FileText, Search, RefreshCcw, ExternalLink, Download, SlidersHorizontal, Loader2
 } from "lucide-react";
 import { getFilesAction, refreshFilesAction, type FileRow, type Visibility } from "./actions";
 
@@ -76,8 +76,8 @@ export default function MateriaisClient({
       try {
         const list = await getFilesAction({ api, visibility });
         if (mounted) { setRows(list); setPage(1); }
-      } catch (e: any) {
-        if (mounted) setError(e.message || "Erro inesperado");
+      } catch (e: unknown) {
+        if (mounted) setError(e instanceof Error ? e.message : "Erro inesperado");
       } finally {
         if (mounted) setLoading(false);
       }
