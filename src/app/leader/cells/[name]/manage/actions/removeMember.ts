@@ -1,19 +1,15 @@
-// /app/leader/cells/[id]/manage/actions/removeMember.ts
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { clerkClient } from "@clerk/nextjs/server";
+import { syncCellLeaderRole } from "./_syncCellLeaderRole";
 
-type Feedback ={
-  success: boolean,
-  message: string,
-  data?: {
-    id: string
-  }
-}
+type Feedback = { success: boolean; message: string; data?: { id: string } };
 
-export async function removeMemberAction(formData: FormData): Promise<Feedback>  {
+export async function removeMemberAction(
+  formData: FormData
+): Promise<Feedback> {
   const supabase = createSupabaseAdmin();
 
   const membershipId = String(formData.get("membershipId") ?? "");
@@ -42,21 +38,29 @@ export async function removeMemberAction(formData: FormData): Promise<Feedback> 
 
   const removedUserId = deletedRow.user_id as string;
 
+  await syncCellLeaderRole(removedUserId);
+
   try {
-    const { data: userData, error: userErr } = await supabase
+    const { data: userData } = await supabase
       .from("users")
       .select("clerk_user_id")
       .eq("id", removedUserId)
       .single();
 
-    if (userErr) {
-      console.error("Erro ao buscar clerk_user_id:", userErr);
-    } else if (userData?.clerk_user_id) {
+    if (userData?.clerk_user_id) {
+      const { data: leaderRows } = await supabase
+        .from("role_assignments")
+        .select("id")
+        .eq("user_id", removedUserId)
+        .eq("role", "LEADER");
+
+      const isLeader = !!leaderRows?.length;
       const client = await clerkClient();
-      await client.users.updateUser(userData.clerk_user_id, {
+      await client.users.updateUserMetadata(userData.clerk_user_id, {
         publicMetadata: {
           primary_cell_id: null,
           cell_role: null,
+          is_leader: isLeader,
         },
       });
     }
@@ -65,5 +69,8 @@ export async function removeMemberAction(formData: FormData): Promise<Feedback> 
   }
 
   revalidatePath(`/leader/cells/${cellId}/manage`);
+  revalidateTag("users");
+  revalidateTag(`user:${removedUserId}`);
+
   return { success: true, message: "Membro removido com sucesso." };
 }

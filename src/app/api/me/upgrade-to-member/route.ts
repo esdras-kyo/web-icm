@@ -66,7 +66,7 @@ export async function POST() {
     .select("role, scope_type, department_id")
     .eq("user_id", userRow?.id);
 
-  await (await clerkClient()).users.updateUser(userId, {
+  await (await clerkClient()).users.updateUserMetadata(userId, {
     publicMetadata: {
       app_user_id: userRow?.id,
       public_code: userRow?.public_code ?? null,

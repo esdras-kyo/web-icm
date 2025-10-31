@@ -95,7 +95,7 @@ export async function POST(req: Request) {
     const primary_cell_id = membership?.cell_id ?? null;
     const cell_role = membership?.role ?? null;
 
-    await (await clerkClient()).users.updateUser(u.id, {
+    await (await clerkClient()).users.updateUserMetadata(u.id, {
       publicMetadata: {
         app_user_id: userRow.id,    
         public_code: userRow.public_code, 

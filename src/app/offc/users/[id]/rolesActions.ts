@@ -60,15 +60,13 @@ async function syncClerkRoles(supabase: ReturnType<typeof createSupabaseAdmin>, 
     department_id: r.department_id ?? null,
   }));
 
-  // (opcional) flags auxiliares
   const is_admin = roles.some(r => r.role === 'ADMIN');
   const is_leader = roles.some(r => r.role === 'LEADER');
 
-  // 4) atualizar Clerk
   try {
-    await (await clerkClient()).users.updateUser(userRow.clerk_user_id, {
+    await (await clerkClient()).users.updateUserMetadata(userRow.clerk_user_id, {
       publicMetadata: {
-        roles,            // array completo
+        roles,            
         is_admin,
         is_leader,
       },
