@@ -96,7 +96,7 @@ export default function ChurchHome() {
               Seja bem-vindo
             </Badge>
             <div className="items-center justify-center mb-2 w-full flex">
-               <img src="/images/logo.png" width={64} height={64}/> 
+               <Image src="/images/logo.png" alt="Logo" width={64} height={64} /> 
             </div>
             <h1 className="text-4xl md:text-7xl font-semibold leading-tight">
             Igreja de Cristo Maranata
@@ -217,7 +217,7 @@ export default function ChurchHome() {
           <div>
             <div className="flex items-center gap-3">
             <div className="flex flex-row items-center">
-          <img src="/images/logo.png" width={20} height={20} /> 
+          <Image src="/images/logo.png" alt="Logo" width={20} height={20} /> 
           <h1 className="ml-2 text-sm md:text-xl">Igreja de Cristo Maranata</h1>
           </div>
             </div>

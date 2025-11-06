@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { HeartHandshake, Star, Users, Church, ArrowRight, Flower2, ScrollText, Compass } from "lucide-react";
+import Image from "next/image";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -56,7 +57,7 @@ function ImageTextBlock({
         {/* imagem */}
         <motion.div className="w-full md:w-1/2" initial={reverse ? { opacity: 0, x: -24 } : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.6 }}>
           <div className="rounded-3xl  overflow-hidden shadow-2xl ring-1 ring-white/10">
-            <img src={img} alt="" className="w-full h-full object-cover aspect-[16/10]" loading="lazy" />
+            <Image src={img} alt="" className="w-full h-full object-cover aspect-[16/10]" loading="lazy" width={800} height={450} />
           </div>
         </motion.div>
       </div>
@@ -158,7 +159,7 @@ function Gallery() {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4">
           {IMGS.map((src, i) => (
             <motion.div key={src} initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.4, delay: i * 0.03 }} className={`overflow-hidden rounded-2xl ring-1 ring-white/10 ${i === 0 ? "md:col-span-3 col-span-2" : i === 5 ? "md:col-span-3 col-span-2" : "md:col-span-1"}`}>
-              <img src={src} alt="" className="w-full h-full object-cover aspect-[4/3] md:aspect-square" loading="lazy" />
+              <Image src={src} alt="" className="w-full h-full object-cover aspect-[4/3] md:aspect-square" loading="lazy" width={400} height={400} />
             </motion.div>
           ))}
         </div>
@@ -229,7 +230,7 @@ function CTA() {
 function Hero() {
   return (
     <section className="relative w-full min-h-[72vh] md:min-h-[82vh] overflow-hidden rounded-none md:rounded-2xl">
-      <img src="/images/maoslevantadas.jpeg" alt="Fundo" className="absolute inset-0 w-full h-full object-cover" />
+      <Image src="/images/maoslevantadas.jpeg" alt="Fundo" className="absolute inset-0 w-full h-full object-cover" loading="eager" fill />
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/40" />
       <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 py-16 md:py-24 text-center">
         <motion.p initial={fadeIn.hidden} animate={fadeIn.show} className="text-gray-300">Nossa História</motion.p>

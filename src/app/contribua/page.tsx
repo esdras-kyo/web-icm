@@ -9,6 +9,7 @@ import {
   Phone,
   MessageSquare,
 } from "lucide-react";
+import Image from "next/image";
 
 type DirectedDonation = {
   name: string;
@@ -70,7 +71,7 @@ function PixCard() {
       <div className="mt-5 flex flex-col gap-4">
         {/* QR no topo */}
         <div className="rounded-xl overflow-hidden bg-white/5 ring-1 ring-white/10 grid place-items-center max-w-[260px] mx-auto">
-          <img
+          <Image
             src="/images/pix-qr-exemplo.png"
             alt="QR PIX"
             className="w-full h-full object-contain p-4"

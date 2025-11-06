@@ -1,5 +1,6 @@
 'use client'
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function ImageTextBlock({
   text,
@@ -43,10 +44,11 @@ export default function ImageTextBlock({
           variants={fadeUp}
         >
           {img ? (
-            <img
+            <Image
               src={img}
               alt="Ilustração"
               className="rounded-3xl w-full h-full object-cover"
+              width={800} height={450}
             />
           ) : (
             <h1 className="text-white text-xl font-semibold">Imagem</h1>

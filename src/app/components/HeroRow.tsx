@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 export default function HeroRow( {
     img,
     title,
@@ -81,12 +82,14 @@ export default function HeroRow( {
         variants={fadeUp}
         className="max-w-3xl max-h-60 rounded-3xl  items-center flex justify-center "> 
          {img ? (
-                <img
+                <Image
                 src={img}
                 alt="Imagem"
                 className="object-contain
                  w-full h-full rounded-3xl"
+                 width={800} height={450}
                 />
+                
             ) : (
                 null
             )}

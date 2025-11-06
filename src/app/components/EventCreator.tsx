@@ -27,6 +27,7 @@ import { DateTimePicker } from "./DatePic";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PlusIcon, X } from "lucide-react";
+import Image from "next/image";
 
 // ---- schema ----------------------------------------------------
 const formSchema = z.object({
@@ -69,8 +70,6 @@ export default function EventCreateForm({
   const [regEndsAt, setRegEndsAt] = React.useState<Date | undefined>(undefined);
 
   const [uploading, setUploading] = React.useState(false);
-  const [progress, setProgress] = React.useState(0);
-  const [imageKey, setImageKey] = React.useState<string | null>(null);
   const [imgWar, setImgWar] = React.useState<string | null>(null);
   const [file, setFile] = React.useState<File | null>(null);
   const[cardOpen, setCardOpen] = React.useState<boolean>(false)
@@ -129,7 +128,6 @@ React.useEffect(() => {
       // 2) se tiver arquivo, faz upload pro R2 e confirma no banco
       if (file) {
         setUploading(true);
-        setProgress(0);
   
         // 2.1 presign
         const presignRes = await fetch("/api/uploads/presign", {
@@ -149,9 +147,6 @@ React.useEffect(() => {
           const xhr = new XMLHttpRequest();
           xhr.open("PUT", uploadUrl);
           xhr.setRequestHeader("Content-Type", file.type);
-          xhr.upload.onprogress = (e) => {
-            if (e.lengthComputable) setProgress((e.loaded / e.total) * 100);
-          };
           xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error("Upload failed")));
           xhr.onerror = () => reject(new Error("Upload error"));
           xhr.send(file);
@@ -165,7 +160,6 @@ React.useEffect(() => {
         });
         if (!confirm.ok) throw new Error("Falha ao confirmar imagem no banco");
   
-        setImageKey(key);
         setUploading(false);
       }//////////
   
@@ -208,8 +202,6 @@ function clearFile() {
   setFile(null);
   setPreviewUrl(null);
   setImgWar(null);
-  setImageKey(null);
-  setProgress(0);
   setUploading(false);
   if (fileInputRef.current) {
     fileInputRef.current.value = ""; // limpa o nome do arquivo no input
@@ -463,10 +455,11 @@ function clearFile() {
                 {previewUrl && (
                   <div className="mt-2">
                     {/* Next/Image funciona também, mas pra Object URL é mais simples usar &lt;img&gt; */}
-                    <img
+                    <Image
                       src={previewUrl}
                       alt="Pré-visualização"
                       className="max-h-56 rounded border border-white/10"
+                      width={800} height={450}
                     />
 
                   </div>
