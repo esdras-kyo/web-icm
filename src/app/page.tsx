@@ -4,10 +4,11 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Church, Heart, Users, Music, Baby, HandHeart, MapPin, Play, Youtube, Facebook, Instagram, Clock, Cross, CrossIcon, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, Youtube, Instagram, Clock, ChevronRight } from "lucide-react";
 import YouTubeCard from "./components/YoutubeCard";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -15,7 +16,7 @@ const fadeUp = {
   hover: { y: 10, opacity: 0.6, transition: { duration: 0.6 } },
 };
 
-const Section = ({ id, title, subtitle, children, img, clickable }: any) => (
+const Section = ({ id, title, subtitle, children, img, clickable }: {id: string, title: string, subtitle:string, children: React.JSX.Element, img?: string, clickable?: boolean}) => (
   <section id={id} className="max-w-6xl mx-auto px-4 md:px-6 py-6 ">
     <motion.div
       initial="hidden"
@@ -60,11 +61,11 @@ function formatarData(dataString: string) {
   const data = new Date(dataString);
 
   const dia = String(data.getDate()).padStart(2, "0");
-  const mes = String(data.getMonth() + 1).padStart(2, "0"); // +1 porque começa em 0
+  const mes = String(data.getMonth() + 1).padStart(2, "0"); 
   const hora = String(data.getHours()).padStart(2, "0");
   const minuto = String(data.getMinutes()).padStart(2, "0");
 
-  return `${dia}/${mes} ${hora}:${minuto}`; // se quiser segundos: `${hora}:${minuto}:${segundo}`
+  return `${dia}/${mes} ${hora}:${minuto}`; 
 }
 
 type Mini = {
@@ -78,7 +79,6 @@ type Mini = {
 export default function ChurchHome() {
   const route = useRouter()
   const [events, setEvents] = useState<Mini[]>([]);
-  const [loading, setLoading] = useState(true);
   return (
     <div className="min-h-screen bg-gradient-to-br from-black to-sky-800 text-white">
       <section
@@ -96,7 +96,7 @@ export default function ChurchHome() {
               Seja bem-vindo
             </Badge>
             <div className="items-center justify-center mb-2 w-full flex">
-               <img src="images/logo.png" width={64} height={64}/> 
+               <img src="/images/logo.png" width={64} height={64}/> 
             </div>
             <h1 className="text-4xl md:text-7xl font-semibold leading-tight">
             Igreja de Cristo Maranata
@@ -134,22 +134,6 @@ export default function ChurchHome() {
       </Section>
 
       <Section
-        id="ministerios"
-        title="Ministérios"
-        subtitle="Descubra onde você pode se conectar e servir."
-        clickable={true}
-        img="/images/sonicpray.jpg"
-      >
-        <button
-          onClick={() => {route.push("/ministerios")}}
-          className="flex cursor-pointer flex-row w-full justify-end"
-        >
-          <ChevronRight width={50} height={50} />
-        </button>
-      </Section>
-
-      {/* Eventos */}
-      <Section
         id="eventos"
         title="Próximos eventos"
         subtitle="Participe do que Deus está fazendo entre nós."
@@ -181,21 +165,6 @@ export default function ChurchHome() {
         </div>
       </Section>
 
-      <Section title="Mensagem do Pastor" subtitle="Uma palavra ao seu coração.">
-        <Card className="rounded-3xl overflow-hidden bg-gradient-to-b border-none from-slate-700">
-          <CardContent className="p-6 md:p-10">
-            <div className="grid md:grid-cols-[140px_1fr] items-center gap-6">
-              <div className="h-32 w-32 rounded-full bg-gradient-to-br from-slate-700 to-slate-100" />
-              <div>
-                <blockquote className="text-xl  text-slate-200 leading-relaxed">“Nosso propósito é que cada pessoa encontre em Cristo um novo começo.”</blockquote>
-                <div className="mt-3 text-muted-foreground">— Pr. Edimar Santos</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </Section>
-
-      {/* Mídia */}
       <Section id="midia" title="Mídia e transmissões" subtitle="Acompanhe ao vivo e reveja mensagens recentes.">
         <div className="grid md:grid-cols-2 gap-6">
           <Card className="rounded-2xl bg-black/20 text-white">
@@ -238,14 +207,6 @@ export default function ChurchHome() {
                 <div className="flex items-center gap-2 text-muted-foreground"><Clock className="h-4 w-4" /> Dom 9h e 19h · Qua 20h</div>
                 <div className="flex items-center gap-2 text-muted-foreground"><Instagram className="h-4 w-4" /> /icmsede</div>
               </div>
-              <div className="rounded-xl border bg-white p-4">
-                <form className="grid gap-3">
-                  <input className="border rounded-md px-3 py-2" placeholder="Seu nome" />
-                  <input className="border rounded-md px-3 py-2" placeholder="Seu e-mail" />
-                  <textarea className="border rounded-md px-3 py-2 min-h-[96px]" placeholder="Sua mensagem" />
-                  <Button className="rounded-xl">Enviar mensagem</Button>
-                </form>
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -256,7 +217,7 @@ export default function ChurchHome() {
           <div>
             <div className="flex items-center gap-3">
             <div className="flex flex-row items-center">
-          <img src="images/logo.png" width={20} height={20} /> 
+          <img src="/images/logo.png" width={20} height={20} /> 
           <h1 className="ml-2 text-sm md:text-xl">Igreja de Cristo Maranata</h1>
           </div>
             </div>
