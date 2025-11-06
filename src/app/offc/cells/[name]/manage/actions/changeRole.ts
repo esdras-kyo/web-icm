@@ -1,4 +1,3 @@
-// /app/leader/cells/[id]/manage/actions/changeRole.ts
 "use server";
 
 import { revalidatePath, revalidateTag } from "next/cache";
@@ -37,7 +36,6 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
   }
 
   try {
-    // Traga clerk_user_id como OBJETO (sem array)
     const { data: mUser, error: mErr } = await supabase
       .from("cell_memberships")
       .select("user_id, cell_id, role, users:users!inner(clerk_user_id)")
@@ -49,10 +47,8 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
     } else if (mUser) {
       const userId: string = mUser.user_id;
 
-      // 🔁 espelha LEADER/CELL conforme memberships do usuário
       await syncCellLeaderRole(userId);
 
-      // 🔎 é líder em QUALQUER escopo?
       const { data: leaderRows, error: lErr } = await supabase
         .from("role_assignments")
         .select("id")
@@ -63,8 +59,9 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
       if (lErr) console.warn("check isLeader error:", lErr);
       const isLeader = !!leaderRows?.length;
 
-      // 🧩 Clerk MERGE (não sobrescreve outras chaves)
-      const clerkId: string | undefined = mUser?.users?.clerk_user_id;
+      const clerkId: string | undefined = Array.isArray(mUser?.users)
+        ? mUser.users[0]?.clerk_user_id
+        : undefined;
       if (clerkId) {
         const client = await clerkClient();
         await client.users.updateUserMetadata(clerkId, {

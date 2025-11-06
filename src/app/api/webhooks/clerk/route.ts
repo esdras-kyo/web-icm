@@ -1,9 +1,8 @@
-// app/api/webhooks/clerk/route.ts
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { Webhook } from "svix";
+import { Webhook} from "svix";
 import { createClient } from "@supabase/supabase-js";
-import { clerkClient } from "@clerk/nextjs/server";
+import { clerkClient, type WebhookEvent } from "@clerk/nextjs/server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,13 +22,13 @@ export async function POST(req: Request) {
   }
 
   const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET!);
-  let evt: any;
+  let evt: WebhookEvent
   try {
     evt = wh.verify(payload, {
       "svix-id": svixId,
       "svix-timestamp": svixTimestamp,
       "svix-signature": svixSignature,
-    });
+    }) as WebhookEvent;
   } catch {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
@@ -79,7 +78,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 500 });
     }
 
-  //  Buscar (no máx.) uma única célula do usuário para popular primary_cell_id e cell_role
     const { data: membershipRows, error: membershipErr } = await supabase
       .from("cell_memberships")
       .select("cell_id, role")
@@ -95,7 +93,7 @@ export async function POST(req: Request) {
     const primary_cell_id = membership?.cell_id ?? null;
     const cell_role = membership?.role ?? null;
 
-    await (await clerkClient()).users.updateUserMetadata(u.id, {
+    await (await clerkClient()).users.updateUser(u.id, {
       publicMetadata: {
         app_user_id: userRow.id,    
         public_code: userRow.public_code, 

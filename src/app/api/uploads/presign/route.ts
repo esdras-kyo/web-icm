@@ -17,7 +17,7 @@ const s3 = new S3Client({
 // === GERA URL DE UPLOAD PRESIGN ===================================
 export async function POST(req: Request) {
   try {
-    const { eventId, filename, contentType, title } = await req.json();
+    const { filename, contentType, title } = await req.json();
     if ( !filename || !contentType) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }

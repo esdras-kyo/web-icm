@@ -1,10 +1,9 @@
-// app/api/agenda/pdf/route.ts
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import AgendaDoc, { type AgendaRow } from "./AgendaDoc";
-import { renderToStream } from "@react-pdf/renderer";
-import { Readable } from "node:stream";
+import { renderToStream, type DocumentProps } from "@react-pdf/renderer";
+import { Readable, type Readable as NodeReadable } from "node:stream";
 import React from "react";
 
 export const runtime = "nodejs";
@@ -45,10 +44,10 @@ export async function GET(req: Request) {
   const element = React.createElement(AgendaDoc, {
     year,
     events: data as AgendaRow[],
-  });
+  }) as unknown as React.ReactElement<DocumentProps>;
 
   const nodeStream = await renderToStream(element);
-  const webStream = Readable.toWeb(nodeStream as any);
+  const webStream = Readable.toWeb(nodeStream as unknown as NodeReadable);
 
   return new Response(webStream as unknown as ReadableStream, {
     headers: {

@@ -27,7 +27,7 @@ export async function GET(req: Request) {
     const rows = (data ?? []).filter((r) => r.file_key?.toLowerCase().endsWith(".pdf"));
 
     return NextResponse.json({ files: rows });
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "List error" }, { status: 500 });
   }

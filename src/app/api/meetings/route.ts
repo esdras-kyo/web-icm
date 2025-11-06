@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { decodeJwt } from "jose";
 
 const supabase = createClient(
@@ -10,11 +10,10 @@ const supabase = createClient(
 
 type MemberJwtClaims = {
     claims?: {
-      app_user_id?: string; // UUID do seu app
+      app_user_id?: string; 
       roles?: Array<{ role: string }>;
-      // ...outros claims que você incluiu no template
     };
-    sub?: string; // id do usuário no Clerk
+    sub?: string;
   };
 
 export async function POST(req: Request) {
@@ -61,10 +60,10 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(data, { status: 201 });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Erro ao criar meeting:", err);
     return NextResponse.json(
-      { error: err.message ?? "Erro interno do servidor." },
+      { error: err instanceof Error ? err.message : "unknown" },
       { status: 500 }
     );
   }
