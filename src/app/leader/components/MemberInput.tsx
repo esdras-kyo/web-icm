@@ -52,9 +52,15 @@ export const MembersInput: React.FC<MembersInputProps> = ({
     setDraft("");
   };
 
+  const DELIMS = /[\n\r,;|\t]/;
+
   const handleAdd = (): void => {
     if (!draft) return;
-    /[\n\r,;|\t|]/.test(draft) ? addMany(draft) : addOne(draft);
+    if (DELIMS.test(draft)) {
+      addMany(draft);
+    } else {
+      addOne(draft);
+    }
   };
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
@@ -81,7 +87,7 @@ export const MembersInput: React.FC<MembersInputProps> = ({
           onKeyDown={handleKeyDown}
           onPaste={(e) => {
             const text = e.clipboardData.getData("text");
-            if (/[\n\r,;|\t|]/.test(text)) {
+            if (DELIMS.test(text)) {
               e.preventDefault();
               addMany(text);
             }

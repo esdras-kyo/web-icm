@@ -1,6 +1,5 @@
 // app/ministerios/[slug]/page.tsx
 import Image from "next/image";
-import Link from "next/link";
 import { getMinistryBySlug } from "../../../lib/ministries"
 
 export default function MinistryPage({ params }: { params: { slug: string } }) {

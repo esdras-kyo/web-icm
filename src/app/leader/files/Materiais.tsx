@@ -243,8 +243,6 @@ function PdfCard({ f, workerBase, idx }: { f: FileRow; workerBase: string; idx: 
   const title = f.title || f.file_key;
   const date = new Date(f.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).replace(/\./g, "");
 
-  function copyLink() { navigator.clipboard.writeText(href).catch(() => {}); }
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

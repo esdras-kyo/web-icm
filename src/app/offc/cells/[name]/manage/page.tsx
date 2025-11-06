@@ -1,18 +1,10 @@
-// /app/leader/cells/[name]/manage/page.tsx
 import Link from "next/link";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { addMemberAction } from "./actions/addMember";
 import { changeRoleAction } from "./actions/changeRole";
 import { removeMemberAction } from "./actions/removeMember";
-import { MeetingForm } from "../../_components/MeetingForm";
 import { CollapsibleCard } from "../../_components/CollapsibleCard";
 import type { PostgrestError } from "@supabase/supabase-js";
-
-type MemberRow = {
-  id: string;                 // membership id
-  role: "LEADER" | "ASSISTANT" | "MEMBER";
-  user: { id: string; name: string; email: string | null };
-};
 
 export type MemberUser = {
   id: string;    
@@ -88,14 +80,6 @@ export default async function ManageCellPage({
       data: CellMembershipWithUser[] | null;
       error: PostgrestError | null;
     };
-
-  const memberOptions =
-    members?.map((m) => ({
-      userId: m.user?.id,
-      name: m.user?.name ?? "",
-    })) ?? [];
-
-    const currentUserId = "14607714-5f33-4be3-97e0-8156a74a8736";
 
   return (
     <div className="max-w-5xl mx-auto py-8 space-y-6 text-white">

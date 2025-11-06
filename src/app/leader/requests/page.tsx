@@ -1,5 +1,4 @@
 'use client'
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
   type Reques= {
@@ -11,7 +10,6 @@ import { useEffect, useState } from "react";
 export default function Members(){
     const [reques, setReques] = useState<Reques[]>([]);
     const [loading, setLoading] = useState(true);
-    const route = useRouter()
 
     useEffect(() => {
         async function fetchUsers() {

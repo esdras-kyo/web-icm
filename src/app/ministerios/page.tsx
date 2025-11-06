@@ -16,15 +16,12 @@ import {
   DramaIcon,
 } from "lucide-react";
 
-// ——— shadcn/ui
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
@@ -183,8 +180,6 @@ export function getCardBackground(ministry: Ministry) {
 export default function MinisteriosHub() {
   const [q, setQ] = useState("");
   const [tag, setTag] = useState<string | null>(null);
-
-  const tags = useMemo(() => computeTags(MINISTRIES), []);
   const filtered = useMemo(
     () => filterMinistries(MINISTRIES, q, tag),
     [q, tag]

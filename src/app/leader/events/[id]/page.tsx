@@ -1,5 +1,5 @@
 'use client'
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 type Inscrito = {
@@ -16,7 +16,6 @@ export default function Inscricoes(){
     const [loading, setLoading] = useState(false)
     const [inscritos, setInscritos] = useState<Inscrito[]>([])
     const [warning, setWarning] = useState("")
-    const router = useRouter()
     const params = useParams();
     const id = params.id?.toString() 
 
@@ -43,7 +42,7 @@ export default function Inscricoes(){
     }
 useEffect(()=>{
     getRegistrations(id)
-},[])
+},[id])
 if (loading)
     return (
       <main className="p-10 text-white text-center">

@@ -8,12 +8,6 @@ import { MeetingForm } from "../../_components/MeetingForm";
 import { CollapsibleCard } from "../../_components/CollapsibleCard";
 import type { PostgrestError } from "@supabase/supabase-js";
 
-type MemberRow = {
-  id: string;                 // membership id
-  role: "LEADER" | "ASSISTANT" | "MEMBER";
-  user: { id: string; name: string; email: string | null };
-};
-
 export type MemberUser = {
   id: string;    
   email: string;    

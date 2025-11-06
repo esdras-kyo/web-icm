@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { ArrowRightIcon, Loader2, Smartphone, CalendarDays, MapPin } from "lucide-react";
+import { ArrowRightIcon, Loader2, CalendarDays} from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 

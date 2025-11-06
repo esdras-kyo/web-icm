@@ -118,7 +118,7 @@ export default function UserDetailPage() {
             <span className="text-xs text-white/70">Role</span>
             <select
               value={role}
-              onChange={(e) => setRole(e.target.value as any)}
+              onChange={(e) => setRole(e.target.value as 'ADMIN' | 'LEADER' | 'MEMBER')}
               className="rounded-md border border-white/20 bg-transparent p-2"
             >
               <option value="ADMIN">ADMIN</option>
@@ -131,7 +131,7 @@ export default function UserDetailPage() {
             <span className="text-xs text-white/70">Escopo</span>
             <select
               value={scope}
-              onChange={(e) => setScope(e.target.value as any)}
+              onChange={(e) => setScope(e.target.value as 'ORG'|'DEPARTMENT')}
               className="rounded-md border border-white/20 bg-transparent p-2"
             >
               <option value="ORG">ORG</option>
