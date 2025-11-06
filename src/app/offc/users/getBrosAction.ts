@@ -14,6 +14,9 @@ export type User = {
   id: string;
   name: string | null;
   email: string | null;
+  public_code: string
+  gender: string | null
+  date_of_birth: string | null
   roles: Role[];
 };
 
@@ -29,6 +32,9 @@ type DbUserRow = {
   id: string;
   name: string | null;
   email: string | null;
+  public_code: string
+  gender: string | null
+  date_of_birth: string | null
   roles?: DbRoleRow[];
 };
 
@@ -42,6 +48,9 @@ async function fetchFromDB(id?: string): Promise<User[] | User | null> {
       id,
       name,
       email,
+      gender,
+      date_of_birth,
+      public_code,
       roles:role_assignments (
         id,
         role,
@@ -59,6 +68,9 @@ async function fetchFromDB(id?: string): Promise<User[] | User | null> {
     id: u.id,
     name: u.name,
     email: u.email,
+    gender: u.gender,
+    date_of_birth: u.date_of_birth,
+    public_code: u.public_code,
     roles: (u.roles ?? []).map((r: DbRoleRow) => ({
       id: r.id,
       role: r.role,

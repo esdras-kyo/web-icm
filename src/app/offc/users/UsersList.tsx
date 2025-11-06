@@ -13,7 +13,7 @@ function primaryRole(roles: User["roles"]) {
   return null;
 }
 
-function roleLabelPt(role: "ADMIN" | "LEADER" | "MEMBER" | null) {
+function roleLabelPt(role: string | null) {
   if (role === "ADMIN") return "Administrador";
   if (role === "LEADER") return "Líder";
   if (role === "MEMBER") return "Membro";
@@ -29,15 +29,23 @@ function genderLabelPt(g: string | null) {
 export default function MembersClient({ users }: { users: User[] }) {
   const [q, setQ] = useState("");
   const [gender, setGender] = useState("ALL");
+  const [birthThisMonth, setBirthThisMonth] = useState(false);
 
   const filtered = useMemo(() => {
     const term = q.toLowerCase();
+    const currentMonth = new Date().getMonth(); // 0–11
+
     return users.filter((u) => {
       const byName = !term || u.name?.toLowerCase().includes(term);
       const byGender = gender === "ALL" || u.gender === gender;
-      return byName && byGender;
+      const byBirth =
+        !birthThisMonth ||
+        (!!u.date_of_birth &&
+          new Date(u.date_of_birth).getMonth() === currentMonth);
+
+      return byName && byGender && byBirth;
     });
-  }, [q, gender, users]);
+  }, [q, gender, birthThisMonth, users]);
 
   return (
     <main className="mx-auto w-full md:max-w-7xl px-2 py-2">
@@ -61,6 +69,16 @@ export default function MembersClient({ users }: { users: User[] }) {
           <option value="M">Masculino</option>
           <option value="F">Feminino</option>
         </select>
+
+        <label className="inline-flex items-center gap-2 text-white/90 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={birthThisMonth}
+            onChange={(e) => setBirthThisMonth(e.target.checked)}
+            className="h-4 w-4"
+          />
+          Aniversariantes do mês
+        </label>
       </div>
 
       <ul className="space-y-3">
@@ -99,7 +117,9 @@ export default function MembersClient({ users }: { users: User[] }) {
       </ul>
 
       {!filtered.length && (
-        <p className="text-white/60 mt-6 text-center">Nenhum usuário encontrado.</p>
+        <p className="text-white/60 mt-6 text-center">
+          Nenhum usuário encontrado.
+        </p>
       )}
     </main>
   );
