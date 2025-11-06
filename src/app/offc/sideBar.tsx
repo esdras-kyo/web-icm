@@ -1,5 +1,5 @@
 'use client'
-import { Menu, Castle, User2, HomeIcon, Users2, CalendarPlus2 } from "lucide-react"
+import { Menu, Castle, User2, HomeIcon, Users2, CalendarPlus2, BlocksIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -13,10 +13,11 @@ type SidebarItem = {
 const ALL_ITEMS: SidebarItem[] = [
   { name: "Painel", href: "/offc", icon: "HomeIcon" },
   { name: "Membros", href: "/offc/users", icon: "Users2" },
-  {name: "Agenda", href: "/offc/agenda", icon: "CalendarPlus2"}
+  {name: "Agenda", href: "/offc/agenda", icon: "CalendarPlus2"},
+  {name: "Celp", href: "/offc/cells", icon: "BlocksIcon"}
 ]
 
-const ICONS = { Castle, User2, HomeIcon, Users2, CalendarPlus2 }
+const ICONS = { Castle, User2, HomeIcon, Users2, CalendarPlus2, BlocksIcon }
 
 const Sidebar = () => {
   const [isSidebaropen, setSidebarOpen] = useState(true)
