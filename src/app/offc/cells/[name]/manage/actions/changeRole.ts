@@ -75,7 +75,6 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
         console.warn("changeRoleAction: clerk_user_id não encontrado no join de users");
       }
 
-      // ♻️ revalida lista/usuário (se usa tags nas telas)
       revalidateTag("users");
       revalidateTag(`user:${userId}`);
     }

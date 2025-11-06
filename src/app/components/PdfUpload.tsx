@@ -155,7 +155,7 @@ export function PdfUploader({
       const publicUrl = `${WORKER_BASE}/${encodeURIComponent(key)}`;
       onUploaded?.({ fileKey: key, title: title.trim(), visibility, publicUrl });
       setMessage("Sucesso")
-    } catch (e: any) {
+    } catch (e) {
       console.error(e);
       setUploading(false);
       setError("Erro inesperado ao enviar o PDF.");

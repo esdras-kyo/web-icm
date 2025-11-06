@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const body = await req.json();
   const { birth_date, gender, baptized } = body;
 
-  const { data: userRow, error } = await supabase
+  const { error } = await supabase
     .from("users")
     .update({ date_of_birth: birth_date, gender, baptized })
     .eq("clerk_user_id", userId)

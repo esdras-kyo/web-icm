@@ -79,7 +79,7 @@ export default function HeroRow( {
             ? { whileInView: "show", viewport: { once: true, amount: 0.4 } }
             : { animate: "show" })}
         variants={fadeUp}
-        className="max-w-3xl max-h-60 rounded-3xl bg-gradient-to-bl from-amber-600 to-emerald-300 items-center flex justify-center "> 
+        className="max-w-3xl max-h-60 rounded-3xl  items-center flex justify-center "> 
          {img ? (
                 <img
                 src={img}

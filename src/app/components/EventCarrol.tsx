@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -16,11 +16,6 @@ type EventItem = {
   }
 
 }
-function chunk<T>(arr: T[], size: number) {
-    const out: T[][] = []
-    for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size))
-    return out
-  }
   
   function EventsCarouselSimple({ events }: { events: EventItem[] }) {
     const route = useRouter()
@@ -29,12 +24,12 @@ function chunk<T>(arr: T[], size: number) {
     const scrollByPage = (dir: "prev" | "next") => {
       const el = viewportRef.current
       if (!el) return
-      const amount = el.clientWidth // 100% do viewport -> pagina
+      const amount = el.clientWidth
       el.scrollBy({ left: dir === "next" ? amount : -amount, behavior: "smooth" })
     }
   
     const fmt = (d: string | Date) =>
-      new Date(d).toLocaleDateString({ day: "2-digit", month: "2-digit", year: "numeric" })
+      new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
   
     return (
       <div className="relative w-full">
@@ -87,7 +82,6 @@ function chunk<T>(arr: T[], size: number) {
 export default function EventsAcive(){
     const [events, setEvents] = useState<EventItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const route = useRouter()
 
     useEffect(() => {
         async function fetchUsers() {

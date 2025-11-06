@@ -26,7 +26,7 @@ import {
 import { DateTimePicker } from "./DatePic";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { PlusCircleIcon, PlusIcon, X } from "lucide-react";
+import { PlusIcon, X } from "lucide-react";
 
 // ---- schema ----------------------------------------------------
 const formSchema = z.object({
@@ -46,14 +46,10 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-// ---- mock do department ----------------------------------------
-const MOCK_DEPARTMENT_ID = "00000000-0000-0000-0000-000000000000";
-
-// ---- componente -------------------------------------------------
 export default function EventCreateForm({
   onCreate,
 }: {
-  // opcional: você pode injetar uma função que salva no DB
+
   onCreate?: (payload: {
     // owner_department_id: string;
     visibility: "ORG" | "DEPARTMENT";
@@ -71,7 +67,7 @@ export default function EventCreateForm({
   const [endsAt, setEndsAt] = React.useState<Date | undefined>(undefined);
   const [regStartsAt, setRegStartsAt] = React.useState<Date | undefined>(undefined);
   const [regEndsAt, setRegEndsAt] = React.useState<Date | undefined>(undefined);
-  const WORKER_BASE = "https://worker-1.esdrascamel.workers.dev"; // troque pelo seu domínio quando tiver
+
   const [uploading, setUploading] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [imageKey, setImageKey] = React.useState<string | null>(null);
@@ -103,7 +99,7 @@ React.useEffect(() => {
   });
 
   // Narrow/control typing to match shadcn FormField generics across RHF versions
-  const control = form.control as any;
+  const control = form.control;
 
   async function handleSubmit(values: FormValues) {
     if (values.ends_at <= values.starts_at) {
@@ -176,7 +172,7 @@ React.useEffect(() => {
       form.reset();
       clearFile()
       alert("Evento criado!");
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       setUploading(false);
       alert("Erro ao criar evento.");
@@ -219,12 +215,6 @@ function clearFile() {
     fileInputRef.current.value = ""; // limpa o nome do arquivo no input
   }
 }
-
-  // helper p/ input datetime-local <-> Date
-  const toLocalInput = (d: Date) =>
-    new Date(d.getTime() - d.getTimezoneOffset() * 60000)
-      .toISOString()
-      .slice(0, 16);
 
   return (
     <div className="mx-auto w-full max-w-4xl">

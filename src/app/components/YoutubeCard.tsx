@@ -16,8 +16,10 @@ export default function YouTubeCard() {
         if (!res.ok) throw new Error("Falha ao carregar vídeo");
         const json = (await res.json()) as Payload;
         setData(json);
-      } catch (e: any) {
-        setErr(e.message);
+      } catch (e) {
+        const msg =
+          e instanceof Error ? e.message : "Erro inesperado";
+        setErr(msg);
       }
     })();
   }, []);

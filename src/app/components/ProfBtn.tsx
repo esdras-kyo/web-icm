@@ -1,26 +1,12 @@
 "use client"
-import { signIn, useSession } from "next-auth/react"
 import { User2 } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
-import { signOut } from "next-auth/react"
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
-import { useRouter } from "next/navigation"
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
+
 
 export default function ProfBtn(){
-    const route = useRouter()
-    const [isOpen, setIsOpen] = useState(false)
-    const { data: session, status, update } = useSession()
-    const alreadyUpdated = useRef(false)
-    useEffect(()=>{
-        if(alreadyUpdated.current) return
-        if (status === "authenticated") {
-            update()
-          }
-         alreadyUpdated.current = true
-    },[status, update])
-    const isOrgAdmin = session?.user?.roles?.some(
-        (r) => r.role === "ADMIN" && r.scope_type === "ORG"
-      )
+    // const route = useRouter()
+    // const [isOpen, setIsOpen] = useState(false)
+
 
     return(
         <div className="">

@@ -36,7 +36,7 @@ export default function ImageTextBlock({
         </motion.div>
 
         <motion.div
-          className="flex-1 flex justify-center items-center min-h-[250px] rounded-3xl bg-gradient-to-bl from-amber-600 to-emerald-300 overflow-hidden"
+          className="flex-1 flex justify-center items-center min-h-[250px] rounded-3xl overflow-hidden"
           initial={reverse ? "hiddenL" : "hiddenR"}
           whileInView="show"
           viewport={{ once: true, amount: 0.4 }}

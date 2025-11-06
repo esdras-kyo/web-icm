@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Calendar, Download, ChevronDown } from "lucide-react";
+import { Calendar, Download } from "lucide-react";
 import { createSupabaseBrowser } from "@/utils/supabase/client";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
@@ -117,16 +117,9 @@ export default function AgendaTimeline({
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
             >
-              {Array.from({ length: 5 }).map((_, i) => {
-                const y = new Date().getFullYear() - 2 + i;
-                return (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                );
-              })}
+              <option value={year}>{year}</option>
+              <option value={year + 1}>{year + 1}</option>
             </select>
-            <ChevronDown className="ml-[-24px] h-4 w-4 opacity-60 pointer-events-none" />
           </div>
 
           {/* botão download */}

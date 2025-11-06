@@ -35,8 +35,10 @@ export function PdfCloudList({
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || "Falha ao listar PDFs");
       setRows(json.files || []);
-    } catch (e: any) {
-      setError(e.message || "Erro inesperado");
+    } catch (e) {
+      const msg =
+      e instanceof Error ? e.message : "Erro inesperado";
+    setError(msg);
     } finally {
       setLoading(false);
     }
