@@ -15,12 +15,23 @@ export default async function AdminAgendaPage() {
     .select("id, title, description, event_date, event_time, visibility, department_id")
     .order("event_date", { ascending: true });
 
+  // server action wrappers must return void/Promise<void>
+  const onCreate = async (formData: FormData): Promise<void> => {
+    "use server";
+    await createAgendaItem(formData);
+  };
+
+  const makeDelete = (id: string) => async (): Promise<void> => {
+    "use server";
+    await deleteAgendaItem(id);
+  };
+
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8 space-y-8">
       <h1 className="text-2xl font-semibold">Agenda — Administração</h1>
 
       {/* Criar novo evento */}
-      <form action={createAgendaItem} className="grid gap-3 rounded-xl border border-zinc-700 bg-zinc-900/40 p-4">
+      <form action={onCreate} className="grid gap-3 rounded-xl border border-zinc-700 bg-zinc-900/40 p-4">
         <h2 className="font-medium text-lg">Novo evento</h2>
 
         <input name="title" placeholder="Título" required className="rounded border border-zinc-700 bg-transparent p-2" />
@@ -75,7 +86,7 @@ export default async function AdminAgendaPage() {
                   <td className="p-2">{ev.visibility}</td>
                   <td className="p-2">{ev.department_id || "—"}</td>
                   <td className="p-2">
-                    <form action={deleteAgendaItem.bind(null, ev.id)}>
+                    <form action={makeDelete(ev.id)}>
                       <button
                         type="submit"
                         className="rounded border border-red-700 px-2 py-1 text-red-300 hover:bg-red-950/40"
