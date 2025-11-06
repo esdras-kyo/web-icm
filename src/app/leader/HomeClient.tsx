@@ -1,4 +1,3 @@
-// app/leader/HomeClient.tsx
 "use client";
 
 import * as React from "react";
@@ -6,7 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, FileText, CalendarDays, FolderTree, Users2 } from "lucide-react";
+import { ExternalLink, FileText, CalendarDays } from "lucide-react";
 
 type AgendaRow = {
   id: string;

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
-import type { JwtEnvelope, UserClaims } from "@/types/UserClaims";
+import type { UserClaims } from "@/types/UserClaims";
 
-function decodeJwt<T = any>(jwt: string): T | null {
+function decodeJwt(jwt: string){
     try {
       const base64Url = jwt.split(".")[1];
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -29,7 +29,7 @@ function decodeJwt<T = any>(jwt: string): T | null {
           const jwt = await getToken({ template, skipCache: true });
           if (!jwt) return;
   
-          const payload = decodeJwt<JwtEnvelope>(jwt);
+          const payload = decodeJwt(jwt);
           console.log("payload:", payload); 
           if (!cancelled) {
             setClaims(payload?.claims ?? null); // 👈 pega de payload.claims
