@@ -26,7 +26,7 @@ export default async function RootLayout({
     >
     <html lang="pt-BR">
       <body
-        className={`bg-black`}
+        className={`bg-black text-white `}
       >
          <Providers session={session}>
          

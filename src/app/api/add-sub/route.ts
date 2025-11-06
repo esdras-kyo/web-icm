@@ -4,7 +4,7 @@ import { createSupabaseAdmin } from "@/utils/supabase/admin";
 export async function POST(request: Request) {
 	const body = await request.json();
 	const supabase = createSupabaseAdmin();
-	const { data, error } = await supabase
+	const { error } = await supabase
 		.from('registrations')
 		.insert(body)
 	if (error) {

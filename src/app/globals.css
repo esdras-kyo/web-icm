@@ -50,7 +50,7 @@ body {
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 1rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -82,6 +82,25 @@ body {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+    /* Brand vermelho ICM (usaremos no CTA/gradiente) */
+    --brand-500: #8B0101;
+    --brand-600: #5E0000;
+  
+    /* Gradiente padrão de página */
+    --page-bg-start: #000000;      /* from-black */
+    --page-bg-end: #0b2a3e;        /* to-sky-800-ish */
+  
+    /* Alternativas de fundo (usadas no Section/Hero) */
+    --bg-app: var(--page-bg-start);
+    --bg-app-alt: var(--page-bg-end);
+  
+    /* Sombras e vidro */
+    --shadow-soft: 0 10px 30px rgb(0 0 0 / 0.25);
+    --shadow-card: 0 15px 40px rgb(2 6 23 / 0.35);
+    --glass: 255 255 255 / 0.06;   /* rgba para usar no bg: rgb(var(--glass)) */
+  
+    /* Raio “grande” pra cards/hero */
+    --radius-lg: 1.5rem;
 }
 
 .dark {
@@ -116,6 +135,76 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --page-bg-start: #020617; /* slate-950 */
+  --page-bg-end: #0b2a3e;
+  --shadow-soft: 0 10px 30px rgb(0 0 0 / 0.35);
+  --shadow-card: 0 20px 50px rgb(0 0 0 / 0.45);
+}
+
+/* ==== Helpers de layout/estilo ==== */
+
+/* Fundo padrão de página */
+.bg-page {
+  background-image: linear-gradient(
+    to bottom right,
+    var(--page-bg-start),
+    var(--page-bg-end)
+  );
+  color: var(--foreground);
+}
+
+/* Painel “vidro” (usado em cards/seções claras sobre fundo escuro) */
+.glass {
+  background: rgb(var(--glass));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+
+/* Card padrão */
+.card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  background: color-mix(in oklch, var(--card) 92%, transparent);
+  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+
+/* Radial glow sutil (o mesmo que usamos no Hero/Section) */
+.radial-glow {
+  background: radial-gradient(
+    60% 50% at 50% 0%,
+    rgba(99, 102, 241, 0.20),
+    transparent 70%
+  );
+}
+
+/* CTA com gradiente da marca (p/ usar junto do Button do shadcn) */
+.btn-brand {
+  background-image: linear-gradient(
+    to top left,
+    var(--brand-500),
+    rgba(0,0,0,0.3)
+  );
+  color: white;
+}
+.btn-brand:hover {
+  background-image: linear-gradient(
+    to top left,
+    rgba(0,0,0,0.5),
+    rgba(0,0,0,0.7)
+  );
+}
+
+/* Containers */
+.container-app {
+  max-width: 72rem; /* ~ max-w-6xl */
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1rem; /* px-4 */
+}
+@media (min-width: 768px) {
+  .container-app { padding-inline: 1.5rem; } /* md:px-6 */
 }
 
 @layer base {
