@@ -39,7 +39,6 @@ type DbUserRow = {
 };
 
 async function fetchFromDB(id?: string): Promise<User[] | User | null> {
-    console.log("bateu")
   const supabase = createSupabaseAdmin();
 
   const base = supabase

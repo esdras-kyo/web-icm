@@ -30,7 +30,6 @@ export default function Inscricoes(){
             return;
         }
         const data = await res.json();
-        console.log(data)
         setWarning("");
         if (Array.isArray(data) && data.length > 0) {
             setInscritos(data);

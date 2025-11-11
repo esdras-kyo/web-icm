@@ -30,7 +30,6 @@ function decodeJwt(jwt: string){
           if (!jwt) return;
   
           const payload = decodeJwt(jwt);
-          console.log("payload:", payload); 
           if (!cancelled) {
             setClaims(payload?.claims ?? null); // 👈 pega de payload.claims
           }

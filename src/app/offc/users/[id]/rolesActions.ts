@@ -22,8 +22,7 @@ async function revokeUserSessions(clerkUserId: string) {
       await Promise.all(
         sessions.map((s) => (async () => (await clerkClient()).sessions.revokeSession(s.id))())
       );
-  
-      console.log(`Revogadas ${sessions.length} sessões para ${clerkUserId}`);
+
     } catch (err) {
       console.warn("Falha ao revogar sessões do Clerk:", err);
     }

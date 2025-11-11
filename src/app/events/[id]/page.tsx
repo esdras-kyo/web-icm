@@ -81,8 +81,8 @@ export default function EventoInscricaoCard() {
       }),
     });
 
-    const data = await res.json();
-    console.log(formData, data);
+    // const data = await res.json();
+    // console.log(formData, data);
 
     if (!res.ok) {
       console.log("erro ao fazer inscrição");

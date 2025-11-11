@@ -41,7 +41,6 @@ export const MeetingFormSimple = ({ depId }: {depId: string}) => {
           throw new Error(data.error || "Erro ao enviar meeting");
         }
   
-        console.log("Meeting criado:", data);
         alert("Enviado com sucesso!");
         setTitle("");
         setDescription("");
