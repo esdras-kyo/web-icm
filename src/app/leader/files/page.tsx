@@ -2,14 +2,21 @@
 import { getFilesAction } from "./actions";
 import  MateriaisClient  from "./Materiais";
 
-export const dynamic = "force-static";      // ou "auto"
-export const revalidate = 300;              // fallback de revalidate para a página
+export const dynamic = "force-dynamic"; // 👈 impede prerender no build
+export const revalidate = 0;             // fallback de revalidate para a página
 
 const API = "/api/files/list";
 const DEFAULT_VIS: "ORG" | "DEPARTMENT" = "ORG";
 
 export default async function MaterialsPage() {
-  const initial = await getFilesAction({ api: API, visibility: DEFAULT_VIS });
+  let initial: Awaited<ReturnType<typeof getFilesAction>> = [];
+  try {
+    initial = await getFilesAction({ api: API, visibility: DEFAULT_VIS });
+  } catch (e) {
+    console.error(e);
+    // não derruba o build/SSR — mostra vazio e segue
+    initial = [];
+  }
 
   return (
     <MateriaisClient

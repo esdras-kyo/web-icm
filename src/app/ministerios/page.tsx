@@ -40,7 +40,7 @@ export type Ministry = {
 };
 
 // ——— MOCK: troque por dados do seu banco
-export const MINISTRIES: Ministry[] = [
+const MINISTRIES: Ministry[] = [
   {
     id: "1",
     name: "Adoradores por Excelência",
@@ -89,13 +89,13 @@ export const MINISTRIES: Ministry[] = [
 ];
 
 // ——— Helpers extraídos (facilitam teste)
-export function computeTags(ministries: Ministry[]): string[] {
+function computeTags(ministries: Ministry[]): string[] {
   const set = new Set<string>();
   ministries.forEach((m) => m.tags?.forEach((t) => set.add(t)));
   return Array.from(set);
 }
 
-export function filterMinistries(
+function filterMinistries(
   ministries: Ministry[],
   q: string,
   tag: string | null
@@ -169,10 +169,10 @@ function MinistryIcon({
 }
 
 // ——— Navegação
-export function buildMinistryHref(slug: string) {
+function buildMinistryHref(slug: string) {
   return `/ministerios/${slug}`;
 }
-export function getCardBackground(ministry: Ministry) {
+function getCardBackground(ministry: Ministry) {
   return ministry.image ?? "/images/ministerios/_placeholder.jpg";
 }
 

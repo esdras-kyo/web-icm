@@ -1,7 +1,6 @@
 import BannerElement from "../components/bannerElement";
 import HeroRow from "../components/HeroRow";
 import BlockCarousel from "../components/ImageCarousel";
-import DemoBlockCarousel from "../components/ImageCarousel";
 import ImageTextBlock from "../components/ImageTextBlock";
 import TextBlockReveal from "../components/TextBlockReveal";
 

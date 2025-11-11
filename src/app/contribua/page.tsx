@@ -57,7 +57,7 @@ function CopyableRow({ label, value }: { label: string; value: string }) {
 
 function PixCard() {
   // substitua pelos dados reais
-  const pixKey = "contato@igrejaicm.org.br"; // e.g., e-mail/aleatória/CNPJ
+  const pixKey = "62.173.620/0001-80"; 
   return (
     <div className="rounded-2xl p-6 md:p-8 bg-white/[0.04] ring-1 ring-white/10 my-8">
       <div className="flex items-center gap-3 text-white">
@@ -72,9 +72,11 @@ function PixCard() {
         {/* QR no topo */}
         <div className="rounded-xl overflow-hidden bg-white/5 ring-1 ring-white/10 grid place-items-center max-w-[260px] mx-auto">
           <Image
-            src="/images/pix-qr-exemplo.png"
+            src="/images/qrcode.png"
             alt="QR PIX"
             className="w-full h-full object-contain p-4"
+            width={430}
+            height={400}
           />
         </div>
 

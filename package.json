@@ -9,7 +9,6 @@
     "lint": "eslint",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write ."
-
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.906.0",
@@ -28,6 +27,7 @@
     "@react-pdf/renderer": "^4.3.1",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.74.0",
+    "@types/next": "^8.0.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -35,7 +35,6 @@
     "lucide-react": "^0.542.0",
     "motion": "^12.23.12",
     "next": "15.5.2",
-    "next-auth": "^4.24.11",
     "next-themes": "^0.4.6",
     "react": "19.1.0",
     "react-day-picker": "^9.11.0",

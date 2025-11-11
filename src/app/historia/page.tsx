@@ -18,7 +18,7 @@ type TitleLinedProps = {
   mono?: boolean;
 };
 
-export function TitleLined({ label, as: Tag = "h2", mono = false }: TitleLinedProps) {
+function TitleLined({ label, as: Tag = "h2", mono = false }: TitleLinedProps) {
   return (
     <div className="w-full flex items-center gap-6">
       <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/25 to-transparent" />

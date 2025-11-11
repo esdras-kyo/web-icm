@@ -1,7 +1,5 @@
 import "./globals.css";
 import NavBar from "./components/navbar";
-import { Providers } from "./providers";
-import { getServerSession } from "next-auth"
 import { ClerkProvider } from '@clerk/nextjs';
 import { ptBR } from "@clerk/localizations"; 
 
@@ -15,7 +13,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession();
+
   return (
     <ClerkProvider
     signInUrl="/sign-in"
@@ -28,12 +26,12 @@ export default async function RootLayout({
       <body
         className={`bg-black text-white `}
       >
-         <Providers session={session}>
+
          
         <NavBar/>
         {children}
        
-        </Providers>
+
       </body>
     </html>
      </ClerkProvider>

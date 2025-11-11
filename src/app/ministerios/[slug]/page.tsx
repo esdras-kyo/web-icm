@@ -1,9 +1,18 @@
 // app/ministerios/[slug]/page.tsx
+import { use } from 'react'
 import Image from "next/image";
 import { getMinistryBySlug } from "../../../lib/ministries"
 
-export default function MinistryPage({ params }: { params: { slug: string } }) {
-  const m = getMinistryBySlug(params.slug);
+
+// export default function DepartmentDetailPage
+//   const { depId } = use(params);
+export default function MinistryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>; // 👈 se a pasta é [slug]
+}) {
+  const { slug } = use(params);      // 👈 resolve a Promise
+  const m = getMinistryBySlug(slug);
   if (!m) return <div className="p-8">Ministério não encontrado.</div>;
 
   return (
