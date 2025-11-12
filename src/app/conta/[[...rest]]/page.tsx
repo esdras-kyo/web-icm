@@ -30,7 +30,7 @@ export default function ContaPage() {
       >
 
         <UserProfile.Page
-          label="Informações de membro"
+          label="Área de Membro"
           labelIcon={<HouseIcon size={16} />}
           url="/personal"
         >

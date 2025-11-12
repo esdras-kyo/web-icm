@@ -30,9 +30,13 @@ export function MemberForm() {
     });
 
     if (res.ok) {
-      // depois de salvar, faz o upgrade
       await fetch("/api/me/upgrade-to-member", { method: "POST" });
       setSuccess(true);
+
+      // aguarda um instante para o backend atualizar e depois recarrega a página
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
     }
 
     setLoading(false);
