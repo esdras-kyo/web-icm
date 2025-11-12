@@ -7,7 +7,7 @@ export type UserRole = {
   
   export type UserClaims = {
     app_user_id: string;
-    public_code: string;
+    public_code: string | number;
     app_meta_version: number;
     roles: UserRole[];
   };
