@@ -44,7 +44,7 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.redirect(new URL("/sign-in", req.url));
     }
 
-    if (req.nextUrl.pathname.startsWith("/leader")) {
+    // if (req.nextUrl.pathname.startsWith("/offc")) {
       // const jwt = await getToken({ template: "member_jwt" });
       // if (!jwt) {
       //   return NextResponse.redirect(new URL("/test", req.url));
@@ -56,12 +56,11 @@ export default clerkMiddleware(async (auth, req) => {
       // ).toString("utf-8");
       // const payload = JSON.parse(payloadJson);
       // const hasLeader =
-      //   payload?.claims?.roles?.some((r: any) => r.role === "LEADER") ?? false;
+      //   payload?.claims?.roles?.some((r) => r.role === "ADMIN") ?? false;
       // if (!hasLeader) {
       //   return NextResponse.redirect(new URL("/conta", req.url));
       // }
-      console.log("tem que descomentar parça ❗️");
-    }
+    // }
   }
 
   return NextResponse.next();

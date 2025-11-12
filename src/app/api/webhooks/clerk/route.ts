@@ -33,8 +33,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  console.log("clerk webhook:", evt.type, "user:", evt.data?.id);
-
   if (evt.type === "user.created" || evt.type === "user.updated") {
     const u = evt.data;
     const email = u.email_addresses?.[0]?.email_address ?? null;

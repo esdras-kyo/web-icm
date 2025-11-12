@@ -4,10 +4,26 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { clerkClient } from "@clerk/nextjs/server";
 import { syncCellLeaderRole } from "./_syncCellLeaderRole";
+// import { redirect } from "next/navigation";
 
-const VALID_ROLES = new Set(["LEADER", "ASSISTANT", "MEMBER"]);
+const VALID_ROLES = new Set(["LEADER", "ASSISTANT", "MEMBER"] as const);
+
+type CellRole = (typeof VALID_ROLES extends Set<infer U> ? U : never) & string;
 
 type Feedback = { success: boolean; message: string; data?: { id: string } };
+
+type MembershipWithClerk = {
+  user_id: string;
+  cell_id: string;
+  role: CellRole;
+  users: { clerk_user_id: string } | { clerk_user_id: string }[];
+};
+
+function extractClerkId(
+  users: MembershipWithClerk["users"]
+): string | undefined {
+  return Array.isArray(users) ? users[0]?.clerk_user_id : users?.clerk_user_id;
+}
 
 export async function changeRoleAction(formData: FormData): Promise<Feedback> {
   const supabase = createSupabaseAdmin();
@@ -19,10 +35,11 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
   if (!membershipId || !cellId) {
     return { success: false, message: "Identificador inválido." };
   }
-  if (!VALID_ROLES.has(newRole)) {
+  if (!VALID_ROLES.has(newRole as CellRole)) {
     return { success: false, message: "Papel inválido." };
   }
 
+  // 1) Atualiza a role na membership
   const { data, error } = await supabase
     .from("cell_memberships")
     .update({ role: newRole })
@@ -38,14 +55,16 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
   try {
     const { data: mUser, error: mErr } = await supabase
       .from("cell_memberships")
-      .select("user_id, cell_id, role, users:users!inner(clerk_user_id)")
+      .select(
+        "user_id, cell_id, role, users:users!inner(clerk_user_id)"
+      )
       .eq("id", membershipId)
-      .single();
+      .single<MembershipWithClerk>();
 
     if (mErr) {
       console.error("Erro carregando membership após update:", mErr);
     } else if (mUser) {
-      const userId: string = mUser.user_id;
+      const userId = mUser.user_id;
 
       await syncCellLeaderRole(userId);
 
@@ -59,12 +78,9 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
       if (lErr) console.warn("check isLeader error:", lErr);
       const isLeader = !!leaderRows?.length;
 
-      const clerkId: string | undefined = Array.isArray(mUser?.users)
-        ? mUser.users[0]?.clerk_user_id
-        : undefined;
+      const clerkId = extractClerkId(mUser.users);
       if (clerkId) {
-        const client = await clerkClient();
-        await client.users.updateUserMetadata(clerkId, {
+        await (await clerkClient()).users.updateUserMetadata(clerkId, {
           publicMetadata: {
             primary_cell_id: mUser.cell_id,
             cell_role: mUser.role, 
@@ -82,6 +98,15 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
     console.error("Erro ao atualizar Clerk publicMetadata:", err);
   }
 
-  revalidatePath(`/leader/cells/${cellId}/manage`);
-  return { success: true, message: "Papel atualizado com sucesso.", data };
+  const cellName = String(formData.get("cellName") ?? "");
+  console.log("cellname",cellName)
+
+  if (cellName) {
+    revalidatePath(`/offc/cells/${encodeURIComponent(cellName)}/manage`);
+    // redirect(`/offc/cells/${encodeURIComponent(cellName)}/manage`);
+  } else {
+    revalidatePath("/offc/cells");
+  }
+
+  return { success: true, message: "Papel atualizado com sucesso."};
 }

@@ -21,7 +21,7 @@ export function CollapsibleCard({
       <button
         type="button" 
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between p-4 border-b hover:bg-zinc-800/50 transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-zinc-800/50 transition-colors"
       >
         <div>
           <h2 className="font-medium">{title}</h2>
