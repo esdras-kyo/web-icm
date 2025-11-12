@@ -14,11 +14,11 @@ const ALL_ITEMS: SidebarItem[] = [
     { name: "Painel",         href: "/leader",   icon: "House" },
     { name: "Agenda", href: "/leader/agenda", icon: "CalendarPlus2"},
     { name: "Materiais", href: "/leader/files", icon: "FileText"},
-    { name: "Membros",        href: "/leader/members",    icon: "Users" },
+    // { name: "Membros",        href: "/leader/members",    icon: "Users" },
     { name: "Cells",           href: "/leader/cells",     icon: "HeartHandshake"},
     { name: "Departamentos",  href: "/leader/departments",icon: "Castle" },
-    { name: "Pedidos",        href: "/leader/requests",   icon: "Mail" },
-    { name: "Eventos",        href: "/leader/events",     icon: "Ticket" },
+    // { name: "Pedidos",        href: "/leader/requests",   icon: "Mail" },
+    // { name: "Eventos",        href: "/leader/events",     icon: "Ticket" },
   ]
 
 const ICONS = {
