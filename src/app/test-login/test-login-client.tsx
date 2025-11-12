@@ -49,7 +49,7 @@ export default function TestLoginClient({ toParam }: { toParam: string }) {
 
   return (
     <main className="max-w-md mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-center">Mock Login</h1>
+      <h1 className="text-2xl font-bold text-center">Tester Login</h1>
       <p className="text-sm text-white/70 text-center">
         Destino após login: <code>{safeTo}</code>
       </p>
@@ -89,7 +89,7 @@ export default function TestLoginClient({ toParam }: { toParam: string }) {
         onClick={handleLogout}
         className="w-full px-4 py-2 rounded-lg bg-white/10 ring-1 ring-white/20 cursor-pointer hover:bg-white/20"
       >
-        Sair (mock)
+        Sair
       </button>
     </main>
   );

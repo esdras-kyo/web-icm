@@ -33,6 +33,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
+  console.log("clerk webhook:", evt.type, "user:", evt.data?.id);
+
   if (evt.type === "user.created" || evt.type === "user.updated") {
     const u = evt.data;
     const email = u.email_addresses?.[0]?.email_address ?? null;
@@ -93,20 +95,25 @@ export async function POST(req: Request) {
     const primary_cell_id = membership?.cell_id ?? null;
     const cell_role = membership?.role ?? null;
 
-    await (await clerkClient()).users.updateUser(u.id, {
-      publicMetadata: {
-        app_user_id: userRow.id,    
-        public_code: userRow.public_code, 
-        roles: (rolesFromDb ?? []).map((r) => ({
-          role: r.role,
-          scope_type: r.scope_type,
-          department_id: r.department_id,
-        })),
-        app_meta_version: 1,
-        primary_cell_id,
-        cell_role,
-      },
-    });
+    try {
+      await (await clerkClient()).users.updateUser(u.id, {
+        publicMetadata: {
+          app_user_id: userRow.id,
+          public_code: userRow.public_code,
+          roles: (rolesFromDb ?? []).map((r) => ({
+            role: r.role,
+            scope_type: r.scope_type,
+            department_id: r.department_id,
+          })),
+          app_meta_version: 1,
+          primary_cell_id,
+          cell_role,
+        },
+      });
+    } catch (e) {
+      console.error("clerkClient.users.updateUser error:", e);
+      // Não derruba o webhook se o Supabase já foi gravado
+    }
   }
 
   return NextResponse.json({ ok: true });

@@ -6,14 +6,24 @@ const isProtectedRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  const { pathname } = req.nextUrl;
+
+  // BYPASS absoluto p/ webhooks e callbacks
+  if (
+    pathname.startsWith("/api/webhooks/") ||
+    pathname.startsWith("/api/auth/callback/") ||
+    pathname.startsWith("/v1/oauth_callback")
+  ) {
+    return NextResponse.next();
+  }
+
   // 🔒 MOCK AUTH — proteção simples se ativado
   if (process.env.NEXT_PUBLIC_MOCK_LOGIN === "1") {
     const cookie = req.cookies.get("mock_auth")?.value;
-    const { pathname, search } = req.nextUrl;
+    const search = req.nextUrl.search;
 
-    // ✅ rotas públicas (não forçar redirect para a própria tela de login)
     const isPublic =
-      pathname.startsWith("/test-login") || // <-- adicionado
+      pathname.startsWith("/test-login") ||
       pathname.startsWith("/mock-login") ||
       pathname.startsWith("/_next") ||
       pathname.startsWith("/api") ||
@@ -21,7 +31,6 @@ export default clerkMiddleware(async (auth, req) => {
 
     if (!isPublic && cookie !== "1") {
       const loginUrl = new URL("/test-login", req.url);
-      // define o destino UMA vez, já codificado
       const dest = pathname + (search || "");
       loginUrl.searchParams.set("to", encodeURIComponent(dest));
       return NextResponse.redirect(loginUrl);
@@ -59,5 +68,7 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
-  matcher: ["/((?!_next|.*\\..*|api/webhooks/clerk).*)"],
+  matcher: [
+    "/((?!_next|.*\\..*|api/webhooks/|api/auth/callback/|v1/oauth_callback).*)",
+  ],
 };
