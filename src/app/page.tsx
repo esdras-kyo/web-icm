@@ -158,7 +158,7 @@ export default function ChurchHome() {
         logoAlt="Logo da igreja"
         showButton
         buttonLabel="Visite-nos neste domingo"
-        onButtonClick={() => route.push("/local")}
+        onButtonClick={() => route.push("/localizacao")}
       />
 
       <Participe/>
