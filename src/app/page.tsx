@@ -1,62 +1,15 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Instagram, Clock, ChevronRight, CalendarClock, UsersRound, Radio } from "lucide-react";
 import YouTubeCard from "./components/YoutubeCard";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Section from "./components/Section";
+import TopBanner from "./components/TopBanner";
+import Footer from "./components/Footer";
 
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  hover: { y: 10, opacity: 0.6, transition: { duration: 0.6 } },
-};
-
-const Section = ({ id, title, subtitle, children, img, clickable }: {id: string, title: string, subtitle:string, children: React.JSX.Element, img?: string, clickable?: boolean}) => (
-  <section id={id} className="max-w-6xl mx-auto px-4 md:px-6 py-6 ">
-    <motion.div
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
-      variants={fadeUp}
-      whileHover={clickable ? "hover" : ""}
-      className={`relative max-w-6xl mx-auto px-4 md:px-6 pt-16 pb-8 rounded-md bg-gradient-to-bl from-transparent ${
-        clickable ? "cursor-pointer" : ""
-      } to-black/60`}
-    >
-      {img && (
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={img}
-            alt=""
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transition-all duration-500 group-hover:brightness-110 group-hover:scale-100 rounded-2xl"
-            priority={false}
-          />
-          {/* Scrim leve só embaixo para legibilidade */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-black/70 via-transparent to-transparent" />
-        </div>
-      )}
-      {title && (
-        <div className="mb-8 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">
-            {title}
-          </h2>
-          {subtitle && (
-            <p className=" mt-2 max-w-2xl text-gray-200">{subtitle}</p>
-          )}
-        </div>
-      )}
-      <div className="relative z-10">{children}</div>
-    </motion.div>
-  </section>
-);
  function Participe() {
   return (
     <motion.section
@@ -170,6 +123,7 @@ type Mini = {
   image_key: string
   starts_at: string
 };
+
 export default function ChurchHome() {
   const route = useRouter()
   const [events, setEvents] = useState<Mini[]>([]);
@@ -190,84 +144,63 @@ export default function ChurchHome() {
 
     loadEvents();
   }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black to-sky-800 text-white">
-      <section
-        className=" relative overflow-hidden mb-24 bg-cover bg-start before:absolute before:inset-0 before:bg-gradient-to-br before:from-black/80 before:to-sky-800/60 before:z-10"
-        style={{ backgroundImage: "url('images/bg.jpeg')", height: "70vh" }}
-      >
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_0%,rgba(99,102,241,0.20),transparent_70%)] " />
-        <div className="max-w-6xl w-full mx-auto px-4 md:px-6 py-20 md:py-28 flex  justify-center gap-10 items-center relative z-20 ">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <Badge className="mb-4 gap-2 bg-transparent rounded-full px-3 py-1">
-              Seja bem-vindo
-            </Badge>
-            <div className="items-center justify-center mb-2 w-full flex">
-               <Image src="/images/logo.png" alt="Logo" width={64} height={64} /> 
-            </div>
-            <h1 className="text-4xl md:text-7xl font-semibold leading-tight">
-            Igreja de Cristo Maranata
-            </h1>
+      <TopBanner
+        badgeText="Seja bem-vindo"
+        title="Igreja de Cristo Maranata"
+        subtitle="Junte-se a nós para adorar, aprender a Palavra e servir em Goiânia."
+        backgroundImage="images/bg.jpeg"
+        bannerHeight="70vh"
+        showLogo
+        logoSrc="/images/logo.png"
+        logoAlt="Logo da igreja"
+        showButton
+        buttonLabel="Visite-nos neste domingo"
+        onButtonClick={() => route.push("/local")}
+      />
 
-            <p className="text-muted-foreground mt-4 max-w-prose">
-            Junte-se a nós para adorar, aprender a Palavra e servir em Goiânia.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button
-                size="lg"
-                className="rounded-2xl cursor-pointer hover:text-gray-300 hover:from-black/50 hover:to-black/70 bg-gradient-to-tl from-[#8B0101] to-black/20"
-              >
-                Visite-nos neste domingo
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-
-        <Participe/>
+      <Participe/>
   
-      
-        <Section
+      <Section
         id="cell"
         title="Células"
         subtitle="Conheça mais sobre nossas células."
         clickable={true}
         img="/images/sonicpray.jpg"
+        onClick={() => {
+          route.push("/celulas");
+        }}
       >
-        <button
-          onClick={() => {route.push("/celulas")}}
-          className="flex cursor-pointer flex-row w-full justify-end"
-        >
+        <div className="flex flex-row w-full justify-end">
           <ChevronRight width={50} height={50} />
-        </button>
-        </Section>
+        </div>
+      </Section>
       
-
-
       <Section
         id="sobre"
         title="Sobre nós"
         subtitle="Há mais de 25 anos compartilhando a Palavra e servindo com amor."
         clickable={true}
         img="/images/velhos.jpeg"
+        onClick={() => {
+          route.push("/historia");
+        }}
       >
-        <button
-          onClick={() => {route.push("/historia")}}
-          className="flex cursor-pointer flex-row w-full justify-end"
-        >
+        <div className="flex flex-row w-full justify-end">
           <ChevronRight width={50} height={50} />
-        </button>
+        </div>
       </Section>
 
       <Section
         id="eventos"
         title="Próximos eventos"
         subtitle="Participe do que Deus está fazendo entre nós."
+        clickable={true}
+        onClick={() => {
+          route.push("/events");
+        }}
       >
         <div className="grid md:grid-cols-3 gap-6">
           {events.slice(0, 2).map((e) => (
@@ -287,16 +220,13 @@ export default function ChurchHome() {
             </Card>
           ))}
           <div className="flex h-full w-full items-end justify-end">
-            <button className="flex-row flex items-center  hover:from-black/50 cursor-pointer rounded-xl pl-6 hover:text-white text-gray-300/50 hover:to-black/70 bg-gradient-to-tl "
-            onClick={()=>{route.push("/events")}}>
+           
               <h1 className="text-xl">Ver mais</h1>{" "}
               <ChevronRight width={40} height={40} />
-            </button>
+           
           </div>
         </div>
       </Section>
-
-
 
       <Section id="contato" title="Visite-nos" subtitle="Estamos ansiosos para receber você e sua família.">
         <Card className="rounded-2xl">
@@ -312,36 +242,7 @@ export default function ChurchHome() {
         </Card>
       </Section>
 
-      <footer className="border-t">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 py-10 grid md:grid-cols-3 gap-8 items-start">
-          <div>
-            <div className="flex items-center gap-3">
-            <div className="flex flex-row items-center">
-          <Image src="/images/logo.png" alt="Logo" width={20} height={20} /> 
-          <h1 className="ml-2 text-sm md:text-xl">Igreja de Cristo Maranata</h1>
-          </div>
-            </div>
-            <p className="text-sm text-muted-foreground mt-3">Uma família em missão, anunciando a esperança do Evangelho.</p>
-          </div>
-          <div>
-            <h4 className="font-medium mb-3">Links rápidos</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#eventos" className="hover:underline">Agenda</a></li>
-              <li><a href="#midia" className="hover:underline">Mensagens</a></li>
-              <li><a href="#contato" className="hover:underline">Contato</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-medium mb-3">Horários</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Domingo – 9h e 19h</li>
-              <li>Quarta – 20h (Células)</li>
-
-            </ul>
-          </div>
-        </div>
-        <div className="text-center text-xs text-muted-foreground pb-10">© {new Date().getFullYear()} Igreja de Cristo Maranata. Todos os direitos reservados.</div>
-      </footer>
+      <Footer/>
     </div>
   );
 }
