@@ -2,36 +2,17 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import TopBanner from "../components/TopBanner";
 
 export default function CellsPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-black to-[#0b2a3e] text-white">
       {/* HERO */}
-      <section
-        className="relative w-full bg-cover bg-center py-16 px-6 text-center"
-        style={{ backgroundImage: "url('/images/bg.jpeg')" }}
-      >
-        {/* overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-[#0b2a3e]/60" />
-        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,rgba(99,102,241,0.20),transparent_70%)]" />
+      <TopBanner 
+      title="Clopses"
+      subtitle="Lorm praesit amet conso tencit adu moris quet uelera mentis nunc."
+      />
 
-        <div className="relative z-10 max-w-6xl mx-auto">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="text-4xl md:text-5xl font-bold mb-4 text-sky-200"
-          >
-            Clopses
-          </motion.h1>
-          <p className="max-w-2xl mx-auto text-lg text-white/80">
-            Lorm praesit amet conso tencit adu moris quet uelera mentis nunc.
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
-          </p>
-        </div>
-      </section>
-
-      {/* O QUE É */}
       <section className="w-full py-20 px-6">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div className="min-w-0">
