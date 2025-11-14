@@ -12,7 +12,7 @@ export default function LocationPage() {
             Como chegar
           </h1>
           <p className="mt-4 text-white/70 text-base md:text-lg leading-relaxed">
-            Veja nossa localização e encontre a melhor rota para nos visitar.
+            Veja nossa localização.
           </p>
         </header>
 
@@ -25,9 +25,6 @@ export default function LocationPage() {
             </h2>
             <p className="text-white/80 text-sm md:text-base">
               Av. Abel Coimbra, 86 – Cidade Jardim, Goiânia – GO
-            </p>
-            <p className="text-white/60 text-xs md:text-sm">
-              Próximo a pontos de referência conhecidos na região.
             </p>
           </div>
 
@@ -55,10 +52,6 @@ export default function LocationPage() {
               Abrir no Google Maps
             </a>
 
-            <p className="text-xs md:text-sm text-white/60">
-              Dica: use aplicativos de navegação (Google Maps, Waze) e busque por
-              &quot;Av. Abel Coimbra, 86 – Cidade Jardim&quot;.
-            </p>
           </div>
         </div>
       </div>
