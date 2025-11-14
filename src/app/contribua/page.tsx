@@ -10,6 +10,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import Image from "next/image";
+import TopBanner from "../components/TopBanner";
 
 type DirectedDonation = {
   name: string;
@@ -298,18 +299,19 @@ function DirectedDonationForm() {
 export default function ContribuicaoPage() {
   return (
     <main className="min-h-dvh w-full bg-neutral-950 text-white">
-      <div className="mx-auto max-w-6xl px-4 md:px-6 py-10 md:py-14">
-        <header className="text-center">
-          <p className="text-white/70 text-sm">Generosidade com propósito</p>
-          <h1 className="mt-1 text-3xl md:text-5xl font-extrabold tracking-tight">
-            Contribuição
-          </h1>
-          <p className="mt-3 text-white/80 max-w-2xl mx-auto">
-            Sua oferta abençoa pessoas, sustenta a obra e amplia o alcance do
-            Evangelho. Escolha a forma de contribuir ou fale conosco para uma
-            oferta direcionada.
-          </p>
-        </header>
+      
+        <TopBanner 
+          badgeText="Generosidade com propósito"
+          title="Contribuição"
+          subtitle="Sua oferta abençoa pessoas, sustenta a obra e amplia o alcance do
+              Evangelho. Escolha a forma de contribuir ou fale conosco para uma
+              oferta direcionada."
+          bannerHeight="70vh"
+        // showLogo
+        // logoSrc="/images/logo.png"
+
+        />
+        <div className="mx-auto max-w-6xl px-4 md:px-6 py-10 md:py-14">
 
         <SectionTitle>Formas de contribuição</SectionTitle>
         <div className="grid grid-cols-1 gap-6 md:gap-8">
