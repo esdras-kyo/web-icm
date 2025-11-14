@@ -2,6 +2,7 @@ import "./globals.css";
 import NavBar from "./components/navbar";
 import { ClerkProvider } from '@clerk/nextjs';
 import { ptBR } from "@clerk/localizations"; 
+import { dark } from '@clerk/themes'
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -16,6 +17,9 @@ export default async function RootLayout({
 
   return (
     <ClerkProvider
+    appearance={{
+      theme: dark
+    }}
     signInUrl="/sign-in"
     signUpUrl="/sign-up"
     signInForceRedirectUrl="/"

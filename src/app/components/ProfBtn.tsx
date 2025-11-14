@@ -1,5 +1,5 @@
 "use client";
-import { User2 } from "lucide-react";
+import { ShieldUser, User2 } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { useUserClaims } from "../hooks/useUserClaims";
 
@@ -24,12 +24,24 @@ export default function ProfBtn() {
                 labelIcon={<User2 className="w-4" />}
               />
             ) : null}
+            {isAdmin ? (
+              <UserButton.Link
+                label="Painel Administrativo"
+                href="/offc"
+                labelIcon={
+                  <div className="flex flex-col items-start justify-start">
+                <ShieldUser className="w-5" />
+                </div>
+              }
+              />
+            ) : null}
+
           </UserButton.MenuItems>
         </UserButton>
       </SignedIn>
       <SignedOut>
         <SignInButton>
-          <button className="rounded-full border p-1"><User2/></button>
+          <button className="flex cursor-pointer rounded-full border w-7 h-7 justify-center"><User2 className="w-5 "/></button>
         </SignInButton>
       </SignedOut>
     </div>
