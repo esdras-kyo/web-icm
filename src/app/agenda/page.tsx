@@ -30,7 +30,7 @@ type TitleLinedProps = {
           <TitleLined label="Programações" />
 
           {/* Cards de recorrência */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="my-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="rounded-2xl p-6 bg-white/[0.04] ring-1 ring-white/10">
               <div className="flex items-center gap-3 text-white">
                 <div className="p-2 rounded-xl bg-white/10"><Calendar className="w-5 h-5"/></div>

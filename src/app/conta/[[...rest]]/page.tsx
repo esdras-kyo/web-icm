@@ -35,7 +35,7 @@ export default function ContaPage() {
           url="/personal"
         >
 
-          <div className="space-y-4 text-black">
+          <div className="space-y-4 text-white">
             <h2 className="text-lg font-medium">Informações</h2>
             <div className="p-6">
 
@@ -47,7 +47,7 @@ export default function ContaPage() {
         <h1>Cargo: {isLeader? "Líder" :isAdmin? "Administrador": "Membro"}</h1>
       </div>:null}
 
-      {isAdmin ? <button onClick={()=>{router.push("/offc")}} className="rounded-md p-2 border border-black/20 bg-zinc-400 hover:bg-transparent cursor-pointer"> Painel </button> : null}
+      {isAdmin ? <button onClick={()=>{router.push("/offc")}} className="mt-4 w-full rounded-md p-2 border border-black/20 bg-gradient-to-r to-zinc-700 hover:bg-transparent cursor-pointer"> Painel Administrativo </button> : null}
 
       {/* <h3>Suas roles:</h3>
       <ul>
