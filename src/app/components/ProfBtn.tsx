@@ -28,7 +28,9 @@ export default function ProfBtn() {
         </UserButton>
       </SignedIn>
       <SignedOut>
-        <SignInButton />
+        <SignInButton>
+          <button className="rounded-full border p-1"><User2/></button>
+        </SignInButton>
       </SignedOut>
     </div>
   );
