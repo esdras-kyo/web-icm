@@ -9,9 +9,7 @@ export async function POST(req: Request) {
   const ok = username === mockUser && password === mockPass;
 
   const res = NextResponse.json({ ok }, { status: ok ? 200 : 401 });
-
   if (ok) {
-    // cookie HttpOnly para o middleware ler
     res.cookies.set("mock_auth", "1", {
       httpOnly: true,
       path: "/",

@@ -13,18 +13,28 @@ export default function TestLoginClient() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+async function normalize(user: string, pass: string) {
+  return {
+    user: user?.trim().toLowerCase(),
+    pass: pass?.trim().toLowerCase(),
+  };
+}
+
+const { user, pass } = await normalize(username, password);
 
     const res = await fetch('/api/mock-login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({username: user, password: pass }),
     });
+  
 
     if (res.ok) {
       router.replace("/");
     } else {
       setError('Usuário ou senha incorretos.');
     }
+  
   };
 
   return (
