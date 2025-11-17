@@ -1,23 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-function isSafeInternal(url: string) {
-  try { new URL(url); return false; } catch { return url.startsWith('/'); }
-}
-
-export default function TestLoginClient({ toParam }: { toParam: string }) {
+export default function TestLoginClient() {
   const router = useRouter();
-
-  const safeTo = useMemo(() => {
-    let t = toParam;
-    try { t = decodeURIComponent(t); } catch {}
-    if (!isSafeInternal(t)) return '/';
-    const onlyPath = t.split('?')[0];
-    if (onlyPath === '/test-login') return '/';
-    return t;
-  }, [toParam]);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +21,7 @@ export default function TestLoginClient({ toParam }: { toParam: string }) {
     });
 
     if (res.ok) {
-      router.replace(safeTo);
+      router.replace("/");
     } else {
       setError('Usuário ou senha incorretos.');
     }
@@ -43,9 +30,6 @@ export default function TestLoginClient({ toParam }: { toParam: string }) {
   return (
     <main className="max-w-md mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold text-center">Tester Login</h1>
-      <p className="text-sm text-white/70 text-center">
-        Destino após login: <code>{safeTo}</code>
-      </p>
 
       <form onSubmit={handleLogin} className="space-y-4">
         <div>
