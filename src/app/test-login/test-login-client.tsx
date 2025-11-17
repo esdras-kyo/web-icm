@@ -23,7 +23,6 @@ export default function TestLoginClient({ toParam }: { toParam: string }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // chama a rota server-side que valida envs e seta o cookie HttpOnly
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -39,12 +38,6 @@ export default function TestLoginClient({ toParam }: { toParam: string }) {
     } else {
       setError('Usuário ou senha incorretos.');
     }
-  };
-
-  const handleLogout = () => {
-    // opcional: criar /api/mock-logout; aqui só remove o cookie não-HttpOnly
-    document.cookie = `mock_auth=; path=/; max-age=0`;
-    router.replace('/');
   };
 
   return (
@@ -84,13 +77,6 @@ export default function TestLoginClient({ toParam }: { toParam: string }) {
           Entrar
         </button>
       </form>
-
-      <button
-        onClick={handleLogout}
-        className="w-full px-4 py-2 rounded-lg bg-white/10 ring-1 ring-white/20 cursor-pointer hover:bg-white/20"
-      >
-        Sair
-      </button>
     </main>
   );
 }

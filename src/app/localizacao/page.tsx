@@ -1,12 +1,10 @@
 export default function LocationPage() {
   return (
     <div className="min-h-dvh w-full flex flex-col items-center justify-start px-4 py-16 relative">
-      {/* glows de fundo */}
       <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 bg-sky-500/20 blur-[140px] rounded-full" />
       <div className="pointer-events-none absolute -bottom-32 -right-32 h-80 w-80 bg-indigo-500/20 blur-[140px] rounded-full" />
 
       <div className="w-full max-w-4xl relative z-10">
-        {/* Cabeçalho */}
         <header className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
             Como chegar
@@ -16,9 +14,7 @@ export default function LocationPage() {
           </p>
         </header>
 
-        {/* Card principal */}
         <div className="w-full rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-6 md:p-8 space-y-8">
-          {/* Endereço */}
           <div className="space-y-2">
             <h2 className="text-xl md:text-2xl font-semibold text-white">
               Endereço
@@ -28,7 +24,6 @@ export default function LocationPage() {
             </p>
           </div>
 
-          {/* Mapa embed */}
           <div className="w-full overflow-hidden rounded-xl border border-white/10 bg-black/60">
             <div className="relative w-full pb-[56.25%]"> 
               <iframe
@@ -41,7 +36,6 @@ export default function LocationPage() {
             </div>
           </div>
 
-          {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
             <a
               href="https://www.google.com/maps/search/?api=1&query=Av.+Abel+Coimbra,+86,+Cidade+Jardim,+Goi%C3%A2nia+-+GO"
