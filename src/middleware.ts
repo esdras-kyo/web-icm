@@ -20,7 +20,6 @@ export default clerkMiddleware(async (auth, req) => {
   // 🔒 MOCK AUTH — proteção simples se ativado
   if (process.env.NEXT_PUBLIC_MOCK_LOGIN === "1") {
     const cookie = req.cookies.get("mock_auth")?.value;
-    const search = req.nextUrl.search;
 
     const isPublic =
       pathname.startsWith("/test-login") ||
@@ -29,12 +28,9 @@ export default clerkMiddleware(async (auth, req) => {
       pathname.startsWith("/api") ||
       pathname.match(/\.(.*)$/);
 
-    if (!isPublic && cookie !== "1") {
-      const loginUrl = new URL("/test-login", req.url);
-      const dest = pathname + (search || "");
-      loginUrl.searchParams.set("to", encodeURIComponent(dest));
-      return NextResponse.redirect(loginUrl);
-    }
+      if (!isPublic && cookie !== "1") {
+        return NextResponse.redirect(new URL("/test-login", req.url));
+      }
   }
 
   // --- SUA LÓGICA ORIGINAL COM CLERK ---
