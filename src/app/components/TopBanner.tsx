@@ -25,7 +25,7 @@ export default function TopBanner({
   badgeText = "",
   title,
   subtitle,
-  backgroundImage = "images/bg.jpeg",
+  backgroundImage = "",
   bannerHeight = "70vh",
   showLogo = false,
   logoSrc = "/images/logo.png",

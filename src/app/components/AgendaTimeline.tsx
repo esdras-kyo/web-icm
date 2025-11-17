@@ -31,9 +31,10 @@ export default function AgendaTimeline({
 }: {
   initialYear?: number;
 }) {
+  const currentYear = new Date().getFullYear();
   const supabase = createSupabaseBrowser();
   const [year, setYear] = useState<number>(
-    initialYear ?? new Date().getFullYear()
+    initialYear ?? currentYear
   );
   const [events, setEvents] = useState<AgendaEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,8 +44,8 @@ export default function AgendaTimeline({
     let active = true;
     (async () => {
       setLoading(true);
-      const from = `${year}-01-01`;
-      const to = `${year}-12-31`;
+      const from = `${currentYear - 1}-01-01`;
+      const to = `${currentYear + 1}-12-31`;
 
       const { data, error } = await supabase
         .from("agenda_events")
@@ -69,26 +70,32 @@ export default function AgendaTimeline({
     return () => {
       active = false;
     };
-  }, [year, supabase]);
+  }, [supabase, currentYear]);
 
   const grouped = useMemo(() => {
-    const g = groupByMonth(events);
+    const filtered = events.filter((ev) =>
+      ev.event_date.startsWith(String(year))
+    );
+    const g = groupByMonth(filtered);
     return Object.entries(g).sort(
       (a, b) =>
         new Date(a[1][0]?.event_date ?? "").getTime() -
         new Date(b[1][0]?.event_date ?? "").getTime()
     );
-  }, [events]);
+  }, [events, year]);
 
-  async function downloadAgendaPdf(year: number) {
+  async function downloadAgendaPdf(yearToDownload: number) {
     try {
-      const res = await fetch(`/api/agenda/pdf?scope=public&year=${year}`, { cache: "no-store" });
+      const res = await fetch(
+        `/api/agenda/pdf?scope=public&year=${yearToDownload}`,
+        { cache: "no-store" }
+      );
       if (!res.ok) throw new Error(`Falha ao gerar PDF: ${res.status}`);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `agenda-icm-${year}.pdf`;
+      a.download = `agenda-icm-${yearToDownload}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -100,54 +107,80 @@ export default function AgendaTimeline({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-6">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between gap-2 print:hidden">
+      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between print:hidden rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.05] to-white/[0.01] px-4 py-3 md:px-5 md:py-4">
         <div className="flex items-center gap-3">
-          <Calendar className="h-5 w-5" />
-          <h2 className="text-xl font-semibold">Agenda {year}</h2>
+          <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
+            <Calendar className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-base md:text-lg font-semibold text-white">
+              Agenda {year}
+            </h2>
+            <p className="text-xs md:text-sm text-white/60">
+              Veja os eventos gerais da igreja ao longo do ano.
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 md:gap-3">
           {/* seletor de ano */}
-          <div className="inline-flex items-center rounded-xl border px-2">
+          <div className="relative inline-flex items-center rounded-xl border border-white/20 bg-white/5 px-2">
             <select
               aria-label="Selecionar ano"
-              className="bg-transparent p-2 outline-none cursor-pointer"
+              className="bg-transparent p-2 pr-7 text-xs md:text-sm text-white outline-none cursor-pointer appearance-none"
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
             >
-              <option value={year}>{year}</option>
-              <option value={year + 1}>{year + 1}</option>
+              <option className="bg-slate-900 text-white" value={currentYear - 1}>
+                {currentYear - 1}
+              </option>
+              <option className="bg-slate-900 text-white" value={currentYear}>
+                {currentYear}
+              </option>
+              <option className="bg-slate-900 text-white" value={currentYear + 1}>
+                {currentYear + 1}
+              </option>
             </select>
+            <span className="pointer-events-none absolute right-2 text-white/60 text-xs">
+              ▾
+            </span>
           </div>
 
           {/* botão download */}
           <button
-            onClick={() => downloadAgendaPdf(new Date().getFullYear())}
-            className="cursor-pointer rounded-xl border px-3 py-2 text-sm hover:bg-zinc-800"
+            onClick={() => downloadAgendaPdf(year)}
+            className="cursor-pointer inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs md:text-sm font-medium text-white hover:bg-white/15 transition"
           >
-            <Download className="mr-1 inline h-4 w-4" />
+            <Download className="h-4 w-4" />
             Baixar PDF
           </button>
         </div>
       </div>
 
       {/* Timeline */}
-      <div ref={printAreaRef} className="space-y-8">
-        {loading && <p className="text-sm opacity-70">Carregando eventos…</p>}
+      <div ref={printAreaRef} className="space-y-6">
+        {loading && (
+          <p className="text-sm text-white/70">Carregando eventos…</p>
+        )}
         {!loading && grouped.length === 0 && (
-          <p className="text-sm opacity-70">
+          <p className="text-sm text-white/70">
             Nenhum evento encontrado para {year}.
           </p>
         )}
 
         {grouped.map(([monthKey, items]) => (
-          <section key={monthKey} className="rounded-2xl border bg-zinc-900/40">
-            <header className="sticky top-0 z-0 rounded-t-2xl border-b bg-zinc-900/70 px-4 py-3 backdrop-blur">
-              <h3 className="text-lg font-semibold capitalize">{monthKey}</h3>
+          <section
+            key={monthKey}
+            className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur"
+          >
+            <header className="sticky top-0 z-0 rounded-t-2xl border-b border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur">
+              <h3 className="text-base md:text-lg font-semibold capitalize text-white">
+                {monthKey}
+              </h3>
             </header>
-            <ul className="divide-y">
+            <ul className="divide-y divide-white/5">
               {items.map((ev) => {
                 const d = parseISO(ev.event_date);
                 const day = format(d, "dd");
@@ -155,20 +188,29 @@ export default function AgendaTimeline({
                 const time = ev.event_time ? ev.event_time.slice(0, 5) : null;
 
                 return (
-                  <li key={ev.id} className="flex items-start gap-4 px-4 py-3">
+                  <li
+                    key={ev.id}
+                    className="flex items-start gap-4 px-4 py-3 md:px-5 md:py-4"
+                  >
                     <div className="w-14 text-right">
-                      <div className="text-2xl font-bold leading-none">
+                      <div className="text-2xl md:text-3xl font-bold leading-none text-white">
                         {day}
                       </div>
-                      <div className="text-xs opacity-60">{dow}</div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium">{ev.title}</div>
-                      <div className="text-xs opacity-70">
-                        {time ? `às ${time}` : ""}
+                      <div className="text-[10px] md:text-xs text-white/60 uppercase">
+                        {dow}
                       </div>
+                    </div>
+                    <div className="flex-1 border-l border-white/10 pl-4">
+                      <div className="text-sm md:text-base font-medium text-white">
+                        {ev.title}
+                      </div>
+                      {time && (
+                        <div className="text-xs md:text-sm text-white/60 mt-0.5">
+                          às {time}
+                        </div>
+                      )}
                       {ev.description && (
-                        <p className="mt-1 text-sm opacity-80">
+                        <p className="mt-1 text-xs md:text-sm text-white/75">
                           {ev.description}
                         </p>
                       )}
