@@ -37,7 +37,7 @@ export default function UserDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: userId }),
       }),
-      fetch(`/api/departments?limit=200`, { cache: "force-cache" }),
+      fetch(`/api/departments?mode=all`, { cache: "no-store" }),
     ]);
   
     const uData = await uRes.json();
