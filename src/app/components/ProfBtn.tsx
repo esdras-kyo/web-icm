@@ -1,5 +1,5 @@
 "use client";
-import { ShieldUser, User2 } from "lucide-react";
+import { ShieldUser, User, User2 } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { useUserClaims } from "../hooks/useUserClaims";
 
@@ -35,6 +35,11 @@ export default function ProfBtn() {
               }
               />
             ) : null}
+            <UserButton.Link
+                label="Área do Membro"
+                href="/conta/personal"
+                labelIcon={<User2 className="w-4" />}
+              />
 
           </UserButton.MenuItems>
         </UserButton>
