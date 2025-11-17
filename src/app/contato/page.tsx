@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Phone, MapPin, MessageCircleHeart } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { HolyRequestCard } from "./RequestCard";
 
 export default function ContactPage() {

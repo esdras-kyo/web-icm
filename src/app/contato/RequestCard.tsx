@@ -47,7 +47,7 @@ export function HolyRequestCard() {
         </div>
 
         <p className="text-xs md:text-sm text-white/60">
-          Envie seu pedido ...
+          Os pedidos são anônimos. Se quiser se identificar, escreva junto ao texto:
         </p>
 
         <textarea
