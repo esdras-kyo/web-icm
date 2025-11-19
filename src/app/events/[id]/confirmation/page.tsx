@@ -6,18 +6,19 @@ import { CheckCircle2, HomeIcon } from "lucide-react";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { CopyableRow } from "@/app/contribua/page";
 
-type PageProps = {
-  params: { id: string };
-  searchParams?: { rid?: string };
+type ConfirmationPageProps = {
+  params: Promise<{ id: string }>;       // 👈 repare: Promise
 };
 
-export default async function ConfirmationPage({ params }: PageProps) {
+export default async function ConfirmationPage({ params }: ConfirmationPageProps) {
+  const { id } = await params;
+  
   const supabase = createSupabaseAdmin();
 
   const { data: event, error } = await supabase
     .from("events")
     .select("id, title, price, image_key, address, description, payment_note")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (error || !event) {
