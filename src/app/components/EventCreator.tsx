@@ -56,13 +56,14 @@ export type EventCreatePayload = {
   description: string;
   price: number;
   capacity: number;
-  starts_at: string; // ISO
-  ends_at: string; // ISO
-  registrations_starts_at: string | null; // ISO ou null
-  registrations_ends_at: string | null; // ISO ou null
+  starts_at: string;
+  ends_at: string;
+  registrations_starts_at: string | null;
+  registrations_ends_at: string | null;
   address: string | null;
   registration_fields: RegistrationFields;
   image_key: string | null;
+  payment_note: string | null;  // 👈 novo
 };
 
 const registrationFieldConfigSchema = z.object({
@@ -108,6 +109,7 @@ const formSchema = z.object({
   address: z.string().max(255).optional().nullable(),
   image_key: z.string().optional().default(""),
   registration_fields: registrationFieldsSchema,
+  payment_note: z.string().max(1000).optional().nullable(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -147,6 +149,7 @@ export default function EventCreateForm({
       capacity: 50,
       image_key: "",
       address: "",
+      payment_note: "",  
       starts_at: new Date(),
       ends_at: new Date(Date.now() + 60 * 60 * 1000),
       registrations_starts_at: null,
@@ -192,6 +195,10 @@ export default function EventCreateForm({
       address: values.address || null,
       registration_fields: values.registration_fields,
       image_key: values.image_key || null,
+      payment_note:
+      values.payment_note && values.payment_note.trim() !== ""
+        ? values.payment_note.trim()
+        : null,
     };
 
     try {
@@ -292,7 +299,7 @@ export default function EventCreateForm({
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <Card className="border-white/10 bg-gradient-to-b from-zinc-900/50 to-zinc-900/20 backdrop-blur">
+      <Card className="border-white/10 bg-zinc-900/20 backdrop-blur">
         <button
           className="flex justify-between px-6 cursor-pointer items-center min-w-80"
           type="button"
@@ -535,6 +542,28 @@ export default function EventCreateForm({
                             </FormControl>
                             <p className="text-xs text-zinc-400">
                               Número máximo de participantes.
+                            </p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name="payment_note"
+                        render={({ field }) => (
+                          <FormItem className="md:col-span-2">
+                            <FormLabel>Instruções de pagamento (opcional)</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder={`Ex.: Membros pagam metade. Crianças até 12 anos não pagam.\nApresente o comprovante no dia do evento.`}
+                                className="min-h-[80px] resize-y"
+                                value={field.value ?? ""}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                            </FormControl>
+                            <p className="text-xs text-zinc-400">
+                              Essa mensagem aparecerá na tela de confirmação de inscrição.
                             </p>
                             <FormMessage />
                           </FormItem>

@@ -9,9 +9,9 @@ import Image from "next/image";
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const links = [
-    { href: "/historia", label: "NOSSA HISTORIA" },
+    // { href: "/historia", label: "NOSSA HISTORIA" },
     // { href: "/ministerios", label: "MINISTÉRIOS" },
-    { href: "/agenda", label: "PROGRAMAÇÃO" },
+    // { href: "/agenda", label: "PROGRAMAÇÃO" },
     { href: "/contato", label: "CONTATO" },
     { href: "/contribua", label: "CONTRIBUA" },
     { href: "/events", label: "EVENTOS" },

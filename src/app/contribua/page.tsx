@@ -35,11 +35,11 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-function CopyableRow({ label, value }: { label: string; value: string }) {
+export function CopyableRow({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 py-3">
-      <div className="min-w-28 text-xs md:text-sm text-white/70">{label}</div>
+      <div className="md:min-w-28 text-xs md:text-sm text-white/70">{label}</div>
       <div className="flex-1 truncate text-sm md:text-base text-white">
         {value}
       </div>
@@ -60,7 +60,7 @@ function CopyableRow({ label, value }: { label: string; value: string }) {
 
 function PixCard() {
   // substitua pelos dados reais
-  const pixKey = "62.173.620/0001-80";
+  const pixKey = "04.391.808/0001-06";
   return (
     <div className="rounded-2xl p-6 md:p-8 bg-white/[0.03] ring-1 ring-white/10">
       <div className="flex items-center gap-3 text-white">
@@ -81,7 +81,7 @@ function PixCard() {
         {/* QR no topo */}
         <div className="rounded-2xl overflow-hidden bg-black/40 ring-1 ring-white/10 grid place-items-center max-w-xs mx-auto">
           <Image
-            src="/images/qrcode.png"
+            src="/images/qrcode.jpeg"
             alt="QR PIX"
             className="w-full h-full object-contain p-4"
             width={430}
@@ -97,32 +97,32 @@ function PixCard() {
   );
 }
 
-function BankCard() {
-  return (
-    <div className="rounded-2xl p-6 md:p-8 bg-white/[0.03] ring-1 ring-white/10">
-      <div className="flex items-center gap-3 text-white">
-        <div className="p-2 rounded-xl bg-white/10">
-          <Banknote className="w-6 h-6" />
-        </div>
-        <div>
-          <h3 className="text-lg md:text-xl font-semibold">
-            Depósito / Transferência
-          </h3>
-          <p className="text-xs md:text-sm text-white/60">
-            Use os dados bancários abaixo para contribuir.
-          </p>
-        </div>
-      </div>
-      <div className="mt-5 grid grid-cols-1 gap-3">
-        <CopyableRow label="Banco" value="Itaú (341)" />
-        <CopyableRow label="Agência" value="1234" />
-        <CopyableRow label="Conta" value="12345-6" />
-        <CopyableRow label="Titular" value="Igreja de Cristo Maranata" />
-        <CopyableRow label="CNPJ" value="12.345.678/0001-90" />
-      </div>
-    </div>
-  );
-}
+// function BankCard() {
+//   return (
+//     <div className="rounded-2xl p-6 md:p-8 bg-white/[0.03] ring-1 ring-white/10">
+//       <div className="flex items-center gap-3 text-white">
+//         <div className="p-2 rounded-xl bg-white/10">
+//           <Banknote className="w-6 h-6" />
+//         </div>
+//         <div>
+//           <h3 className="text-lg md:text-xl font-semibold">
+//             Depósito / Transferência
+//           </h3>
+//           <p className="text-xs md:text-sm text-white/60">
+//             Use os dados bancários abaixo para contribuir.
+//           </p>
+//         </div>
+//       </div>
+//       <div className="mt-5 grid grid-cols-1 gap-3">
+//         <CopyableRow label="Banco" value="Itaú (341)" />
+//         <CopyableRow label="Agência" value="1234" />
+//         <CopyableRow label="Conta" value="12345-6" />
+//         <CopyableRow label="Titular" value="Igreja de Cristo Maranata" />
+//         <CopyableRow label="CNPJ" value="12.345.678/0001-90" />
+//       </div>
+//     </div>
+//   );
+// }
 
 function whatsappHrefFrom(data: DirectedDonation) {
   const lines = [
@@ -340,7 +340,7 @@ export default function ContribuicaoPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               <PixCard />
-              <BankCard />
+              {/* <BankCard /> */}
             </div>
           </div>
         </div>

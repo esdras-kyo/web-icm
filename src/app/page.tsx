@@ -71,7 +71,7 @@ import Footer from "./components/Footer";
           </div>
 
           {/* CTAs relacionadas ao vídeo */}
-          <div className="mt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          {/* <div className="mt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
 
             <Link
               href="/agenda"
@@ -79,7 +79,7 @@ import Footer from "./components/Footer";
             >
               Ver agenda completa
             </Link>
-          </div>
+          </div> */}
         </section>
       </div>
     </motion.section>
@@ -146,7 +146,7 @@ export default function ChurchHome() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black to-sky-800 text-white">
+    <div className="min-h-screen bg-linear-to-br from-black to-sky-800 text-white">
       <TopBanner
         badgeText="Seja bem-vindo"
         title="Igreja de Cristo Maranata"
@@ -163,7 +163,7 @@ export default function ChurchHome() {
 
       <Participe/>
   
-      <Section
+      {/* <Section
         id="cell"
         title="Células"
         subtitle="Conheça mais sobre nossas células."
@@ -176,9 +176,9 @@ export default function ChurchHome() {
         <div className="flex flex-row w-full justify-end">
           <ChevronRight width={50} height={50} />
         </div>
-      </Section>
+      </Section> */}
       
-      <Section
+      {/* <Section
         id="sobre"
         title="Sobre nós"
         subtitle="Há mais de 25 anos compartilhando a Palavra e servindo com amor."
@@ -191,7 +191,7 @@ export default function ChurchHome() {
         <div className="flex flex-row w-full justify-end">
           <ChevronRight width={50} height={50} />
         </div>
-      </Section>
+      </Section> */}
 
       <Section
         id="eventos"
@@ -214,9 +214,7 @@ export default function ChurchHome() {
                 </div>
                 <CardTitle className="text-xl mt-2">{e.title}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">{e.description}</p>
-              </CardContent>
+
             </Card>
           ))}
           <div className="flex h-full w-full items-end justify-end">

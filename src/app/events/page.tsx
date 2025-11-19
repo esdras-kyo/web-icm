@@ -72,9 +72,6 @@ export default function Members(){
                 <p className="text-2xl font-semibold text-white mb-4">
                   {event.title || "Sem nome"}
                 </p>
-                <p className="text-sm font-semibold text-gray-300 mb-16">
-                  {event.description|| "Sem descrição"}
-                </p>
                 {event.price>0 && (<p className="text-sm font-semibold text-gray-300">
                   R$ {event.price}
                 </p>)}

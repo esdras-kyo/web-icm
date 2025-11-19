@@ -25,6 +25,7 @@ export async function POST(req: Request) {
         address: payload.address,
         registration_fields: payload.registration_fields,
         image_key: payload.image_key,
+        payment_note: payload.payment_note,  
         // owner_department_id: ...  // aqui você coloca pelo contexto do usuário
       })
       .select("id")

@@ -68,7 +68,7 @@ export default function ContactPage() {
                   cultos.
                 </p>
                 <Link
-                  href="https://wa.me/5562993288894"
+                  href="https://wa.me/5562993865467"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex cursor-pointer items-center text-xs md:text-sm font-medium text-emerald-300 hover:text-emerald-200 underline-offset-4 hover:underline"
