@@ -262,14 +262,14 @@ export default function EventoInscricaoCard() {
   return (
     <main className="min-h-dvh w-full bg-black text-white">
       {/* HERO com imagem do evento ocupando topo */}
-      <section className="relative h-[44vh] md:h-[52vh] w-full overflow-hidden">
+      <section className="relative w-full overflow-hidden h-[28vh] sm:h-[32vh] md:h-[52vh]">
         <Image
           src={imageUrl}
           alt={evento?.title || "Imagem do evento"}
           fill
-          sizes="100vw"
-          className="object-cover"
-          priority={true}
+          //sizes="100vw"
+          className="object-contain md:object-cover object-top"
+          priority
         />
         {/* overlay para legibilidade */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
