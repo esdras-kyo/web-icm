@@ -7,11 +7,16 @@ import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { CopyableRow } from "@/app/contribua/page";
 
 type ConfirmationPageProps = {
-  params: Promise<{ id: string }>;       // 👈 repare: Promise
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ member?: string }>;
 };
 
-export default async function ConfirmationPage({ params }: ConfirmationPageProps) {
+export default async function ConfirmationPage(props: ConfirmationPageProps) {
+  const { params, searchParams } = props;
   const { id } = await params;
+  const sp = await searchParams;
+  const isMemberFromUrl =
+    sp?.member === "1" || sp?.member === "true";
   
   const supabase = createSupabaseAdmin();
 
@@ -26,7 +31,17 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
     notFound();
   }
 
-  const isFree = !event.price || event.price <= 0;
+  const basePrice = event.price ?? 0;
+  const isFree = !basePrice || basePrice <= 0;
+
+  // calcula valor final
+  let effectivePrice = basePrice;
+  let memberDiscountApplied = false;
+
+  if (!isFree && isMemberFromUrl) {
+    effectivePrice = basePrice / 2;
+    memberDiscountApplied = true;
+  }
 
   const imageUrl = event.image_key
     ? `https://worker-1.esdrascamel.workers.dev/${event.image_key}`
@@ -38,13 +53,13 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
   return (
     <main className="min-h-dvh w-full bg-black text-white flex flex-col">
       {/* Banner do evento */}
-      <section className="relative h-[40vh] w-full overflow-hidden">
+      <section className="relative w-full overflow-hidden h-[28vh] sm:h-[32vh] md:h-[52vh]">
         <Image
           src={imageUrl}
           alt={event.title}
           fill
           sizes="100vw"
-          className="object-cover"
+          className="object-contain md:object-cover object-top"
           priority
         />
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent" />
@@ -84,8 +99,7 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
           {!isFree && (
             <div className="mt-2 flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-black/40 px-4 py-4">
               <p className="text-sm text-gray-200 text-center">
-                Escaneie o QR Code abaixo com o app do seu banco para efetuar o
-                pagamento deste evento.
+                Escaneie o QR Code abaixo
               </p>
 
               <div className="bg-white p-3 rounded-lg">
@@ -103,13 +117,24 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
 
               
 
-              {typeof event.price === "number" && event.price > 0 && (
-                <p className="text-sm text-gray-300">
-                  Valor:{" "}
-                  <span className="font-semibold">
-                    R$ {event.price.toFixed(2).replace(".", ",")}
-                  </span>
-                </p>
+              {effectivePrice > 0 && (
+                <div className="text-center space-y-1">
+                  <p className="text-sm text-gray-300">
+                    Valor a pagar:{" "}
+                    <span className="font-semibold">
+                      R{"$ "}
+                      {effectivePrice
+                        .toFixed(2)
+                        .replace(".", ",")}
+                    </span>
+                  </p>
+
+                  {memberDiscountApplied && (
+                    <p className="text-xs text-emerald-300">
+                      Desconto de membro aplicado
+                    </p>
+                  )}
+                </div>
               )}
               {!isFree && event.payment_note && (
                   <p className="mt-2 text-xs text-gray-400 whitespace-pre-line text-center">
@@ -117,9 +142,11 @@ export default async function ConfirmationPage({ params }: ConfirmationPageProps
                   </p>
                 )}
 
-          <p className="text-xs text-gray-100 text-center">
+<div className="mx-auto max-w-sm rounded-lg border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-100 text-center">
+<span className="font-semibold block">
             Na descrição do pagamento/PIX coloque: &quot;{event.title}&quot;
-          </p>
+          </span>
+          </div>
             </div>
           )}
 

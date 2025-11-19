@@ -233,7 +233,7 @@ export default function EventoInscricaoCard() {
 
       if (event_id) {
         if (registrationId) {
-          router.push(`/events/${event_id}/confirmation?rid=${registrationId}`);
+          router.push(`/events/${event_id}/confirmation?member=${isMember ? "1" : "0"}`);
         } else {
           router.push(`/events/${event_id}/confirmation`);
         }

@@ -33,7 +33,7 @@ export default function ContactPage() {
                       E-mail
                     </p>
                     <p className="font-semibold text-sm md:text-base">
-                      esdrascamel@gmail.com
+                      icmaranata.gyn@gmail.com
                     </p>
                   </div>
                 </div>
@@ -59,7 +59,7 @@ export default function ContactPage() {
                       Telefone / WhatsApp
                     </p>
                     <p className="font-semibold text-sm md:text-base">
-                      (62) 9 9328-8894
+                      (62) 9 9386-5467
                     </p>
                   </div>
                 </div>
