@@ -5,10 +5,14 @@ import { createSupabaseAdmin } from "@/utils/supabase/admin";
 export async function POST(req: Request) {
   try {
     const {eventId, visibility, fileKey, title, type } = await req.json();
-    if (!visibility || !fileKey) {
-      return NextResponse.json({ error: "Missing visibility/fileKey" }, { status: 400 });
+    if (!fileKey) {
+      return NextResponse.json({ error: "Missing fileKey" }, { status: 400 });
     }
-
+    
+    if (type === "pdf" && !visibility) {
+      return NextResponse.json({ error: "Missing visibility for PDF" }, { status: 400 });
+    }
+    
     const supabase = createSupabaseAdmin();
 
     // se for PDF, salva na tabela "event_files"

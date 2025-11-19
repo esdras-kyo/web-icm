@@ -35,18 +35,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unsupported content type" }, { status: 415 });
     }
 
-    // chave única — pode usar subpastas pra separar imagens e pdfs
-    const folder = contentType === "application/pdf" ? "pdfs" : "";
-    const key = `${folder}/${randomUUID()}-${filename}`;
+    const clean = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+    const isPdf = contentType === "application/pdf";
+
+    const key = isPdf
+      ? `pdfs/${randomUUID()}-${clean}`
+      : `${randomUUID()}-${clean}`;
 
     const cmd = new PutObjectCommand({
       Bucket: process.env.R2_BUCKET!,
       Key: key,
       ContentType: contentType,
-      Metadata: {
-        uploaded_via: "presigned",
-        title: title || filename, // adiciona título no metadata
-      },
     });
 
     const uploadUrl = await getSignedUrl(s3, cmd, { expiresIn: 90 });
