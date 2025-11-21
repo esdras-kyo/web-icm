@@ -1,18 +1,24 @@
 "use client";
 
+import { Plus, X } from "lucide-react";
 import { useState } from "react";
 
 export type Inscrito = {
   id: string;
   name: string;
   cpf: string;
-  telefone: string;
+  phone: string;
   email: string;
   payment_status: "pending" | "paid" | "failed" | string;
   created_at: string;
 };
 
-export default function InscritoCard({ inscrito }: { inscrito: Inscrito }) {
+type Props = {
+  inscrito: Inscrito;
+  onStatusChange?: (id: string, newStatus: Inscrito["payment_status"]) => void;
+};
+
+export default function InscritoCard({ inscrito, onStatusChange }: Props) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(inscrito.payment_status);
   const [saving, setSaving] = useState(false);
@@ -29,56 +35,60 @@ export default function InscritoCard({ inscrito }: { inscrito: Inscrito }) {
 
   const statusLabel =
     status === "paid"
-      ? "Pagamento confirmado"
+      ? "Confirmado"
       : status === "pending"
-      ? "Aguardando pagamento"
-      : "Pagamento falhou";
+      ? "Pendente"
+      : "Falha";
 
   const statusColor =
     status === "paid"
-      ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/40"
+      ? " text-emerald-300 "
       : status === "pending"
-      ? "bg-amber-500/10 text-amber-200 border-amber-500/40"
-      : "bg-red-500/10 text-red-200 border-red-500/40";
+      ? "text-amber-200 "
+      : "text-red-200 ";
 
-  async function handleChangeStatus(newStatus: "pending" | "paid" | "failed") {
-    if (newStatus === status) return;
-
-    setSaving(true);
-    setErrorMsg("");
-
-    const prev = status;
-    setStatus(newStatus);
-
-    try {
-      const res = await fetch("/api/registrations/set-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: inscrito.id,
-          payment_status: newStatus,
-        }),
-      });
-
-      if (!res.ok) {
-        setStatus(prev);
-        const body = await res.json().catch(() => ({}));
-        setErrorMsg(body?.error || "Falha ao atualizar status");
+      async function handleChangeStatus(newStatus: "pending" | "paid" | "failed") {
+        if (newStatus === status) return;
+    
+        setSaving(true);
+        setErrorMsg("");
+    
+        const prev = status;
+        setStatus(newStatus);
+    
+        try {
+          const res = await fetch("/api/registrations/set-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: inscrito.id,
+              payment_status: newStatus,
+            }),
+          });
+    
+          if (!res.ok) {
+            setStatus(prev);
+            const body = await res.json().catch(() => ({}));
+            setErrorMsg(body?.error || "Falha ao atualizar status");
+          } else {
+            // ✅ avisa o pai que mudou de verdade no backend
+            onStatusChange?.(inscrito.id, newStatus);
+          }
+        } catch (err) {
+          console.error(err);
+          setStatus(prev);
+          setErrorMsg("Erro de rede ao atualizar status");
+        } finally {
+          setSaving(false);
+        }
       }
-    } catch (err) {
-      console.error(err);
-      setStatus(prev);
-      setErrorMsg("Erro de rede ao atualizar status");
-    } finally {
-      setSaving(false);
-    }
-  }
+    
 
   return (
-    <li className="w-full rounded-xl border border-zinc-700 bg-zinc-900/40 p-4 hover:bg-zinc-800/60 transition-all duration-150 text-white">
+    <li className="w-full rounded-xl border border-zinc-700 bg-zinc-900/40 p-4 hover:bg-zinc-800/60 transition-all duration-150 text-white my-2">
       <button
         type="button"
-        className="w-full flex items-center justify-between gap-3 text-left"
+        className="w-full flex items-center justify-between gap-3 text-left cursor-pointer"
         onClick={() => setOpen((prev) => !prev)}
       >
         <div className="flex flex-col gap-1">
@@ -87,14 +97,14 @@ export default function InscritoCard({ inscrito }: { inscrito: Inscrito }) {
           </h2>
 
           <span
-            className={`inline-block text-[11px] px-2 py-1 rounded-full border ${statusColor}`}
+            className={`inline-block text-[11px] px-2 py-1  ${statusColor}`}
           >
             {statusLabel}
           </span>
         </div>
 
         <span className="text-xs text-zinc-400">
-          {open ? "Fechar detalhes ▲" : "Ver detalhes ▼"}
+          {open ? <X /> : <Plus /> }
         </span>
       </button>
 
@@ -106,7 +116,7 @@ export default function InscritoCard({ inscrito }: { inscrito: Inscrito }) {
           </p>
           <p>
             <span className="font-semibold text-zinc-300">Telefone: </span>
-            {inscrito.telefone || "-"}
+            {inscrito.phone || "-"}
           </p>
           <p>
             <span className="font-semibold text-zinc-300">E-mail: </span>
@@ -134,9 +144,9 @@ export default function InscritoCard({ inscrito }: { inscrito: Inscrito }) {
                 }
                 className="rounded-md bg-black/60 border border-zinc-600 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
-                <option value="pending">Aguardando pagamento</option>
-                <option value="paid">Pagamento confirmado</option>
-                <option value="failed">Pagamento falhou</option>
+                <option value="pending">Pendente</option>
+                <option value="paid">Confirmado</option>
+                <option value="failed">Falha</option>
               </select>
 
               {saving && (

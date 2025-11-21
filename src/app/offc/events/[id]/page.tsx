@@ -2,23 +2,89 @@
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import InscritoCard, { Inscrito } from "../CardIns"
+import { useSearchParams } from "next/navigation";
+import { Download } from "lucide-react";
 
-// type Inscrito = {
-//     id: string
-//     name: string
-//     cpf: string 
-//     event_id: string
-//     telefone: string
-//     email: string
-//     payment_status: string
-//     created_at: Date
-// }
 export default function Inscricoes(){
+  const searchParams = useSearchParams();
+  const eventTitle = searchParams.get("title");
     const [loading, setLoading] = useState(false)
     const [inscritos, setInscritos] = useState<Inscrito[]>([])
     const [warning, setWarning] = useState("")
     const params = useParams();
     const id = params.id?.toString() 
+
+    function handleStatusChange(
+      id: string,
+      newStatus: Inscrito["payment_status"]
+    ) {
+      setInscritos((prev) =>
+        prev.map((inscrito) =>
+          inscrito.id === id
+            ? { ...inscrito, payment_status: newStatus }
+            : inscrito
+        )
+      );
+    }
+
+    function handleDownloadCsv() {
+      if (!inscritos.length) {
+        alert("Nenhum inscrito para exportar.");
+        return;
+      }
+      const fileName = eventTitle
+      ? `inscritos-${eventTitle}.csv`
+      : "inscritos.csv";
+    
+      // Cabeçalho do CSV
+      const header = [
+        "Nome",
+        "CPF",
+        "Telefone",
+        "Email",
+        "Status pagamento",
+        "Data inscrição",
+      ];
+    
+      // Linhas
+      const rows = inscritos.map((i) => [
+        i.name,
+        i.cpf,
+        i.phone,
+        i.email,
+        i.payment_status,
+        i.created_at
+          ? new Date(i.created_at).toLocaleString("pt-BR")
+          : "",
+      ]);
+    
+      // Monta tudo: escapa aspas e separa por ; (Excel BR curte ;)
+      const csvArray = [header, ...rows].map((row) =>
+        row
+          .map((field) => {
+            const value = (field ?? "").toString();
+            // escapa aspas internas
+            return `"${value.replace(/"/g, '""')}"`;
+          })
+          .join(";")
+      );
+    
+      const csvString = csvArray.join("\n");
+    
+      // Blob com BOM pra acentos ficarem bonitos no Excel
+      const blob = new Blob(["\uFEFF" + csvString], {
+        type: "text/csv;charset=utf-8;",
+      });
+    
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
 
     async function getRegistrations(id?: string) {
         setLoading(true);
@@ -53,9 +119,20 @@ if (loading)
     return(
         <div className="flex items-start px-8 justify-start flex-col w-full min-h-dvh">
             <h1>{warning}</h1>
+            <div className="flex flex-col md:flex-row justify-between p-2 w-full gap-2 items-center ">
+            <h1 className="text-2xl">Inscritos</h1>
+            <button
+        onClick={handleDownloadCsv}
+        disabled={!inscritos.length}
+        className="px-4 py-2 rounded bg-emerald-600/50 items-center text-white  flex flex-row  gap-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      >
+        Baixar Planilha <Download  className=" w-4 h-4"/>
+      </button>
+      
+      </div>
 
             {inscritos.map((inscrito) => (
-  <InscritoCard key={inscrito.id} inscrito={inscrito} />
+  <InscritoCard key={inscrito.id} inscrito={inscrito} onStatusChange={handleStatusChange} />
 ))}
     
             {inscritos.length === 0 && (

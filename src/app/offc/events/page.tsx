@@ -13,6 +13,16 @@ export default function Members(){
     const [loading, setLoading] = useState(true);
     const route = useRouter()
 
+    function slugify(text: string) {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+    
+
     useEffect(() => {
         async function fetchUsers() {
           try {
@@ -44,7 +54,12 @@ export default function Members(){
             key={event.id}
             className="rounded-xl border border-white/10 bg-white/5 hover:bg-gray-600 cursor-pointer"
           >
-            <button onClick={()=>{route.push(`/offc/events/${event.id}`)}} className="cursor-pointer p-4 w-full flex items-center justify-between">
+            <button 
+           onClick={() => {
+            const slug = event.title ? slugify(event.title) : "";
+            route.push(`/offc/events/${event.id}?title=${slug}`)
+          }}
+            className="cursor-pointer p-4 w-full flex items-center justify-between">
               <div>
                 <p className="text-lg font-semibold text-white">
                   {event.title || "Sem nome"}
