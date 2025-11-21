@@ -32,11 +32,22 @@ export default function Inscricoes(){
         alert("Nenhum inscrito para exportar.");
         return;
       }
+
+      const exportDate = new Date().toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      const titleForHeader = eventTitle || "Evento";
+
       const fileName = eventTitle
-      ? `inscritos-${eventTitle}.csv`
-      : "inscritos.csv";
-    
-      // Cabeçalho do CSV
+        ? `inscritos-${eventTitle}.csv`
+        : "inscritos.csv";
+
+      // Cabeçalho da tabela
       const header = [
         "Nome",
         "CPF",
@@ -45,8 +56,8 @@ export default function Inscricoes(){
         "Status pagamento",
         "Data inscrição",
       ];
-    
-      // Linhas
+
+      // Linhas da tabela
       const rows = inscritos.map((i) => [
         i.name,
         i.cpf,
@@ -57,25 +68,37 @@ export default function Inscricoes(){
           ? new Date(i.created_at).toLocaleString("pt-BR")
           : "",
       ]);
-    
-      // Monta tudo: escapa aspas e separa por ; (Excel BR curte ;)
-      const csvArray = [header, ...rows].map((row) =>
-        row
-          .map((field) => {
-            const value = (field ?? "").toString();
-            // escapa aspas internas
-            return `"${value.replace(/"/g, '""')}"`;
-          })
-          .join(";")
-      );
-    
-      const csvString = csvArray.join("\n");
-    
+
+      // Blocos do CSV:
+      // 1) Metadados (Evento / Data de exportação)
+      // 2) Linha em branco
+      // 3) Cabeçalho
+      // 4) Dados
+      const csvBlocks = [
+        ["Evento", titleForHeader],
+        ["Data de exportação", exportDate],
+        [],
+        header,
+        ...rows,
+      ];
+
+      const csvString = csvBlocks
+        .map((row) =>
+          row
+            .map((field) => {
+              const value = (field ?? "").toString();
+              // escapa aspas internas
+              return `"${value.replace(/"/g, '""')}"`;
+            })
+            .join(";")
+        )
+        .join("\n");
+
       // Blob com BOM pra acentos ficarem bonitos no Excel
       const blob = new Blob(["\uFEFF" + csvString], {
         type: "text/csv;charset=utf-8;",
       });
-    
+
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
