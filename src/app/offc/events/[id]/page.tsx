@@ -53,6 +53,7 @@ export default function Inscricoes(){
         "CPF",
         "Telefone",
         "Email",
+        "Membro?",
         "Status pagamento",
         "Data inscrição",
       ];
@@ -63,6 +64,7 @@ export default function Inscricoes(){
         i.cpf,
         i.phone,
         i.email,
+        i.is_member ? "sim": "não",
         i.payment_status,
         i.created_at
           ? new Date(i.created_at).toLocaleString("pt-BR")
