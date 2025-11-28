@@ -9,6 +9,7 @@ export type Inscrito = {
   cpf: string;
   phone: string;
   email: string;
+  is_member: boolean;
   payment_status: "pending" | "paid" | "failed" | string;
   created_at: string;
 };
@@ -121,6 +122,10 @@ export default function InscritoCard({ inscrito, onStatusChange }: Props) {
           <p>
             <span className="font-semibold text-zinc-300">E-mail: </span>
             {inscrito.email || "-"}
+          </p>
+          <p>
+            <span className="font-semibold text-zinc-300">Membro: </span>
+            {inscrito.is_member ? "Sim": "Não"}
           </p>
           <p>
             <span className="font-semibold text-zinc-300">
