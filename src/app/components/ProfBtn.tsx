@@ -1,5 +1,5 @@
 "use client";
-import { ShieldUser, User, User2 } from "lucide-react";
+import { FlaskConical, ShieldUser, User, User2 } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { useUserClaims } from "../hooks/useUserClaims";
 
@@ -24,29 +24,53 @@ export default function ProfBtn() {
                 labelIcon={<User2 className="w-4" />}
               />
             ) : null}
-            {isAdmin ? (
+            {isAdmin ? ( 
               <UserButton.Link
                 label="Painel Administrativo"
                 href="/offc"
                 labelIcon={
                   <div className="flex flex-col items-start justify-start">
-                <ShieldUser className="w-5" />
-                </div>
-              }
+                    <ShieldUser className="w-5" />
+                  </div>
+                } />) : null} 
+
+            {isAdmin ? (
+
+              <UserButton.Link
+                label="Historia - teste"
+                href="/historia"
+                labelIcon={<FlaskConical className="w-4" />}
               />
-            ) : null}
+            ) : null} {isAdmin ? (
+              
+              <UserButton.Link
+                label="Agenda - teste"
+                href="/agenda"
+                labelIcon={<FlaskConical className="w-4" />}
+              />
+            ) : null} {isAdmin ? (
+
+              <UserButton.Link
+                label="Celulas - teste"
+                href="/celulas"
+                labelIcon={<FlaskConical className="w-4" />}
+              />
+              ) : null}
+
             <UserButton.Link
-                label="Área do Membro"
-                href="/conta/personal"
-                labelIcon={<User2 className="w-4" />}
-              />
+              label="Área do Membro"
+              href="/conta/personal"
+              labelIcon={<User2 className="w-4" />}
+            />
 
           </UserButton.MenuItems>
         </UserButton>
       </SignedIn>
       <SignedOut>
         <SignInButton>
-          <button className="flex cursor-pointer rounded-full border w-7 h-7 justify-center"><User2 className="w-5 "/></button>
+          <button className="flex cursor-pointer rounded-full border w-7 h-7 justify-center">
+            <User2 className="w-5 " />
+          </button>
         </SignInButton>
       </SignedOut>
     </div>

@@ -1,8 +1,95 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import TopBanner from "../components/TopBanner";
+
+type Cell = {
+  id: number,
+  name: string,
+  address: string,
+  leader: string
+}
+
+const cells: Cell[] = [
+  {
+    id: 1,
+    name: "Célula Resgate de Almas",
+    leader: "Sílvia",
+    address: "Rua Fleury Curado n. 350, Cidade Jardim"
+  },
+  {
+    id: 2,
+    name: "Célula Metanoia",
+    leader: "Pr. Márcio",
+    address: "Online"
+  },
+  {
+    id: 3,
+    name: "Célula 60+",
+    leader: "Pr. Edimar",
+    address: "Online"
+  },
+  {
+    id: 4,
+    name: "Célula Yeshua",
+    leader: "Pr. Ilton",
+    address: "Rua Antônio Pereira, Quadra 21, Lote 18, Lorena Parque, Goiânia"
+  },
+  {
+    id: 5,
+    name: "Célula Adonai",
+    leader: "Dalva / Renato",
+    address: "Rua 7A, Quadra 7B, Lote 02, Residencial Cidade Verde"
+  },
+  {
+    id: 6,
+    name: "Célula Renascer",
+    leader: "Cristiane / Nicoly",
+    address: "Rua Salinas 7, Quadra 28, Lote 25, Buena Vista 2"
+  },
+  {
+    id: 7,
+    name: "Célula Habitar em Cristo",
+    leader: "Wilian / Adrielle",
+    address: "Rua CP 50, Quadra 04, Lote 18, Casa 2, Carolina Parque Complemento"
+  },
+  {
+    id: 8,
+    name: "Célula Maanaim",
+    leader: "Wagner",
+    address: "Rua Formosa, Quadra 03, Lote 01, Casa 02 - Cidade Jardim, Goiânia - GO, 74425-410"
+  },
+  {
+    id: 9,
+    name: "Célula AbbaPai",
+    leader: "Cadu / Ju",
+    address: "Rua Fuad Rassi, nº 320, Setor Chácara Santa Rita, Parque Goia Condomínio Clube"
+  },
+  {
+    id: 10,
+    name: "Célula Kadosh",
+    leader: "Ivanneide / Robson",
+    address: "Rua Caetano de Franco, Quadra 7, Lote 18, Nº 299, Conjunto Guadalajara, Cidade Jardim"
+  },
+  {
+    id: 11,
+    name: "Célula Impactados",
+    leader: "Anna Patrícia",
+    address: "Rua Caetano de Franco, Quadra 7, Lote 18, Nº 299, Conjunto Guadalajara, Cidade Jardim"
+  },
+  {
+    id: 12,
+    name: "Célula Buena Vista",
+    leader: "Marco / Idely",
+    address: "Rua Juca Rodrigues, Quadra 17, Lote 06, Buena Vista I"
+  },
+  {
+    id: 13,
+    name: "Célula Águias Celestiais",
+    leader: "Celma",
+    address: "Rua CRP-8, Quadra 11, Lote 13 - Residencial Primavera, Goiânia - GO"
+  }
+]
 
 export default function CellsPage() {
   return (
@@ -84,26 +171,25 @@ export default function CellsPage() {
           </p>
 
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
+            {cells.map((cell) => (
               <div
-                key={i}
+                key={cell.id}
                 className="rounded-2xl overflow-hidden shadow-[0_15px_40px_rgba(2,6,23,0.35)] ring-1 ring-white/10 bg-white/5 backdrop-blur hover:bg-white/7 transition cursor-pointer"
               >
                 <div className="relative h-48 w-full">
-                  <Image
+                  {/* <Image
                     src={`/images/cell-${i}.jpg`}
                     alt={`Berodins ${i}`}
                     fill
                     className="object-cover"
-                  />
+                  /> */}
                 </div>
                 <div className="p-4">
                   <h3 className="text-xl font-medium text-sky-200">
-                    Priles Lorem {i}
+                    {cell.name}
                   </h3>
                   <p className="text-white/70 text-sm mt-2">
-                    Nunc cursus metus in lorem convallis, vel consequat libero
-                    egestas.
+                    {cell.address}
                   </p>
                 </div>
               </div>
