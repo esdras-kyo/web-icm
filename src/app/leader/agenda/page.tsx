@@ -1,8 +1,9 @@
+// app/(leader)/agenda/page.tsx
 import { auth } from "@clerk/nextjs/server";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
-import AgendaMonthList, { AgendaEvent } from "../components/AgendaMonthList";
+import { AgendaEvent } from "../components/AgendaMonthList";
+import LeaderAgendaClient from "./LeaderAgendaClient";
 
-// Troque por sua checagem real (roles em Clerk ou na tabela role_assignments)
 async function assertLeaderOrAdmin() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -14,32 +15,40 @@ export default async function LeaderAgendaPage() {
   await assertLeaderOrAdmin();
 
   const supabase = createSupabaseAdmin();
-  const year = new Date().getFullYear();
+  const currentYear = new Date().getFullYear();
+
+  const from = `${currentYear - 1}-01-01`;
+  const to = `${currentYear + 1}-12-31`;
 
   const { data, error } = await supabase
     .from("agenda_events")
     .select("id, title, description, event_date, event_time")
-    .gte("event_date", `${year}-01-01`)
-    .lte("event_date", `${year}-12-31`)
-    // Como é área interna, pegamos TUDO (GLOBAL + INTERNAL)
+    .gte("event_date", from)
+    .lte("event_date", to)
+    // Área interna: GLOBAL + INTERNAL (RLS cuida do resto, se aplicado)
     .order("event_date", { ascending: true });
 
   if (error) {
-    // Você pode renderizar um estado de erro mais elegante
     return (
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <h1 className="text-2xl font-semibold">Agenda — Líder</h1>
-        <p className="mt-4 text-sm text-red-300">Erro ao carregar agenda: {error.message}</p>
+        <p className="mt-4 text-sm text-red-300">
+          Erro ao carregar agenda: {error.message}
+        </p>
       </div>
     );
   }
 
+  const events = (data ?? []) as AgendaEvent[];
+
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
-      <h1 className="mb-2 text-2xl font-semibold">Agenda</h1>
+      <h1 className="mb-2 text-2xl font-semibold text-white">Agenda</h1>
 
-
-      <AgendaMonthList year={year} events={(data ?? []) as AgendaEvent[]} />
+      <LeaderAgendaClient
+        initialEvents={events}
+        initialYear={currentYear}
+      />
     </div>
   );
 }

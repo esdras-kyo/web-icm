@@ -101,7 +101,7 @@ export default async function ManageCellPage({
       <div className="flex items-center justify-between">
         <div>
           <div className="text-sm">
-            <Link href="/leader/cells" className="underline">
+            <Link href="/offc/cells" className="underline">
               ← Voltar
             </Link>
           </div>
