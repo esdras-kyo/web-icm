@@ -1,0 +1,32 @@
+import { NextResponse } from "next/server";
+import { createSupabaseAdmin } from "@/utils/supabase/admin";
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  const { event_id } = body;
+
+  if (!event_id) {
+    return NextResponse.json(
+      { error: "Missing event_id" },
+      { status: 400 }
+    );
+  }
+
+  const supabase = await createSupabaseAdmin();
+
+  const { data, error } = await supabase
+    .from("events")
+    .select("id, title, capacity, starts_at, ends_at")
+    .eq("id", event_id)
+    .single();
+
+  if (error || !data) {
+    console.error("Error fetching event details:", error);
+    return NextResponse.json(
+      { error: "Event not found" },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json(data);
+}
