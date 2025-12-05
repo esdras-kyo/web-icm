@@ -1,4 +1,5 @@
 'use client'
+import EventCreateForm, { EventCreatePayload } from "@/app/components/EventCreator";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -22,6 +23,23 @@ export default function Members(){
         .replace(/^-+|-+$/g, "");
     }
     
+    async function handleCreate(payload: EventCreatePayload) {
+      const res = await fetch("/api/events/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        console.error("create event error:", body);
+        throw new Error(body?.error ?? "Falha ao criar evento");
+      }
+  
+      const { id } = (await res.json()) as { id: string };
+      return id; // isso volta como eventId lá dentro do EventCreateForm
+    }
+  
 
     useEffect(() => {
         async function fetchUsers() {
@@ -47,7 +65,7 @@ export default function Members(){
     
     return(
         <main className="mx-auto max-w-7xl px-2 py-2">
-     <h1 className="text-xl font-bold text-white mb-8">Eventos</h1>
+     <h1 className="text-xl font-bold text-white mb-4">Eventos</h1>
         <ul className="space-y-4">
         {events.map((event) => (
           <li
@@ -74,6 +92,10 @@ export default function Members(){
       {events.length === 0 && (
         <p className="text-white/60 mt-6 text-center">Nenhum Evento encontrado.</p>
       )}
+
+<div className="mb-8 flex items-start justify-start w-full my-8 border-t-2 border-white/30 py-4">
+     <EventCreateForm onCreate={handleCreate} />
+     </div>
         </main>
     )
 }

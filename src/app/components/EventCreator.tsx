@@ -63,7 +63,7 @@ export type EventCreatePayload = {
   address: string | null;
   registration_fields: RegistrationFields;
   image_key: string | null;
-  payment_note: string | null;  // 👈 novo
+  payment_note: string | null;
 };
 
 const registrationFieldConfigSchema = z.object({
@@ -80,7 +80,6 @@ const registrationFieldsSchema = z.object({
   idade: registrationFieldConfigSchema,
 });
 
-// lista para montar a UI
 type RegistrationFieldKey = keyof RegistrationFields;
 const registrationFieldList: { key: RegistrationFieldKey; label: string }[] = [
   { key: "name", label: "Nome completo" },
@@ -91,7 +90,6 @@ const registrationFieldList: { key: RegistrationFieldKey; label: string }[] = [
   { key: "idade", label: "Idade" },
 ];
 
-// ---- schema ----------------------------------------------------
 const formSchema = z.object({
   title: z.string().min(1, "Título obrigatório"),
   description: z.string().min(1, "Descrição obrigatória"),
@@ -127,7 +125,6 @@ export default function EventCreateForm({
   const [cardOpen, setCardOpen] = React.useState<boolean>(false);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
 
-  // gera e limpa o object URL
   React.useEffect(() => {
     if (!file) {
       setPreviewUrl(null);
@@ -149,7 +146,7 @@ export default function EventCreateForm({
       capacity: 50,
       image_key: "",
       address: "",
-      payment_note: "",  
+      payment_note: "",
       starts_at: new Date(),
       ends_at: new Date(Date.now() + 60 * 60 * 1000),
       registrations_starts_at: null,
@@ -165,7 +162,6 @@ export default function EventCreateForm({
     },
   });
 
-  // Narrow/control typing to match shadcn FormField generics across RHF versions
   const control = form.control;
 
   async function handleSubmit(values: FormValues) {
@@ -196,13 +192,12 @@ export default function EventCreateForm({
       registration_fields: values.registration_fields,
       image_key: values.image_key || null,
       payment_note:
-      values.payment_note && values.payment_note.trim() !== ""
-        ? values.payment_note.trim()
-        : null,
+        values.payment_note && values.payment_note.trim() !== ""
+          ? values.payment_note.trim()
+          : null,
     };
 
     try {
-      // 1) cria o evento e recebe o id
       const eventId = (await (onCreate
         ? onCreate(payload)
         : Promise.resolve(undefined))) as string | undefined;
@@ -211,11 +206,9 @@ export default function EventCreateForm({
         console.warn("Evento criado via fallback (sem id retornado).");
       }
 
-      // 2) se tiver arquivo, faz upload pro R2 e confirma no banco
       if (file) {
         setUploading(true);
 
-        // 2.1 presign
         const presignRes = await fetch("/api/uploads/presign", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -229,7 +222,6 @@ export default function EventCreateForm({
           throw new Error("Falha ao gerar URL de upload");
         const { uploadUrl, key } = await presignRes.json();
 
-        // 2.2 PUT direto no R2 com progresso
         await new Promise<void>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open("PUT", uploadUrl);
@@ -242,7 +234,6 @@ export default function EventCreateForm({
           xhr.send(file);
         });
 
-        // 2.3 confirma no Supabase
         const confirm = await fetch("/api/uploads/confirm-upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -293,29 +284,32 @@ export default function EventCreateForm({
     setImgWar(null);
     setUploading(false);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // limpa o nome do arquivo no input
+      fileInputRef.current.value = "";
     }
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
-      <Card className="border-white/10 bg-zinc-900/20 backdrop-blur">
+    <div className="mx-auto w-full  sm:px-0">
+      <Card className=" flex w-full border-white/10 bg-zinc-900/20 backdrop-blur">
         <button
-          className="flex justify-between px-6 cursor-pointer items-center min-w-80"
+          className="flex w-full items-center justify-between gap-3 px-2 py-2 sm:px-6 cursor-pointer"
           type="button"
           onClick={() => setCardOpen(!cardOpen)}
         >
-          <CardTitle className="text-xl text-white">Criar evento</CardTitle>
+          <CardTitle className="text-lg sm:text-xl text-white text-left">
+            Criar evento
+          </CardTitle>
           {!cardOpen ? (
             <PlusIcon className="text-white" />
           ) : (
             <X className="text-white" />
           )}
         </button>
+
         {cardOpen && (
           <div>
             <CardHeader>
-              <CardDescription className="text-zinc-200 text-md">
+              <CardDescription className="text-zinc-200 text-sm sm:text-md">
                 Preencha as informações do evento. A capa é opcional e pode ser
                 enviada depois.
               </CardDescription>
@@ -331,7 +325,7 @@ export default function EventCreateForm({
                     <h3 className="text-sm uppercase tracking-wide text-zinc-400">
                       Informações gerais
                     </h3>
-                    <div className="flex flex-col md:grid-cols-2 gap-4">
+                    <div className="grid gap-4 md:grid-cols-2">
                       <FormField
                         control={control}
                         name="title"
@@ -356,7 +350,7 @@ export default function EventCreateForm({
                         control={control}
                         name="description"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="md:col-span-2">
                             <FormLabel>Descrição</FormLabel>
                             <FormControl>
                               <Textarea
@@ -384,7 +378,6 @@ export default function EventCreateForm({
                             <FormControl>
                               <Input
                                 placeholder="Rua, número, bairro - cidade/UF"
-                                // garante que nunca é null/undefined pro input
                                 value={field.value ?? ""}
                                 onChange={(e) => field.onChange(e.target.value)}
                                 onBlur={field.onBlur}
@@ -400,7 +393,7 @@ export default function EventCreateForm({
                         )}
                       />
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <FormField
                           control={control}
                           name="visibility"
@@ -475,7 +468,7 @@ export default function EventCreateForm({
                     <h3 className="text-sm uppercase tracking-wide text-zinc-400">
                       Inscrições &amp; capacidade
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <FormField
                         control={control}
                         name="price"
@@ -553,7 +546,9 @@ export default function EventCreateForm({
                         name="payment_note"
                         render={({ field }) => (
                           <FormItem className="md:col-span-2">
-                            <FormLabel>Instruções de pagamento (opcional)</FormLabel>
+                            <FormLabel>
+                              Instruções de pagamento (opcional)
+                            </FormLabel>
                             <FormControl>
                               <Textarea
                                 placeholder={`Ex.: Membros pagam metade. Crianças até 12 anos não pagam.\nApresente o comprovante no dia do evento.`}
@@ -563,7 +558,8 @@ export default function EventCreateForm({
                               />
                             </FormControl>
                             <p className="text-xs text-zinc-400">
-                              Essa mensagem aparecerá na tela de confirmação de inscrição.
+                              Essa mensagem aparecerá na tela de confirmação de
+                              inscrição.
                             </p>
                             <FormMessage />
                           </FormItem>
@@ -580,24 +576,21 @@ export default function EventCreateForm({
                       Datas
                     </h3>
 
-                    <div className="flex flex-col">
-                      <h1 className="font-mono text-sky-200">
-                        Data do Evento
-                      </h1>
-                      <div className="flex-row flex gap-4 px-2">
+                    {/* Data do evento */}
+                    <div className="space-y-2">
+                      <h1 className="font-mono text-sky-200">Data do Evento</h1>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:px-2">
                         <FormField
                           control={control}
                           name="starts_at"
                           render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="w-full min-w-0">
                               <FormLabel>Início</FormLabel>
                               <FormControl>
                                 <DateTimePicker
                                   labelTitle="Início"
                                   value={field.value ?? undefined}
-                                  onChange={(date) =>
-                                    field.onChange(date ?? new Date())
-                                  }
+                                  onChange={(date) => field.onChange(date ?? new Date())}
                                   showSeconds={true}
                                 />
                               </FormControl>
@@ -610,15 +603,13 @@ export default function EventCreateForm({
                           control={control}
                           name="ends_at"
                           render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="w-full min-w-0">
                               <FormLabel>Fim</FormLabel>
                               <FormControl>
                                 <DateTimePicker
                                   labelTitle="Fim"
                                   value={field.value ?? undefined}
-                                  onChange={(date) =>
-                                    field.onChange(date ?? new Date())
-                                  }
+                                  onChange={(date) => field.onChange(date ?? new Date())}
                                   showSeconds={true}
                                 />
                               </FormControl>
@@ -629,24 +620,21 @@ export default function EventCreateForm({
                       </div>
                     </div>
 
-                    <div className="flex flex-col border-t pt-2 border-zinc-400">
-                      <h1 className="font-mono text-amber-200">
-                        Data das Inscrições
-                      </h1>
-                      <div className="flex-row flex gap-4 px-2">
+                    {/* Datas das inscrições */}
+                    <div className="flex flex-col border-t border-zinc-400 pt-2">
+                      <h1 className="font-mono text-amber-200">Data das Inscrições</h1>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:px-2">
                         <FormField
                           control={control}
                           name="registrations_starts_at"
                           render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="w-full min-w-0">
                               <FormLabel>Início</FormLabel>
                               <FormControl>
                                 <DateTimePicker
                                   labelTitle="Início"
                                   value={field.value ?? undefined}
-                                  onChange={(date) =>
-                                    field.onChange(date ?? null)
-                                  }
+                                  onChange={(date) => field.onChange(date ?? null)}
                                   showSeconds={true}
                                 />
                               </FormControl>
@@ -659,15 +647,13 @@ export default function EventCreateForm({
                           control={control}
                           name="registrations_ends_at"
                           render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="w-full min-w-0">
                               <FormLabel>Fim</FormLabel>
                               <FormControl>
                                 <DateTimePicker
                                   labelTitle="Fim"
                                   value={field.value ?? undefined}
-                                  onChange={(date) =>
-                                    field.onChange(date ?? null)
-                                  }
+                                  onChange={(date) => field.onChange(date ?? null)}
                                   showSeconds={true}
                                 />
                               </FormControl>
@@ -695,7 +681,7 @@ export default function EventCreateForm({
                       {registrationFieldList.map((cfg) => (
                         <div
                           key={cfg.key}
-                          className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-2"
+                          className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2 sm:flex-row sm:items-center sm:justify-between"
                         >
                           <div>
                             <p className="text-sm font-medium text-white">
@@ -703,13 +689,10 @@ export default function EventCreateForm({
                             </p>
                           </div>
 
-                          <div className="flex items-center gap-4 text-xs text-zinc-300">
-                            {/* habilitado */}
+                          <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-300">
                             <FormField
                               control={control}
-                              name={
-                                `registration_fields.${cfg.key}.enabled`
-                              }
+                              name={`registration_fields.${cfg.key}.enabled`}
                               render={({ field }) => (
                                 <FormItem className="flex items-center gap-2">
                                   <FormControl>
@@ -727,12 +710,9 @@ export default function EventCreateForm({
                               )}
                             />
 
-                            {/* obrigatório */}
                             <FormField
                               control={control}
-                              name={
-                                `registration_fields.${cfg.key}.required`
-                              }
+                              name={`registration_fields.${cfg.key}.required`}
                               render={({ field }) => (
                                 <FormItem className="flex items-center gap-2">
                                   <FormControl>
@@ -765,7 +745,7 @@ export default function EventCreateForm({
                       type="file"
                       accept="image/*"
                       onChange={handleFileSelect}
-                      className="cursor-pointer items-center justify-center hover:bg-white text-white"
+                      className="cursor-pointer hover:bg-white/5 text-white"
                     />
 
                     {previewUrl && (
@@ -773,7 +753,7 @@ export default function EventCreateForm({
                         <Image
                           src={previewUrl}
                           alt="Pré-visualização"
-                          className="max-h-56 rounded border border-white/10"
+                          className="max-h-56 rounded border border-white/10 object-cover"
                           width={800}
                           height={450}
                         />
@@ -789,7 +769,7 @@ export default function EventCreateForm({
                   </div>
 
                   {/* Ações */}
-                  <div className="flex items-center gap-3 pt-2">
+                  <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
                     <Button
                       type="submit"
                       className="cursor-pointer"
