@@ -1,7 +1,9 @@
+// app/offc/galeria/[id]/GalleryImagesManager.tsx
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Sortable from "sortablejs";
 
 type GalleryImage = {
   id: string;
@@ -22,8 +24,11 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const imagesRef = useRef<GalleryImage[]>(initialImages);
 
   const allowedTypes = [
     "image/jpeg",
@@ -33,6 +38,70 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
     "image/jpg",
   ];
 
+  // Mantém ref sincronizado com o state
+  useEffect(() => {
+    imagesRef.current = images;
+  }, [images]);
+
+  // ========= DRAG & DROP =========
+  useEffect(() => {
+    if (!gridRef.current) return;
+
+    console.log("[Gallery] gridRef OK, inicializando Sortable...");
+
+    const sortable = Sortable.create(gridRef.current, {
+      animation: 200,
+      ghostClass: "sortable-ghost",
+      chosenClass: "sortable-chosen",
+      dragClass: "sortable-drag",
+      draggable: ".sortable-item",
+      onStart() {
+        setIsReordering(true);
+      },
+      async onEnd() {
+        setIsReordering(false);
+        const newOrderIds: string[] = sortable.toArray();
+
+        const reordered: GalleryImage[] = [];
+        for (const id of newOrderIds) {
+          const img = imagesRef.current.find((i) => i.id === id);
+          if (img) reordered.push(img);
+        }
+
+        if (reordered.length !== imagesRef.current.length) {
+          console.warn(
+            "[Gallery] Tamanhos diferentes na reorder",
+            reordered.length,
+            imagesRef.current.length
+          );
+        } else {
+          setImages(reordered);
+        }
+
+        // Persiste no backend
+        try {
+          await fetch("/api/gallery/images/reorder", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sectionId,
+              orderedIds: newOrderIds,
+            }),
+          });
+        } catch (err) {
+          console.error("Erro ao reordenar:", err);
+          setErrorMsg("Erro ao salvar nova ordem das imagens.");
+        }
+      },
+    });
+
+    return () => {
+      console.log("[Gallery] destruindo Sortable");
+      sortable.destroy();
+    };
+  }, [sectionId]);
+
+  // ========= FILE SELECT =========
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const selected = Array.from(e.target.files || []);
     setErrorMsg(null);
@@ -64,6 +133,7 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
     }
   }
 
+  // ========= UPLOAD =========
   async function handleUpload() {
     if (!files.length) return;
     setErrorMsg(null);
@@ -131,7 +201,7 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
         setImages((prev) => [...prev, ...newImages]);
       }
       clearSelection();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       setErrorMsg(err?.message ?? "Erro ao enviar imagens.");
     } finally {
@@ -139,6 +209,7 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
     }
   }
 
+  // ========= DELETE =========
   async function handleDelete(id: string) {
     if (!confirm("Tem certeza que deseja remover esta imagem?")) return;
 
@@ -153,7 +224,7 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
       }
 
       setImages((prev) => prev.filter((img) => img.id !== id));
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       setErrorMsg(err?.message ?? "Erro ao remover imagem.");
     }
@@ -161,6 +232,7 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* UPLOAD */}
       <div className="space-y-3 rounded-xl border border-slate-700 bg-slate-900/60 p-4">
         <p className="text-sm text-slate-200">
           Adicione novas fotos para esta seção.
@@ -184,7 +256,7 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
               {previewUrls.map((url, idx) => (
                 <div
                   key={url}
-                  className="relative aspect-4/3 overflow-hidden rounded-lg border border-slate-700"
+                  className="relative aspect-[4/3] overflow-hidden rounded-lg border border-slate-700"
                 >
                   <Image
                     src={url}
@@ -231,21 +303,31 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
         )}
       </div>
 
-      <div className="space-y-3">
-        <p className="text-sm text-slate-200">
-          Imagens atuais ({images.length}):
-        </p>
+      {/* GRID COM DRAG & DROP */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm text-slate-200">
+            Imagens atuais ({images.length})
+          </p>
+          {isReordering && (
+            <span className="text-xs text-slate-400">Reorganizando...</span>
+          )}
+        </div>
 
         {images.length === 0 ? (
           <p className="text-xs text-slate-500">
             Nenhuma imagem cadastrada ainda.
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          <div
+            ref={gridRef}
+            className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4"
+          >
             {images.map((img) => (
               <div
                 key={img.id}
-                className="group relative aspect-4/3 overflow-hidden rounded-lg border border-slate-700 bg-slate-900/80"
+                data-id={img.id}
+                className="sortable-item group relative aspect-4/3 overflow-hidden rounded-lg border border-slate-700 bg-slate-900/80 transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:border-icm-primary cursor-move"
               >
                 <Image
                   src={img.image_url}
@@ -254,10 +336,12 @@ export function GalleryImagesManager({ sectionId, initialImages }: Props) {
                   className="object-cover"
                 />
 
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/5 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+
                 <button
                   type="button"
                   onClick={() => handleDelete(img.id)}
-                  className="absolute right-2 top-2 rounded-full bg-black/60 px-2 py-1 text-[10px] font-medium text-red-200 opacity-0 shadow-sm transition group-hover:opacity-100 cursor-pointer"
+                  className="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-1 text-[10px] font-medium text-red-200 shadow-sm opacity-0 transition-opacity duration-150 group-hover:opacity-100 cursor-pointer"
                 >
                   Remover
                 </button>
