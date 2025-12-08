@@ -1,4 +1,5 @@
 // app/leader/page.tsx
+import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import HomeClient from "./HomeClient";
 
 // tipos só pra consistência
@@ -24,40 +25,52 @@ type FileRow = {
 export const revalidate = 120; // 2 minutos de cache opcional
 
 export default async function LeaderHomePage() {
-  // MOCKS de dados
-  const agenda: AgendaRow[] = [
-    {
-      id: "1",
-      title: "Reunião de planejamento",
-      description: "Revisar metas do trimestre e escala de ministério.",
-      event_date: "2025-11-03",
-      department_name: "Louvor",
-      department_id: "dep-louvor",
-    },
-    {
-      id: "2",
-      title: "Treinamento de novos líderes",
-      description: "Capacitação para novos responsáveis por células.",
-      event_date: "2025-11-05",
-      department_name: "Discipulado",
-      department_id: "dep-discipulado",
-    },
-  ];
+  const supabase = createSupabaseAdmin();
 
-  const files: FileRow[] = [
-    {
-      id: "f1",
-      title: "Manual de Boas Práticas",
-      file_key: "manual_boas_praticas.pdf",
-      created_at: "2025-10-29T12:00:00Z",
-    },
-    {
-      id: "f2",
-      title: "Escala de Louvor - Novembro",
-      file_key: "escala_louvor_novembro.pdf",
-      created_at: "2025-10-28T09:00:00Z",
-    },
-  ];
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0, 10); // "YYYY-MM-DD"
+
+  const { data: agendaData, error: agendaError } = await supabase
+    .from("agenda_events")
+    .select("id, title, description, event_date, event_time")
+    .gte("event_date", todayStr)
+    .order("event_date", { ascending: true })
+    .order("event_time", { ascending: true })
+    .limit(5); // pega só os próximos 5 pra home
+
+  if (agendaError) {
+    console.error("Erro ao carregar agenda para área do líder:", agendaError);
+  }
+
+  const agenda =
+    agendaData?.map((ev: AgendaRow) => ({
+      id: ev.id as string,
+      title: ev.title as string,
+      description: ev.description as string | null,
+      event_date: ev.event_date as string, // "YYYY-MM-DD"
+      event_time: (ev.event_time as string | null) ?? null,
+
+    })) ?? [];
+
+
+
+    const { data: filesData, error: filesError } = await supabase
+    .from("files")
+    .select("id, title, file_key, created_at")
+    .order("created_at", { ascending: false })
+    .limit(8);
+
+  if (filesError) {
+    console.error("Erro ao carregar arquivos para área do líder:", filesError);
+  }
+
+  const files =
+    filesData?.map((f) => ({
+      id: f.id as string,
+      title: f.title as string | null,
+      file_key: f.file_key as string,
+      created_at: f.created_at as string,
+    })) ?? [];
 
   return (
     <HomeClient
