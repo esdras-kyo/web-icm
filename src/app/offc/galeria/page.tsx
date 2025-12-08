@@ -1,8 +1,7 @@
-// app/offc/galeria/page.tsx
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { GallerySectionsList } from "./GallerySectionsList";
 
-export const revalidate = 0; // sempre pegar dados frescos, se quiser
+export const revalidate = 0;
 
 export default async function GallerySectionsPage() {
   const supabase = createSupabaseAdmin();
