@@ -71,8 +71,8 @@ export async function addMemberAction(formData: FormData): Promise<Feedback> {
   }
 
   revalidatePath(`/leader/cells/${cellId}/manage`);
-  revalidateTag("users");
-  revalidateTag(`user:${userId}`);
+  revalidateTag("users", "max");
+  revalidateTag(`user:${userId}`, "max");
 
   return { success: true, message: "Membro adicionado com sucesso.", data };
 }

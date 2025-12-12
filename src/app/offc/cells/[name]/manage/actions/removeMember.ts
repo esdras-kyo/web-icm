@@ -69,8 +69,8 @@ export async function removeMemberAction(
   }
 
   revalidatePath(`/leader/cells/${cellId}/manage`);
-  revalidateTag("users");
-  revalidateTag(`user:${removedUserId}`);
+  revalidateTag("users","max");
+  revalidateTag(`user:${removedUserId}`,"max");
 
   return { success: true, message: "Membro removido com sucesso." };
 }

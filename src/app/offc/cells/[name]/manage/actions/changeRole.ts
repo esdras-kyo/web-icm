@@ -91,8 +91,8 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
         console.warn("changeRoleAction: clerk_user_id não encontrado no join de users");
       }
 
-      revalidateTag("users");
-      revalidateTag(`user:${userId}`);
+      revalidateTag("users", "max");
+      revalidateTag(`user:${userId}`, "max");
     }
   } catch (err) {
     console.error("Erro ao atualizar Clerk publicMetadata:", err);

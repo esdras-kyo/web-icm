@@ -102,8 +102,8 @@ export async function addRoleAction(formData: FormData) {
   }
 
   // 🔁 invalida caches
-  revalidateTag('users');
-  revalidateTag(`user:${user_id}`);
+  revalidateTag('users',"max");
+  revalidateTag(`user:${user_id}`,"max");
 
   // 🔄 sincroniza Clerk (não bloqueante caso falhe)
   await syncClerkRoles(supabase, user_id);
@@ -132,8 +132,8 @@ export async function removeRoleAction(formData: FormData) {
   }
 
   // 🔁 invalida caches
-  revalidateTag('users');
-  revalidateTag(`user:${user_id}`);
+  revalidateTag('users', "max");
+  revalidateTag(`user:${user_id}`, "max");
 
   // 🔄 sincroniza Clerk
   await syncClerkRoles(supabase, user_id);

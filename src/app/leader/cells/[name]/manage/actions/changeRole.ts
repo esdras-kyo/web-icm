@@ -70,8 +70,8 @@ export async function changeRoleAction(formData: FormData): Promise<Feedback> {
       }
 
       // ♻️ revalida lista/usuário
-      revalidateTag("users");
-      revalidateTag(`user:${userId}`);
+      revalidateTag("users", "max");
+      revalidateTag(`user:${userId}`, "max");
     }
   } catch (err) {
     console.error("Erro ao atualizar Clerk publicMetadata:", err);

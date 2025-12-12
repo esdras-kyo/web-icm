@@ -87,5 +87,5 @@ export async function getFilesAction(params: { api: string; visibility: Visibili
 }
 
 export async function refreshFilesAction(visibility: Visibility) {
-  revalidateTag(tagFor(visibility));
+  revalidateTag(tagFor(visibility), "max");
 }
