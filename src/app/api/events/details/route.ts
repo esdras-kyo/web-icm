@@ -16,7 +16,22 @@ export async function POST(req: Request) {
 
   const { data, error } = await supabase
     .from("events")
-    .select("id, title, capacity, starts_at, ends_at")
+    .select(`
+      id,
+      title,
+      description,
+      starts_at,
+      ends_at,
+      capacity,
+      price,
+      status,
+      visibility,
+      registration_starts_at,
+      registration_ends_at,
+      address,
+      registration_fields,
+      payment_note
+    `)
     .eq("id", event_id)
     .single();
 

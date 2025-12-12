@@ -3,11 +3,12 @@
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import InscritoCard, { Inscrito } from "../CardIns";
-import { Download } from "lucide-react";
+import { Download, PencilIcon } from "lucide-react";
 import StatisticsChart, {
   RegistrationPoint,
 } from "@/app/components/EventChart";
 import { EventKpis } from "../../EventsKpis";
+import Link from "next/link";
 
 type Orders = "alpha" | "created_asc" | "created_desc"
 
@@ -283,6 +284,15 @@ export default function Inscricoes() {
             )}
           </div>
 
+          <div className="flex gap-3">
+          <Link
+            href={`/offc/events/${id}/edit`}
+            className="rounded-md border flex flex-row items-center justify-center gap-2 border-white/20 px-4 py-2 text-sm text-white hover:bg-white/10"
+          >
+            Editar
+            <PencilIcon className="w-4 h-4" />
+          </Link>
+
           <button
             onClick={handleDownloadCsv}
             disabled={!inscritos.length}
@@ -291,6 +301,7 @@ export default function Inscricoes() {
             Baixar planilha
             <Download className="h-4 w-4" />
           </button>
+        </div>
         </div>
 
         {/* KPIs */}
