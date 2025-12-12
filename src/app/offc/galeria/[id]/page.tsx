@@ -3,43 +3,50 @@ import Link from "next/link";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { EditGallerySectionForm } from "./EditGallerySectionForm";
 import { GalleryImagesManager } from "./GalleryImagesManager";
+import { GallerySectionDangerZone } from "./GallerySectionDangerZone";
+import { use } from "react";
+
 
 type PageProps = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 };
 
 export const revalidate = 0;
 
-export default async function GallerySectionDetailPage({ params }: PageProps) {
-  const { id } = await params; 
+export default function GallerySectionDetailPage({ params }: PageProps) {
+  const { id } = use(params) 
   const supabase = createSupabaseAdmin();
   const sectionId = id;
 
-  const { data: section, error: sectionError } = await supabase
-    .from("gallery_sections")
-    .select("id, title, description, slug, is_published, created_at")
-    .eq("id", sectionId)
-    .single();
+  const sectionPromise = supabase
+  .from("gallery_sections")
+  .select("id, title, description, slug, is_published, created_at")
+  .eq("id", sectionId)
+  .single();
 
-  if (sectionError || !section) {
-    if (sectionError) {
-      console.error("Erro ao carregar seção da galeria:", sectionError);
-    }
-    notFound();
+const imagesPromise = supabase
+  .from("gallery_images")
+  .select("id, image_url, alt_text, sort_order, created_at")
+  .eq("section_id", sectionId)
+  .order("sort_order", { ascending: true })
+  .order("created_at", { ascending: true });
+
+// Usa o React.use pra resolver as Promises
+const [
+  { data: section, error: sectionError },
+  { data: images, error: imagesError },
+] = use(Promise.all([sectionPromise, imagesPromise]));
+
+if (sectionError || !section) {
+  if (sectionError) {
+    console.error("Erro ao carregar seção da galeria:", sectionError);
   }
+  notFound();
+}
 
-  const { data: images, error: imagesError } = await supabase
-    .from("gallery_images")
-    .select("id, image_url, alt_text, sort_order, created_at")
-    .eq("section_id", sectionId)
-    .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: true });
-
-  if (imagesError) {
-    console.error("Erro ao carregar imagens da galeria:", imagesError);
-  }
+if (imagesError) {
+  console.error("Erro ao carregar imagens da galeria:", imagesError);
+}
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
@@ -106,6 +113,10 @@ export default async function GallerySectionDetailPage({ params }: PageProps) {
 
         <GalleryImagesManager sectionId={section.id} initialImages={images ?? []} />
       </section>
+      <GallerySectionDangerZone
+        sectionId={section.id}
+        sectionTitle={section.title}
+      />
     </div>
   );
 }

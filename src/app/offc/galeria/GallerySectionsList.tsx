@@ -132,15 +132,9 @@ export function GallerySectionsList({
                   <div className="flex items-center justify-end gap-2">
                     <Link
                       href={`/offc/galeria/${section.id}`}
-                      className="rounded-lg border border-slate-600 px-3 py-1.5 text-xs font-medium text-slate-100 hover:border-icm-primary hover:text-icm-primary cursor-pointer"
-                    >
-                      Editar seção
-                    </Link>
-                    <Link
-                      href={`/offc/galeria/${section.id}#imagens`}
                       className="rounded-lg bg-slate-700 px-3 py-1.5 text-xs font-medium text-slate-50 hover:bg-slate-600 cursor-pointer"
                     >
-                      Gerenciar fotos
+                      Gerenciar
                     </Link>
                   </div>
                 </td>

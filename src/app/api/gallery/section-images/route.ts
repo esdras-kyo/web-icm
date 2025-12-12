@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
     const supabase = createSupabaseAdmin();
 
     const { data: images, error } = await supabase
+    
       .from("gallery_images")
       .select("id, image_url, alt_text, sort_order, created_at")
       .eq("section_id", sectionId)

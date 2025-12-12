@@ -36,9 +36,9 @@ export default async function GallerySectionsPage() {
 
         <a
           href="/offc/galeria/new"
-          className="rounded-lg bg-icm-primary px-4 py-2 text-sm font-medium text-white cursor-pointer"
+          className="rounded-lg hover:bg-emerald-200/30 border-white/40 border px-4 py-2 text-sm font-medium text-white cursor-pointer"
         >
-          Nova seção
+          Nova seção +
         </a>
       </header>
 
