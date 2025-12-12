@@ -1,13 +1,16 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import InscritoCard, { Inscrito } from "../CardIns";
 import { Download } from "lucide-react";
 import StatisticsChart, {
   RegistrationPoint,
 } from "@/app/components/EventChart";
 import { EventKpis } from "../../EventsKpis";
+
+type Orders = "alpha" | "created_asc" | "created_desc"
+
 
 type EventDetails = {
   id: string;
@@ -26,6 +29,9 @@ export default function Inscricoes() {
   const [warning, setWarning] = useState("");
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [order, setOrder] = useState<Orders>(
+    "created_desc"
+  );
 
   const params = useParams();
   const id = params.id?.toString();
@@ -145,6 +151,32 @@ export default function Inscricoes() {
     URL.revokeObjectURL(url);
   }
 
+  const sortedInscritos = useMemo(() => {
+    if (!inscritos) return [];
+  
+    const copy = [...inscritos];
+  
+    switch (order) {
+      case "created_asc":
+        return copy.sort(
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+  
+      case "created_desc":
+        return copy.sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+  
+      case "alpha":
+        return copy.sort((a, b) =>
+          a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" })
+        );
+  
+      default:
+        return copy;
+    }
+  }, [inscritos, order]);
+
   async function getRegistrations(id?: string) {
     setLoading(true);
     const res = await fetch(`/api/getsubs?id=${id}`, { cache: "no-store" });
@@ -179,8 +211,6 @@ export default function Inscricoes() {
         <p>Carregando inscritos...</p>
       </main>
     );
-
-  // ======= KPIs DERIVADOS =======
 
   const totalRegistrations = inscritos.length;
 
@@ -310,7 +340,16 @@ export default function Inscricoes() {
             }`}
           >
             <div className="mt-4 space-y-3">
-              {inscritos.map((inscrito) => (
+            <select
+              className="form-control"
+              value={order}
+              onChange={(e) => setOrder(e.target.value as Orders)}
+            >
+              <option value="created_desc">Mais recentes primeiro</option>
+              <option value="created_asc">Mais antigos primeiro</option>
+              <option value="alpha">Ordem alfabética (A–Z)</option>
+            </select>
+              {sortedInscritos.map((inscrito) => (
                 <InscritoCard
                   key={inscrito.id}
                   inscrito={inscrito}
@@ -318,7 +357,7 @@ export default function Inscricoes() {
                 />
               ))}
 
-              {inscritos.length === 0 && (
+              {sortedInscritos.length === 0 && (
                 <p className="mt-4 text-center text-white/60">
                   Nenhum inscrito encontrado.
                 </p>
