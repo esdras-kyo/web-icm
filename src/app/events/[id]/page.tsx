@@ -27,6 +27,8 @@ type Evento = {
   image_key: string; // key no R2
   address?: string | null;
   registration_fields?: RegistrationFields | null;
+  registration_ends_at?: string | null;
+  capacity?: number | null
 };
 
 const DEFAULT_FIELDS: RegistrationFields = {
@@ -89,6 +91,13 @@ export default function EventoInscricaoCard() {
     [evento]
   );
 
+  const isRegistrationsClosed = useMemo(() => {
+    if (!evento?.registration_ends_at) return true; // se não tiver data, considera ainda aberto
+    const now = new Date();
+    const regEnd = new Date(evento.registration_ends_at);
+    return regEnd.getTime() < now.getTime();
+  }, [evento?.registration_ends_at]);
+
   const getEvento = async (id?: string) => {
     const res = await fetch(`/api/events-on?id=${event_id}`, {
       cache: "no-store",
@@ -96,6 +105,7 @@ export default function EventoInscricaoCard() {
     if (!res.ok) return;
     const data = await res.json();
     setEvento(data);
+    console.log(data)
     setShow(true);
   };
 
@@ -344,6 +354,16 @@ export default function EventoInscricaoCard() {
                 Inscrição
               </h2>
               {show && (
+                  isRegistrationsClosed ? (
+                    <div className="py-4 text-center text-sm text-red-300">
+                    Inscrições encerradas
+                    {evento?.registration_ends_at && (
+                      <p className="mt-1 text-xs text-gray-400">
+                        Encerradas em {formatDateTime(evento.registration_ends_at)}
+                      </p>
+                    )}
+                  </div>
+                  ): (
                 <form
                   className="flex flex-col gap-3"
                   onSubmit={(e) => {
@@ -608,7 +628,7 @@ export default function EventoInscricaoCard() {
                       ❌ Falha ao inscrever.
                     </p>
                   )}
-                </form>
+                </form>)
               )}
             </div>
           </div>

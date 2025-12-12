@@ -34,8 +34,9 @@ export async function GET(request: Request) {
     return NextResponse.json(data);
   }
 
+  const now = new Date().toISOString();
 
-  let query = supabase.from('events').select('*');
+  let query = supabase.from('events').select('*').gte('ends_at', now);;
   if (status) {
     query = query.eq('status', status);
   }

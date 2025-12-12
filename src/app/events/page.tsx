@@ -21,7 +21,7 @@ export default function Members(){
     useEffect(() => {
         async function fetchUsers() {
           try {
-            const res = await fetch("/api/events-on?visibility=ORG", {
+            const res = await fetch("/api/events-on?visibility=ORG&status=ATIVO", {
                 method: "GET", cache: 'no-store'
               });;
             const data = await res.json();
