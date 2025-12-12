@@ -30,7 +30,7 @@ function Content({ children }: { children: React.ReactNode }) {
 export default function OffcClientShell({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <div className="h-dvh overflow-hidden bg-zinc-950 relative">
+      <div className="h-dvh overflow-hidden bg-zinc-950 relative text-white">
         <AppSidebar />
         <Backdrop />
         <Content>{children}</Content>

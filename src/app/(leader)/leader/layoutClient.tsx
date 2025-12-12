@@ -30,7 +30,7 @@ function Content({ children }: { children: React.ReactNode }) {
 export default function LeaderClientShell({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <div className="h-dvh overflow-hidden bg-zinc-950 relative">
+      <div className="h-dvh overflow-hidden bg-zinc-950 relative text-white">
         <LeaderSidebar />
         <Backdrop />
         <Content>{children}</Content>
