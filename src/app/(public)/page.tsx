@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, MapPin, Instagram, Clock, ChevronRight, CalendarClock, UsersRound, Radio } from "lucide-react";
 import YouTubeCard from "../components/YoutubeCard";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Section from "../components/Section";
-import TopBanner from "../components/TopBanner";
 import Footer from "../components/Footer";
+import YouTubePopularGrid from "@/app/components/YouTubePopular";
+import HeroMission from "@/app/components/HomeHero";
 
  function Participe() {
   return (
@@ -18,37 +18,11 @@ import Footer from "../components/Footer";
       viewport={{ once: true, amount: 0.3 }}
       className="w-full py-16 px-6 "
     >
-      <div className="relative w-full mx-auto max-w-6xl  overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.03] p-8 md:p-12 shadow-xl flex flex-col items-center text-center gap-8">
+      <div className="relative w-full mx-auto max-w-6xl  overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/6 to-white/3 p-8 md:p-12 shadow-xl flex flex-col items-center text-center gap-8">
         {/* glows */}
         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-sky-400/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-violet-400/20 blur-3xl" />
 
-        {/* título */}
-        <header>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-            Participe conosco
-          </h2>
-          <p className="text-white/70 text-sm md:text-base mt-2">
-            Há lugar pra você aqui.
-          </p>
-        </header>
-
-        {/* horários em destaque */}
-        <ul className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-3 text-white/90">
-          <InfoPill
-            icon={<CalendarClock className="size-5" />}
-            text="Domingos • 09:00 e 19:00"
-          />
-          <InfoPill
-            icon={<UsersRound className="size-5" />}
-            text="Células • quartas-feiras"
-          />
-        </ul>
-
-        {/* separador sutil */}
-        <div className="w-full h-px bg-white/10" />
-
-        {/* bloco de live + vídeo (frase diretamente ligada ao player) */}
         <section className="w-full max-w-3xl flex flex-col items-center text-center gap-4">
           <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-white/15 bg-white/10 text-white/90">
             <Radio className="size-4" />
@@ -61,25 +35,15 @@ import Footer from "../components/Footer";
           <p className="text-white/70 text-sm md:text-base -mt-1">
             Cultos transmitidos com carinho pra quem está perto ou longe.
           </p>
-
-          {/* player / card do YouTube */}
           <div className="w-full overflow-hidden rounded-xl ring-1 ring-white/10 bg-black/40">
             <div className="aspect-video w-full">
-              {/* Substitua pelo seu componente real */}
               <YouTubeCard />
             </div>
+
+            {/* <div className="w-full text-left">
+              <YouTubePopularGrid />
+            </div> */}
           </div>
-
-          {/* CTAs relacionadas ao vídeo */}
-          {/* <div className="mt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-
-            <Link
-              href="/agenda"
-              className="cursor-pointer inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold bg-white/10 text-white hover:bg-white/15 ring-1 ring-white/20 active:scale-[0.98] transition"
-            >
-              Ver agenda completa
-            </Link>
-          </div> */}
         </section>
       </div>
     </motion.section>
@@ -147,51 +111,14 @@ export default function ChurchHome() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-black to-sky-800 text-white">
-      <TopBanner
-        badgeText="Seja bem-vindo"
-        title="Igreja de Cristo Maranata"
-        subtitle="Junte-se a nós para adorar, aprender a Palavra e servir em Goiânia."
-        backgroundImage="images/bg.jpeg"
-        bannerHeight="70vh"
-        showLogo
-        logoSrc="/images/logo.png"
-        logoAlt="Logo da igreja"
-        showButton
-        buttonLabel="Visite-nos neste domingo"
-        onButtonClick={() => route.push("/localizacao")}
+      <HeroMission
+        churchName="Igreja de Crito Maranata"
+        mission="Ganhar, consolidar, discipular e enviar"
+        imageSrc="/images/home.png"
       />
 
       <Participe/>
-  
-      {/* <Section
-        id="cell"
-        title="Células"
-        subtitle="Conheça mais sobre nossas células."
-        clickable={true}
-        img="/images/sonicpray.jpg"
-        onClick={() => {
-          route.push("/celulas");
-        }}
-      >
-        <div className="flex flex-row w-full justify-end">
-          <ChevronRight width={50} height={50} />
-        </div>
-      </Section> */}
-      
-      {/* <Section
-        id="sobre"
-        title="Sobre nós"
-        subtitle="Há mais de 25 anos compartilhando a Palavra e servindo com amor."
-        clickable={true}
-        img="/images/velhos.jpeg"
-        onClick={() => {
-          route.push("/historia");
-        }}
-      >
-        <div className="flex flex-row w-full justify-end">
-          <ChevronRight width={50} height={50} />
-        </div>
-      </Section> */}
+
 
       <Section
         id="eventos"
@@ -206,7 +133,7 @@ export default function ChurchHome() {
           {events.slice(0, 2).map((e) => (
             <Card
               key={e.title}
-              className="rounded-2xl border-none bg-gradient-to-br text-white from-black to-sky-700"
+              className="rounded-2xl border-none bg-linear-to-br text-white from-black to-sky-700"
             >
               <CardHeader>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -226,14 +153,12 @@ export default function ChurchHome() {
         </div>
       </Section>
 
-      <Section id="contato" title="Visite-nos" subtitle="Estamos ansiosos para receber você e sua família.">
+      <Section id="contato" title="Aqui voce encontra" subtitle="colocar dps">
         <Card className="rounded-2xl">
           <CardContent className="p-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="h-4 w-4" /> Av. Abel Coimbra, 86 – Cidade Jardim</div>
-                <div className="flex items-center gap-2 text-muted-foreground"><Clock className="h-4 w-4" /> Dom 9h e 19h · Qua 20h</div>
-                <div className="flex items-center gap-2 text-muted-foreground"><Instagram className="h-4 w-4" /> /icmsede</div>
+                cards
               </div>
             </div>
           </CardContent>

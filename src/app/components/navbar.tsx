@@ -1,75 +1,131 @@
 "use client";
+
 import Link from "next/link";
-import { MenuIcon, X } from "lucide-react";
-import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import ProfBtn from "./ProfBtn";
 import Image from "next/image";
+import { MenuIcon, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useScroll } from "framer-motion";
+import ProfBtn from "./ProfBtn";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const { scrollY } = useScroll();
+
+  useEffect(() => {
+    return scrollY.on("change", (y) => {
+      setScrolled(y > 40);
+    });
+  }, [scrollY]);
+
   const links = [
-    // { href: "/historia", label: "NOSSA HISTORIA" },
-    // { href: "/ministerios", label: "MINISTÉRIOS" },
-    // { href: "/agenda", label: "PROGRAMAÇÃO" },
     { href: "/contato", label: "CONTATO" },
     { href: "/contribua", label: "CONTRIBUA" },
     { href: "/events", label: "EVENTOS" },
   ];
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const unsub = scrollY.on("change", () => setIsOpen(false));
+    return () => unsub();
+  }, [isOpen, scrollY]);
+
   return (
-    <div className="top-0 left-0 w-full shadow-md sticky text-white  z-40 backdrop-blur supports-[backdrop-filter]:bg-black/60">
-      <div className=" md:bg-transparent w-full mx-auto flex items-center justify-between p-6">
-        <div className="text-xl font-bold  flex flex-row gap-2">
-        <Image alt="" src="/images/logo.png" width={20} height={20} />  
-          <Link href="/" className="hover:text-gray-300 cursor-pointer flex flex-row items-center">
-          
-           <h1 className="ml-2 text-sm md:text-xl">ICM</h1> 
-          </Link>
-          
-        </div>
+    <>
+      <motion.header
+        className="fixed inset-x-0 top-0 z-50"
+        animate={{
+          backgroundColor: scrolled ? "rgba(0,0,0,0.65)" : "rgba(0,0,0,0)",
+          backdropFilter: scrolled ? "blur(10px)" : "blur(0px)",
+          borderColor: scrolled ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0)",
+        }}
+        transition={{ duration: 0.22, ease: "easeOut" }}
+      >
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="h-16 flex items-center justify-between">
 
-        <div className="flex items-center gap-4">
-        <div className=" flex md:hidden " onClick={() => setIsOpen(!isOpen)}>
-          {!isOpen ? <MenuIcon /> : <X />}
-        </div>
-        <div className="hidden md:flex space-x-8 text-xs font-mono">
-          {links.map((link) => (
-            <Link key={link.label} href={link.href} className="hover:text-gray-300">
-              {link.label}
-            </Link>
-          ))}
-         
-        </div>
-<ProfBtn/>
-</div>
-        
-        </div>
-
-      <AnimatePresence initial={false}
-      mode="wait">
-        {isOpen && (
-          <motion.div
-            initial={{ y: -50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            exit={{ y: -50, opacity: 0 }}
-            className="flex flex-col items-center  justify-center  space-y-6  md:hidden bg-black/50 p-4"
-          >
-          {links.map((link) => (
             <Link
-              key={link.label}
-              href={link.href}
-              onClick={()=>setIsOpen(!isOpen)}
-              className="text-xs text-center font-mono hover:text-gray-300"
+              href="/"
+              className="cursor-pointer flex items-center gap-2 select-none"
+              onClick={() => setIsOpen(false)}
             >
-              {link.label}
+              <Image
+                alt="ICM"
+                src="/images/logo.png"
+                width={22}
+                height={22}
+                priority
+              />
             </Link>
-          ))}
-          </motion.div>
-          
-        )}
+
+            <nav className="hidden md:flex items-center gap-8">
+              <div className="flex items-center gap-8 text-xs font-mono tracking-wider text-white/85">
+                {links.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="cursor-pointer hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="ml-2">
+                <ProfBtn />
+              </div>
+            </nav>
+
+            <div className="flex items-center gap-3 md:hidden">
+              <ProfBtn />
+
+              <button
+                type="button"
+                className="cursor-pointer inline-flex items-center justify-center rounded-xl px-2 py-2 text-white/90 hover:text-white transition"
+                aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
+                onClick={() => setIsOpen((v) => !v)}
+              >
+                {!isOpen ? <MenuIcon size={22} /> : <X size={22} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <AnimatePresence initial={false} mode="wait">
+          {isOpen && (
+            <motion.div
+              key="mobile-menu"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="md:hidden overflow-hidden"
+            >
+              <div className="px-6 pb-5 pt-2 bg-black/55 backdrop-blur supports-backdrop-filter:bg-black/40">
+                <div className="flex flex-col gap-4 text-xs font-mono tracking-wider text-white/85">
+                  {links.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="cursor-pointer py-2 hover:text-white transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
-      
-    </div>
+      </motion.header>
+
+      {/* Spacer opcional:
+          Se você NÃO quiser que a navbar cubra conteúdo nas páginas internas,
+          coloque esse spacer apenas em layouts internos (não na home com hero). */}
+      {/* <div className="h-16" /> */}
+    </>
   );
 }

@@ -69,7 +69,7 @@ export default function ProfBtn() {
       <SignedOut>
         <SignInButton>
           <button className="flex cursor-pointer rounded-full border w-7 h-7 justify-center">
-            <User2 className="w-5 " />
+            <User2 className="w-4 text-white" />
           </button>
         </SignInButton>
       </SignedOut>

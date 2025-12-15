@@ -1,9 +1,8 @@
-// app/api/youtube/current/route.ts
 import { NextResponse } from "next/server";
 
 const YT = "https://www.googleapis.com/youtube/v3";
 
-export const revalidate = 300; // cache 5 min (ajuste se quiser)
+export const revalidate = 300;
 
 export async function GET() {
   const channelId = process.env.YT_CHANNEL_ID!;
