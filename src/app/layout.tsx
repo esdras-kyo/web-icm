@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       signInFallbackRedirectUrl="/"
     >
       <html lang="pt-BR">
-        <body className="bg-page">{children}</body>
+        <body className="bg-page bg-black">{children}</body>
       </html>
     </ClerkProvider>
   );
