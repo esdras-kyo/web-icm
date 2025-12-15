@@ -1,54 +1,13 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, MapPin, Instagram, Clock, ChevronRight, CalendarClock, UsersRound, Radio } from "lucide-react";
-import YouTubeCard from "../components/YoutubeCard";
 import { useRouter } from "next/navigation";
 import Section from "../components/Section";
 import Footer from "../components/Footer";
-import YouTubePopularGrid from "@/app/components/YouTubePopular";
 import HeroMission from "@/app/components/HomeHero";
+import YouTubeSection from "../components/YoutubeSection";
 
- function Participe() {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      className="w-full py-16 px-6 "
-    >
-      <div className="relative w-full mx-auto max-w-6xl  overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/6 to-white/3 p-8 md:p-12 shadow-xl flex flex-col items-center text-center gap-8">
-        {/* glows */}
-        <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-sky-400/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-violet-400/20 blur-3xl" />
-
-        <section className="w-full max-w-3xl flex flex-col items-center text-center gap-4">
-          <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-white/15 bg-white/10 text-white/90">
-            <Radio className="size-4" />
-            Ao vivo
-          </span>
-
-          <h3 className="text-xl md:text-2xl font-semibold text-white">
-            Acompanhe-nos em live
-          </h3>
-          <p className="text-white/70 text-sm md:text-base -mt-1">
-            Cultos transmitidos com carinho pra quem está perto ou longe.
-          </p>
-          <div className="w-full overflow-hidden rounded-xl ring-1 ring-white/10 bg-black/40">
-            <div className="aspect-video w-full">
-              <YouTubeCard />
-            </div>
-
-            {/* <div className="w-full text-left">
-              <YouTubePopularGrid />
-            </div> */}
-          </div>
-        </section>
-      </div>
-    </motion.section>
-  );
-}
 
 function InfoPill({
   icon,
@@ -117,7 +76,7 @@ export default function ChurchHome() {
         imageSrc="/images/home.png"
       />
 
-      <Participe/>
+      <YouTubeSection />
 
 
       <Section
