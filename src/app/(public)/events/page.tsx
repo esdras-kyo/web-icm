@@ -43,8 +43,8 @@ export default function Members(){
         );
     
     return(
-        <main className="mx-auto max-w-7xl px-2 py-2 ">
-     <h1 className="text-4xl font-bold text-white mb-8"> Proximos Eventos</h1>
+      <main className="mx-auto max-w-7xl px-8 pt-18 ">
+        <h1 className="text-3xl font-bold text-white my-8 flex w-full text-center justify-center">Próximos Eventos</h1>
         <ul className="space-y-4">
         {events.map((event) => (
               
@@ -66,7 +66,7 @@ export default function Members(){
                 {/* Scrim leve só embaixo para legibilidade */}
                 <div className="absolute inset-0 rounded-2xl bg-linear-to-b from-black/70 via-transparent to-transparent" />
               </div>
-)}
+          )}
             <button onClick={()=>{route.push(`/events/${event.id}`)}} className="relative z-10 cursor-pointer bg-black/50 hover:bg-black/30 p-4 w-full flex items-end justify-between">
               <div className="items-start flex justify-start flex-col ">
                 <p className="text-2xl font-semibold text-white mb-4">

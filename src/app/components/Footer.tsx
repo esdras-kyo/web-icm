@@ -3,7 +3,7 @@ import { Instagram, MapPin, Youtube } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer>
+    <footer className="bg-black" >
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-10 grid gap-8 md:grid-cols-3 items-start">
 
         <div>
