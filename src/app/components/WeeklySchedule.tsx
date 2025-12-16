@@ -45,10 +45,14 @@ const SCHEDULE: ScheduleItem[] = [
 export default function WeeklySchedule() {
   return (
     <motion.section
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      className="w-full py-16 px-6 bg-linear-to-tl from-black via-black to-sky-800/40"
+      transition={{
+        duration: 0.8,
+        ease: "easeOut",
+      }}
+      viewport={{ once: true, amount: 0.4 }}
+      className="w-full py-36 px-6 bg-linear-to-tl from-black via-black to-sky-800/40"
     >
       <div className="mx-auto max-w-6xl">
         {/* Header */}

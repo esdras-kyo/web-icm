@@ -89,10 +89,15 @@ export default function YouTubeSection({
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 48 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      className="w-full py-16 px-6"
+      transition={{
+        duration: 0.8,
+        ease: "easeOut",
+        delay: 0.5,
+      }}
+      viewport={{ once: true, amount: 0.4 }}
+      className="w-full py-36 px-6"
     >
       <div className="relative w-full mx-auto max-w-6xl overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-white/6 to-white/3 p-6 md:p-10 shadow-xl">
         {/* glows */}

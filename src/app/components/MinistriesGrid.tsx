@@ -77,7 +77,15 @@ const MINISTRIES: Ministry[] = [
 
 export default function MinistriesGrid() {
   return (
-    <section className="w-full bg-black py-16 px-6">
+    <motion.section
+    initial={{ opacity: 0, y: 48 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{
+      duration: 0.8,
+      ease: "easeOut",
+      delay: 0.5,
+     }}
+    className="w-full bg-black py-36 px-6">
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 text-center">
           <p className="text-xs uppercase tracking-[0.28em] text-white/60">
@@ -164,6 +172,6 @@ export default function MinistriesGrid() {
           ))}
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

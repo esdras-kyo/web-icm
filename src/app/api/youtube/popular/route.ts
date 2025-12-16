@@ -23,7 +23,7 @@ export async function GET() {
   const listJson = await listRes.json();
 
   const ids: string[] =
-    listJson?.items?.map((it) => it?.id?.videoId).filter(Boolean) ?? [];
+    listJson?.items?.map((it: { id?: { videoId?: string } }) => it?.id?.videoId).filter(Boolean) ?? [];
 
   if (ids.length === 0) {
     return NextResponse.json({ items: [] as Item[] });
@@ -37,7 +37,7 @@ export async function GET() {
   const statsJson = await statsRes.json();
 
   const items: (Item & { views: number })[] =
-    statsJson?.items?.map((v) => ({
+    statsJson?.items?.map((v: { id: string; snippet?: { title?: string }; statistics?: { viewCount?: string } }) => ({
       videoId: v.id,
       title: v.snippet?.title ?? "Vídeo",
       views: Number(v.statistics?.viewCount ?? 0),
