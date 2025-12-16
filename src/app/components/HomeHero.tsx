@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 type HeroMissionProps = {
   churchName: string;
   mission: string;
-  imageSrc: string;
+  imageSrc?: string;
 };
 
 export default function HeroMission({
@@ -17,6 +17,7 @@ export default function HeroMission({
   return (
     <section className="relative w-full h-dvh overflow-hidden">
       {/* Background */}
+      { imageSrc? (
       <Image
         src={imageSrc}
         alt={churchName}
@@ -25,6 +26,7 @@ export default function HeroMission({
         className="object-cover"
         sizes="100vw"
       />
+      ): null}
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/45" />

@@ -54,6 +54,14 @@ export default function ProfBtn() {
               />
             )}
 
+            {isAdmin && (
+              <UserButton.Link
+                label="Home - teste"
+                href="/teste"
+                labelIcon={<FlaskConical className="w-4 h-4" />}
+              />
+            )}
+
             <UserButton.Link
               label="Área do Membro"
               href="/conta/personal"
