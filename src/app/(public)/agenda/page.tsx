@@ -68,7 +68,7 @@ export default function AgendaSection() {
                 </p>
               </div>
 
-              <div className="rounded-2xl p-6 bg-white/[0.03] ring-1 ring-white/10">
+              <div className="rounded-2xl p-6 bg-white/3 ring-1 ring-white/10">
                 <div className="flex items-center gap-3 text-white">
                   <div className="p-2 rounded-xl bg-white/10">
                     <Calendar className="w-5 h-5" />
@@ -109,7 +109,6 @@ export default function AgendaSection() {
               </div>
             </div>
 
-            {/* Timeline abaixo, com o mesmo card */}
             <div className="border-t border-white/10 pt-6">
               <AgendaTimeline />
             </div>

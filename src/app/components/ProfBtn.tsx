@@ -16,7 +16,7 @@ export default function ProfBtn() {
           <UserButton.MenuItems>
             {(isLeader || isAdmin) && (
               <UserButton.Link
-                label="Painel do Líder"
+                label="Área do Líder"
                 href="/leader"
                 labelIcon={<User2 className="w-4 h-4" />}
               />

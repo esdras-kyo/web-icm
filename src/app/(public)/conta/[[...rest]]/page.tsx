@@ -16,7 +16,7 @@ export default function ContaPage() {
   const isVisitant = claims?.roles?.some((r) => r.role === "VISITANT");
   const isAdmin = claims?.roles?.some((r) => r.role === "ADMIN");
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="min-h-dvh flex flex-col items-center justify-center mx-auto pt-24 px-6">
       <UserProfile
         routing="path"
         path="/conta"
@@ -29,46 +29,72 @@ export default function ContaPage() {
         }}
       >
 
-        <UserProfile.Page
-          label="Área de Membro"
-          labelIcon={<HouseIcon size={16} />}
-          url="/personal"
-        >
+<UserProfile.Page
+  label='Área de Membro'
+  labelIcon={<HouseIcon size={16} />}
+  url='/personal'
+>
+  <div className='text-white'>
+    <h2 className='text-lg font-medium'>Informações</h2>
 
-          <div className="space-y-4 text-white">
-            <h2 className="text-lg font-medium">Informações</h2>
-            <div className="p-6">
+    {!isVisitant ? (
+      <div className='rounded-2xl border mt-8 border-white/10 bg-black/40 backdrop-blur-sm p-6 md:p-8 space-y-4'>
+        <div>
+          <p className='text-white/80'>Seu ICM ID: <span className='font-semibold text-white'>{claims?.public_code}</span></p>
+          <p className='text-white/80'>
+            Cargo:{' '}
+            <span className='font-semibold text-white'>
+              {isLeader ? 'Líder' : isAdmin ? 'Administrador' : 'Membro'}
+            </span>
+          </p>
+        </div>
 
-      
-      {!isVisitant
-      ?
-      <div>
-        <p>Seu ICM_ID: {claims?.public_code}</p>
-        <h1>Cargo: {isLeader? "Líder" :isAdmin? "Administrador": "Membro"}</h1>
-      </div>:null}
+        {isAdmin ? (
+          <button
+            onClick={() => router.push('/offc')}
+            className='mt-2 w-full rounded-xl px-4 py-3 border border-white/10 bg-white/5 hover:bg-white/10 cursor-pointer'
+          >
+            Painel Administrativo
+          </button>
+        ) : null}
 
-      {isAdmin ? <button onClick={()=>{router.push("/offc")}} className="mt-4 w-full rounded-md p-2 border border-black/20 bg-gradient-to-r to-zinc-700 hover:bg-transparent cursor-pointer"> Painel Administrativo </button> : null}
+    {isLeader ? (
+          <button
+            onClick={() => router.push('/leader')}
+            className='mt-2 w-full rounded-xl px-4 py-3 border border-white/10 bg-white/5 hover:bg-white/10 cursor-pointer'
+          >
+            Área do Líder
+          </button>
+        ) : null}
+      </div>
+    ) : (
+      <div className='space-y-3'>
+        <p className='text-sm text-white/70'>
+          Falta pouco pra liberar tudo da área do membro.
+        </p>
 
-      {/* <h3>Suas roles:</h3>
-      <ul>
-        {claims?.roles?.map((r, i) => (
-          <li key={i}>
-            {r.role} — {r.scope_type}
-            {r.department_id ? ` (Departamento ${r.department_id})` : ""}
-          </li>
-        ))}
-      </ul> */}
+        <div className='rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-6 md:p-8'>
+          <div className='flex items-start justify-between gap-4 mb-5'>
+            <div>
+              <h1 className='text-base md:text-lg font-semibold text-white'>
+                Complete seu cadastro de Membro
+              </h1>
+              <p className='mt-1 text-sm text-white/70'>
+                Preencha os dados abaixo para concluir.
+              </p>
+            </div>
 
-    </div>
-    {isVisitant
-    ? <div className="rounded-lg p-2 border border-zinc-300">
-    <h1 className="pb-2 font-bold">Complete seu cadastro de Membro!</h1>
-    <MemberForm /> 
-    </div>
-    : null}
-
+            <span className='hidden md:inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70'>
+              Visitante
+            </span>
           </div>
-        </UserProfile.Page>
+
+          <MemberForm />
+        </div>
+      </div>
+    )}
+  </div>
+</UserProfile.Page>
        {isLeader ? <UserProfile.Link url="/leader" label="Area do Líder" labelIcon={<SwordsIcon size={16}/>}></UserProfile.Link> : null}
 
       </UserProfile>

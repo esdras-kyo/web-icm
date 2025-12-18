@@ -10,10 +10,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       localization={ptBR}
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
-      signInForceRedirectUrl="/conta/personal"
-      signInFallbackRedirectUrl="/conta/personal"
-      signUpFallbackRedirectUrl="/welcome"
-      signUpForceRedirectUrl="/welcome"
+      signInForceRedirectUrl="/welcome?from=signin"
+      signInFallbackRedirectUrl="/welcome?from=signin"
+      signUpFallbackRedirectUrl="/welcome?from=signup"
+      signUpForceRedirectUrl="/welcome?from=signup"
     >
       <html lang="pt-BR">
         <body className="bg-page bg-black">{children}</body>
