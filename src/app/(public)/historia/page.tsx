@@ -1,15 +1,19 @@
 "use client";
+import Footer from "@/app/components/Footer";
+import HeroCenter from "@/app/components/HeroCenter";
+import MinistriesGrid from "@/app/components/MinistriesGrid";
 import { motion } from "framer-motion";
-import { HeartHandshake, Star, Users, Church, ArrowRight, Flower2, ScrollText, Compass } from "lucide-react";
+import {
+  HeartHandshake,
+  Star,
+  Flower2,
+  Compass,
+} from "lucide-react";
 import Image from "next/image";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-};
-const fadeIn = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.6 } },
 };
 
 type TitleLinedProps = {
@@ -21,16 +25,17 @@ type TitleLinedProps = {
 function TitleLined({ label, as: Tag = "h2", mono = false }: TitleLinedProps) {
   return (
     <div className="w-full flex items-center gap-6">
-      <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-      <Tag className={`text-2xl md:text-3xl font-bold tracking-tight text-white text-center ${mono ? "font-mono" : ""}`}>
+      <span className="h-px flex-1 bg-linear-to-r from-transparent via-white/25 to-transparent" />
+      <Tag
+        className={`text-2xl md:text-3xl font-bold tracking-tight text-white text-center ${mono ? "font-mono" : ""}`}
+      >
         {label}
       </Tag>
-      <span className="h-px flex-1 bg-gradient-to-l from-transparent via-white/25 to-transparent" />
+      <span className="h-px flex-1 bg-linear-to-l from-transparent via-white/25 to-transparent" />
     </div>
   );
 }
 
-// ---- bloco imagem + texto ----
 function ImageTextBlock({
   text,
   img,
@@ -46,18 +51,47 @@ function ImageTextBlock({
 }) {
   return (
     <section className="relative py-12 md:py-16">
-      <div className={`max-w-6xl mx-auto px-4 md:px-6 flex flex-col items-center gap-10 md:gap-12 ${reverse ? "md:flex-row-reverse" : "md:flex-row"}`}>
-        {/* texto */}
-        <motion.div className="w-full md:w-1/2" initial={reverse ? { opacity: 0, x: 24 } : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.6 }}>
-          {eyebrow && <p className="text-xs uppercase tracking-[0.18em] text-white/60 mb-2">{eyebrow}</p>}
-          {title && <h3 className="text-2xl md:text-3xl font-semibold text-white mb-4">{title}</h3>}
-          <p className=" text-gray-200 text-base md:text-lg leading-relaxed max-w-prose">{text}</p>
+      <div
+        className={`max-w-6xl mx-auto px-4 md:px-6 flex flex-col items-center gap-10 md:gap-12 ${reverse ? "md:flex-row-reverse" : "md:flex-row"}`}
+      >
+        <motion.div
+          className="w-full md:w-1/2"
+          initial={reverse ? { opacity: 0, x: 24 } : { opacity: 0, x: -24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.6 }}
+        >
+          {eyebrow && (
+            <p className="text-xs uppercase tracking-[0.18em] text-white/60 mb-2">
+              {eyebrow}
+            </p>
+          )}
+          {title && (
+            <h3 className="text-2xl md:text-3xl font-semibold text-white mb-4">
+              {title}
+            </h3>
+          )}
+          <p className=" text-gray-200 text-base md:text-lg leading-relaxed max-w-prose">
+            {text}
+          </p>
         </motion.div>
 
-        {/* imagem */}
-        <motion.div className="w-full md:w-1/2" initial={reverse ? { opacity: 0, x: -24 } : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          className="w-full md:w-1/2"
+          initial={reverse ? { opacity: 0, x: -24 } : { opacity: 0, x: 24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="rounded-3xl  overflow-hidden shadow-2xl ring-1 ring-white/10">
-            <Image src={img} alt="" className="w-full h-full object-cover aspect-[16/10]" loading="lazy" width={800} height={450} />
+            <Image
+              src={img}
+              alt=""
+              className="w-full h-full object-cover aspect-16/10"
+              loading="lazy"
+              width={800}
+              height={450}
+            />
           </div>
         </motion.div>
       </div>
@@ -65,9 +99,12 @@ function ImageTextBlock({
   );
 }
 
-// ---- cards (Missão, Visão, Valores) ----
 function Pill({ children }: { children: React.ReactNode }) {
-  return <span className="px-3 py-1 rounded-full bg-white/10 text-white/80 text-xs md:text-sm">{children}</span>;
+  return (
+    <span className="px-3 py-1 rounded-full bg-white/10 text-white/80 text-xs md:text-sm">
+      {children}
+    </span>
+  );
 }
 
 function MVV() {
@@ -75,25 +112,33 @@ function MVV() {
     {
       icon: <HeartHandshake className="w-6 h-6" />,
       title: "Missão",
-      desc: "Anunciar o evangelho de Cristo com fidelidade bíblica, formar discípulos que crescem em comunhão, santidade e serviço, e edificar famílias para a glória de Deus.",
-      tags: ["Evangelho", "Discipulado", "Comunhão"],
+      desc: "Formar discípulos de Jesus vivendo a verdade da Palavra, cheios do Espírito Santo, servindo à Igreja e alcançando o mundo. Nossa missão é edificar uma comunidade que ama a Bíblia, pratica a comunhão e serve com propósito, promovendo transformação de vidas e famílias para a glória de Deus.",
+      tags: ["Palavra", "Discipulado", "Comunhão", "Serviço"],
     },
     {
       icon: <Compass className="w-6 h-6" />,
       title: "Visão",
-      desc: "Ser uma comunidade que reflete o Reino: simples, acolhedora e relevante, onde cada membro descobre seus dons e serve com alegria na cidade e até os confins da terra.",
-      tags: ["Santidade", "Serviço", "Cidade"],
+      desc: "Ser uma Igreja saudável, fundamentada no Evangelho, onde vidas são transformadas pelo poder de Deus e onde cada membro cresce em maturidade espiritual, se multiplica e assume seu chamado. Vivemos a visão “Somos Mil”: alcançar pessoas, formar líderes e expandir o Reino com simplicidade e fidelidade bíblica.",
+      tags: ["Santidade", "Crescimento", "Multiplicação", "Liderança"],
     },
     {
       icon: <Star className="w-6 h-6" />,
       title: "Valores",
-      desc: "Centralidade das Escrituras, oração, unidade, integridade, generosidade, amor ao próximo e esperança viva na volta de Cristo.",
-      tags: ["Escrituras", "Oração", "Unidade"],
+      desc: [
+        "Cristocentrismo: Jesus é o centro de tudo.",
+        "Simplicidade Bíblica: onde a Bíblia fala, falamos; onde ela se cala, calamo-nos.",
+        "Serviço com amor: cada membro é um ministro.",
+        "Unidade e comunhão: caminhamos como um só corpo.",
+        "Discipulado relacional: vidas cuidando de vidas.",
+        "Excelência com coração voluntário: fazemos o melhor para Deus.",
+        "Esperança escatológica: vivemos olhando para o retorno de Cristo.",
+      ],
+      tags: ["Escrituras", "Oração", "Unidade", "Esperança"],
     },
   ];
 
   return (
-    <section className="py-14 md:py-20">
+    <section className="py-14 md:py-48 bg-black">
       <div className="max-w-6xl mx-auto px-4 md:px-6">
         <TitleLined label="Missão, Visão e Valores" />
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -103,13 +148,21 @@ function MVV() {
               initial={fadeUp.hidden}
               whileInView={fadeUp.show}
               viewport={{ once: true, amount: 0.35 }}
-              className="rounded-2xl p-6 md:p-8 bg-white/[0.04] ring-1 ring-white/10 backdrop-blur-sm hover:bg-white/[0.06] transition" 
+              className="rounded-2xl p-6 md:p-8 bg-white/4 ring-1 ring-white/10 backdrop-blur-sm hover:bg-white/6 transition"
             >
               <div className="flex items-center gap-3 text-white">
                 <div className="p-2 rounded-xl bg-white/10">{it.icon}</div>
                 <h3 className="text-xl font-semibold">{it.title}</h3>
               </div>
-              <p className="mt-4 text-white/90 leading-relaxed">{it.desc}</p>
+              {Array.isArray(it.desc) ? (
+                <ul className="mt-4 list-disc pl-5 space-y-2 text-white/90">
+                  {it.desc.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-4 text-white/90 leading-relaxed">{it.desc}</p>
+              )}
               <div className="mt-5 flex flex-wrap gap-2">
                 {it.tags.map((t) => (
                   <Pill key={t}>{t}</Pill>
@@ -123,192 +176,117 @@ function MVV() {
   );
 }
 
-function Emphasis() {
-  return (
-    <section className="py-14 md:py-20">
-      <div className="max-w-5xl mx-auto px-6">
-        <motion.blockquote
-          initial={fadeIn.hidden}
-          whileInView={fadeIn.show}
-          viewport={{ once: true, amount: 0.4 }}
-          className="rounded-3xl p-8 md:p-12 bg-gradient-to-br from-white/[0.06] to-white/[0.02] ring-1 ring-white/10"
-        >
-          <p className="text-xl md:text-2xl leading-relaxed text-white/95">
-            “Nossa casa, que antes era um galpão, tornou-se um lugar de adoração e comunhão — simples, acolhedor e centrado em Cristo.”
-          </p>
-          <footer className="mt-4 text-white/60">Memórias da comunidade</footer>
-        </motion.blockquote>
-      </div>
-    </section>
-  );
-}
-
-function Gallery() {
-  const IMGS = [
-    "/images/maoslevantadas.jpeg",
-    "/images/galpao.jpg",
-    "/images/templo1.jpeg",
-    "/images/templo2.jpeg",
-    "/images/templo-out.jpeg",
-    "/images/velhos.jpeg",
-  ];
-  return (
-    <section className="py-14 md:py-20">
-      <div className="max-w-6xl mx-auto px-4 md:px-6">
-        <TitleLined label="Memórias em imagens" />
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4">
-          {IMGS.map((src, i) => (
-            <motion.div key={src} initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.4, delay: i * 0.03 }} className={`overflow-hidden rounded-2xl ring-1 ring-white/10 ${i === 0 ? "md:col-span-3 col-span-2" : i === 5 ? "md:col-span-3 col-span-2" : "md:col-span-1"}`}>
-              <Image src={src} alt="" className="w-full h-full object-cover aspect-[4/3] md:aspect-square" loading="lazy" width={400} height={400} />
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ---- seção pioneiros ----
 function Pioneers() {
   const people = [
-    "Edimar Santos",
-    "Geneci Coutinho",
-    "Edia Bueno",
-    "Roberta Braga",
-    "Rones Marques",
-    "Meire e Neomarcio",
-    "Simone Pinheiro",
-    "Gleisson Marcos",
-    "Ediberto Camilo",
-    "Carmem Pinheiro",
-    "Fabiana e Jodeilton",
-    "Júnior e Alessandra",
-    "Kenia Saraiva",
-    "Márcio Moreno",
-    "Rosane e suas crianças",
+    'Edimar Santos',
+    'Geneci Coutinho',
+    'Edia Bueno',
+    'Roberta Braga',
+    'Rones Marques',
+    'Meire e Neomarcio',
+    'Simone Pinheiro',
+    'Gleisson Marcos',
+    'Ediberto Camilo',
+    'Carmem Pinheiro',
+    'Fabiana e Jodeilton',
+    'Júnior e Alessandra',
+    'Kenia Saraiva',
+    'Márcio Moreno',
+    'Rosane e suas crianças',
   ];
+
   return (
-    <section className="py-14 md:py-20 items-center">
-      <div className="max-w-6xl mx-auto px-4 md:px-6 md:w-full">
+    <section className="py-16 md:py-24 bg-black/30 min-h-dvh flex items-center">
+      <div className="w-full mx-auto px-4 md:px-6">
         <TitleLined label="Os pioneiros" />
-        <p className="mt-6 text-white/90 leading-relaxed text-center md:w-full max-w-3xl">
-          Homens e mulheres que, com fé, coragem e zelo, plantaram as sementes de uma comunidade comprometida com a verdade bíblica, o discipulado relacional e a comunhão entre os santos.
+
+        <p className="mt-6 text-white/85 leading-relaxed text-center max-w-3xl mx-auto">
+          Homens e mulheres que, com fé, coragem e zelo, plantaram as sementes
+          de uma comunidade comprometida com a verdade bíblica, o discipulado
+          relacional e a comunhão entre os santos.
         </p>
-        <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {people.map((p) => (
-            <li key={p} className="flex items-center gap-3 text-white/90">
-              <Flower2 className="w-4 h-4 text-white/70" />
-              <span>{p}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
 
-// ---- CTA simples ----
-function CTA() {
-  return (
-    <section className="py-14 md:py-20">
-      <div className="max-w-6xl mx-auto px-4 md:px-6">
-        <div className="rounded-3xl p-8 md:p-12 bg-white/[0.04] ring-1 ring-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="text-2xl md:text-3xl font-semibold text-white">Junte-se à nossa comunhão</h3>
-            <p className="text-white/80 mt-2"></p>
-          </div>
-          <a href="#agenda" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-medium hover:opacity-90 transition">
-            Ver agenda <ArrowRight className="w-4 h-4" />
-          </a>
+        <div className="mt-10">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 max-w-5xl mx-auto">
+            {people.map((p) => (
+              <li
+                key={p}
+                className="flex items-center gap-3 text-white/90"
+              >
+                <Flower2 className="w-4 h-4 text-white/60 shrink-0" />
+                <span className="leading-snug">{p}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
   );
 }
 
-// ---- HERO ----
-function Hero() {
-  return (
-    <section className="relative w-full min-h-[72vh] md:min-h-[82vh] overflow-hidden rounded-none md:rounded-2xl">
-      <Image src="/images/maoslevantadas.jpeg" alt="Fundo" className="absolute inset-0 w-full h-full object-cover" loading="eager" fill />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/40" />
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 py-16 md:py-24 text-center">
-        <motion.p initial={fadeIn.hidden} animate={fadeIn.show} className="text-gray-300">Nossa História</motion.p>
-        <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.05 }} className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-2">
-          IGREJA DE CRISTO MARANATA
-        </motion.h1>
-        <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }} className="text-white/90 mt-3 md:mt-4 text-base md:text-lg">
-          Um nascimento em oração e simplicidade
-        </motion.p>
-        <div className="mt-6 flex items-center justify-center gap-3">
-          <span className="inline-flex items-center gap-2 text-white/80 text-sm"><Church className="w-4 h-4"/> Comunhão</span>
-          <span className="inline-flex items-center gap-2 text-white/80 text-sm"><ScrollText className="w-4 h-4"/> Escrituras</span>
-          <span className="inline-flex items-center gap-2 text-white/80 text-sm"><Users className="w-4 h-4"/> Discipulado</span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ---- Página ----
 export default function HistorySection() {
   return (
-    <main className="min-h-screen w-full bg-neutral-950 text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-        <Hero />
+    <main className="min-h-screen bg-linear-to-br from-black to-[#0b2a3e] text-white">
+      <HeroCenter
+        churchName="NOSSA HISTÓRIA"
+        mission="Igreja de Cristo Maranata"
+        imageSrc="/images/maoslevantadas.jpeg"
+      />
 
-        {/* Seções sobre o começo */}
-        <ImageTextBlock
-          eyebrow="1999"
-          title=""
-          img="/images/velhos.jpeg"
-          text="A história começou em abril de 1999, na casa da irmã Edia (Rua 11 de Janeiro, Vila Aurora Oeste). Tempo de oração, comunhão e esperança — um grupo sonhando com uma igreja centrada no Evangelho e na comunhão cristã."
-        />
+      {/* 1999 — O Começo de Tudo
+       */}
+      <ImageTextBlock
+        eyebrow="1999"
+        title="O Começo de Tudo"
+        img="/images/velhos.jpeg"
+        text="A nossa história nasceu em abril de 1999, quando um pequeno grupo de irmãos se reuniu na casa da irmã Edia, na Vila Aurora Oeste, para orar, sonhar e buscar a vontade de Deus. Ali, entre comunhão e esperança, surgiram os primeiros passos do que se tornaria a Igreja de Cristo Maranata — uma igreja simples, bíblica e centrada no Evangelho.
+O que começou em um lar, com poucos, tornou-se uma família espiritual que segue crescendo, servindo e vivendo a missão que o Senhor nos confiou."
+      />
 
-        <ImageTextBlock
-          reverse
-          eyebrow="2001"
-          title=""
-          img="/images/galpao.jpg"
-          text="No fim de 2000, a mudança para a Rua Leão XIII (Setor Rodoviário) trouxe identidade ao grupo. Em 19 de agosto de 2001, foi oficialmente fundada a Igreja de Cristo Maranata. Em 2004, a mudança para o galpão da Rua da Imprensa consolidou a obra."
-        />
+      <ImageTextBlock
+        reverse
+        eyebrow="2001"
+        title="Uma Nova Fase de Crescimento e Consolidação"
+        img="/images/galpao.jpg"
+        text="No fim de 2000, a mudança para a Rua Leão XIII, no Setor Rodoviário, trouxe identidade, estrutura e novas possibilidades ao grupo que estava sendo formado. Ali, os encontros ganharam estabilidade, a comunhão se fortaleceu e a visão de plantar uma igreja bíblica, simples e centrada no Evangelho começou a tomar forma com mais clareza.
+Em 19 de agosto de 2001, a Igreja de Cristo Maranata foi oficialmente fundada, marcando um passo decisivo na história da comunidade. Esse momento representou mais do que um registro — foi a confirmação de um chamado que Deus havia iniciado anos antes, dentro de um pequeno grupo reunido em fé e oração.
+Já em 2004, a mudança para o galpão da Rua da Imprensa trouxe uma nova onda de crescimento. O espaço, mais amplo e estruturado, permitiu o avanço dos ministérios, a realização de projetos e o fortalecimento da comunhão, consolidando a obra e preparando o caminho para tudo o que Deus continuaria a fazer nos anos seguintes.
+"
+      />
 
-        <ImageTextBlock
-          eyebrow="2005"
-          title=""
-          img="/images/templo1.jpeg"
-          text="Instalação na Av. Abel Coimbra (Cidade Jardim). Com a contribuição e propósito dos irmãos, o templo foi sendo erguido e aprimorado, mantendo a simplicidade e a centralidade em Cristo."
-        />
+      <ImageTextBlock
+        eyebrow="2005"
+        title="Um Novo Tempo: A Casa Ganha Forma, a Visão Ganha Força"
+        img="/images/templo1.jpeg"
+        text="A mudança para a Av. Abel Coimbra, no bairro Cidade Jardim, marcou um ponto decisivo na caminhada da Igreja de Cristo Maranata. O que começou como um terreno simples se tornou, aos poucos, um espaço sagrado — erguido com esforço, oração, generosidade e o propósito firme de ver o Reino de Deus avançar.
+Cada parede levantada, cada tijolo colocado e cada recurso ofertado pelos irmãos carregava um significado profundo: ali nascia um lugar preparado para acolher vidas, ensinar a Palavra e construir uma igreja saudável, centrada exclusivamente em Cristo.
+Mesmo em meio ao processo de construção, os cultos aconteciam na tenda, sob sol ou chuva, revelando uma fé perseverante e uma igreja disposta a caminhar com simplicidade, união e coragem. Ano após ano, o templo foi ganhando forma e estrutura, mas manteve intacto aquilo que sempre definiu a nossa identidade: a centralidade em Jesus, o amor pela comunhão e o desejo de formar discípulos que impactam gerações.
+A instalação no novo endereço não apenas ampliou o espaço físico — ela ampliou a visão, fortaleceu a unidade e preparou o terreno para tudo o que Deus continuaria a realizar nos anos seguintes.
+Um templo construído por mãos humanas, mas sustentado pela fidelidade de Deus.
+"
+      />
 
-        {/* Blocos MVV */}
-        <MVV />
+      <ImageTextBlock 
+      reverse
+      eyebrow="Hoje"
+      title="Igreja de Cristo Maranata"
+      img=""
+      text="O que começou em uma sala simples, depois cresceu em casas, galpões e tendas, hoje se tornou uma igreja viva, madura e comprometida com o Reino. A Igreja de Cristo Maranata segue firme na missão de formar discípulos, fortalecer famílias e anunciar o Evangelho com verdade e amor. Somos uma comunidade que honra o legado recebido, mas caminha com os olhos no futuro. Aqui, cada culto, cada célula, cada ministério e cada líder faz parte de uma construção contínua: uma igreja saudável, bíblica, acolhedora e movida pela presença do Espírito Santo. "/>
 
-        {/* Ênfase */}
-        <Emphasis />
+      <ImageTextBlock
+      
+      eyebrow=""
+      title=""
+      img=""
+      text="Vivemos a visão “Somos Mil” com fé e ação, entendendo que o crescimento não acontece apenas em números, mas em vidas transformadas, relacionamentos restaurados e líderes levantados para servir. Hoje, continuamos avançando — como família, como igreja e como corpo unido em Cristo — para cumprir o propósito que Deus nos confiou e alcançar gerações com o poder do Evangelho. Esta é a Igreja de Cristo Maranata: firme na fé, constante na missão e cheia de esperança pelo que ainda virá. "
+      />
+       <MVV />
 
-        {/* Continuidade visual do templo */}
-        <ImageTextBlock
-          reverse
-          eyebrow="Hoje"
-          title="Nossa casa de adoração"
-          img="/images/templo2.jpeg"
-          text="De galpão a lar espiritual: um espaço acolhedor para adoração e comunhão, com melhorias contínuas e foco no que é essencial."
-        />
-        <ImageTextBlock
-          eyebrow="Comunidade"
-          title="Simplicidade que acolhe"
-          img="/images/templo-out.jpeg"
-          text="Ambiente pensado para receber famílias, ensinar as Escrituras e servir a cidade com amor e generosidade."
-        />
+      <Pioneers />
 
-        {/* Galeria e Pioneiros */}
-        <Gallery />
-        {/* <Timeline /> */}
-        <Pioneers />
+      <MinistriesGrid />
 
-        {/* CTA */}
-        <CTA />
-      </div>
+      <Footer />
     </main>
   );
 }
