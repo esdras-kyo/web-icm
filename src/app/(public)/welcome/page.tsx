@@ -3,11 +3,12 @@
 import { useAuth } from '@clerk/nextjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
+import { Suspense } from 'react'
 
-export default function BemVindoPage(): React.JSX.Element {
+function BemVindoInner(): React.JSX.Element {
   const router = useRouter()
   const params = useSearchParams()
-  const from = params.get('from') // 'signin' | 'signup' | null
+  const from = params.get('from') 
 
   const { isLoaded, isSignedIn } = useAuth()
   const ready = isLoaded && isSignedIn
@@ -67,5 +68,13 @@ export default function BemVindoPage(): React.JSX.Element {
         )}
       </div>
     </main>
+  )
+}
+
+export default function BemVindoPage(): React.JSX.Element {
+  return (
+    <Suspense fallback={null}>
+      <BemVindoInner />
+    </Suspense>
   )
 }
