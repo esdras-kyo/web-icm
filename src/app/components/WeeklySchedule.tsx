@@ -1,7 +1,8 @@
 "use client";
 
-import { Clock } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 type ScheduleItem = {
   day: string;
@@ -99,6 +100,15 @@ export default function WeeklySchedule() {
                 </div>
               </div>
             ))}
+          </div>
+          <div className="flex flex-col w-full p-2 items-center justify-center mt-4 md:mt-12">
+          <Link
+                href="/agenda"
+                className="cursor-pointer inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-xs md:text-sm font-semibold text-black bg-zinc-200 hover:bg-zinc-100 transition"
+              >
+                <p>Ver agenda</p>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
           </div>
         </div>
       </div>
