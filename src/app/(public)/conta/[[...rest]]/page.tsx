@@ -83,10 +83,6 @@ export default function ContaPage() {
                 Preencha os dados abaixo para concluir.
               </p>
             </div>
-
-            <span className='hidden md:inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70'>
-              Visitante
-            </span>
           </div>
 
           <MemberForm />

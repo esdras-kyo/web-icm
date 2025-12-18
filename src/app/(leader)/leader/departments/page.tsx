@@ -17,7 +17,7 @@ export default async function DepartmentsPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-2 py-2">
-      <h1 className="text-xl font-bold text-white mb-8">Lista de Departamentos</h1>
+      <h1 className="text-xl font-bold text-white mb-8">Ministérios</h1>
       <ul className="space-y-4">
         {minis?.map((mini) => (
           <li
