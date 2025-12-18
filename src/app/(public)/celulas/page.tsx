@@ -1,6 +1,7 @@
 "use client";
+import Footer from "@/app/components/Footer";
+import HeroCenter from "@/app/components/HeroCenter";
 import { motion, Variants } from "framer-motion";
-import Image from "next/image";
 
 type Cell = {
   id: number,
@@ -89,69 +90,6 @@ const cells: Cell[] = [
     address: "Rua CRP-8, Quadra 11, Lote 13 - Residencial Primavera, Goiânia - GO"
   }
 ]
-
-type HeroMissionProps = {
-  churchName: string;
-  mission: string;
-  imageSrc?: string;
-};
-
-function HeroMission({
-  churchName,
-  mission,
-  imageSrc,
-}: HeroMissionProps) {
-  return (
-    <section className="relative w-full h-dvh overflow-hidden">
-      {/* Background */}
-      {imageSrc ? (
-        <Image
-          src={imageSrc}
-          alt={churchName}
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-        />
-      ) : null}
-
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/45" />
-
-      {/* Centered content */}
-      <div className="absolute inset-0 flex items-center justify-center text-center px-6">
-        <div className="max-w-4xl">
-          {/* Church name */}
-          <motion.h1
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="text-3xl md:text-5xl font-semibold tracking-tight text-white"
-          >
-            {churchName}
-          </motion.h1>
-
-          {/* Mission */}
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              ease: "easeOut",
-              delay: 0.12,
-            }}
-            className="mt-4 text-sm md:text-lg tracking-wide uppercase text-white/75"
-          >
-            {mission}
-          </motion.p>
-        </div>
-      </div>
-
-      {/* Subtle gradient for legibility */}
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-black/30 via-transparent to-black/60" />
-    </section>
-  );
-}
 
 function CellsIntroPremium() {
   const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -517,14 +455,13 @@ export default function CellsPage() {
   return (
     <main className="min-h-screen bg-linear-to-br from-black to-[#0b2a3e] text-white">
 
-    <HeroMission
+    <HeroCenter
         mission="A igreja que acontece de casa em casa."
         churchName="Nossas Células"
       />
 
       <CellsIntroPremium />
 
-      {/* BLOCO DE CARDS */}
       <section className="w-full py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl font-semibold mb-4 text-white">
@@ -561,25 +498,7 @@ export default function CellsPage() {
           </div>
         </div>
       </section>
-
-      {/* CTA final */}
-      {/* <section className="w-full py-20 flex justify-center">
-        <button className="px-8 py-3 rounded-2xl text-white font-medium bg-linear-to-tl from-[#8B0101] to-black/50 hover:from-[#a30303] hover:to-black/60 transition cursor-pointer">
-          Quero participar
-        </button>
-      </section> */}
+      <Footer />
     </main>
   );
 }
-
-
-
-{/*
-  As células são o coração que sustenta o crescimento da Igreja de Cristo Maranata. 
-  Acreditamos que a igreja não é apenas o que acontece no templo, mas o que vivemos todos os dias — nas casas, nos lares, nas ruas e nos relacionamentos.
-   Assim como a igreja do Novo Testamento, reunimo-nos em pequenos grupos para orar, aprender a Palavra, compartilhar a vida e alcançar novas pessoas com o Evangelho.
-
-Cada célula é um ambiente acolhedor, simples e cheio da presença de Deus, onde cada pessoa é vista, cuidada e discipulada. É ali que vidas são restauradas, líderes são formados e a visão “Somos Mil” se torna realidade — uma pessoa, uma casa e uma célula de cada vez.
-Nossas células seguem um processo bíblico que guia toda a igreja: ganhar, consolidar, treinar e enviar. Através desse movimento, crescemos com saúde, fortalecemos nossa fé e ampliamos o alcance do Reino em nossa cidade.
-Seja qual for sua fase da caminhada, existe uma célula preparada para você. Um lugar para pertencer, crescer e servir.
-  */}
