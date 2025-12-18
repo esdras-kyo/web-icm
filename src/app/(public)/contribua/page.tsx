@@ -10,7 +10,8 @@ import {
   MessageSquare,
 } from "lucide-react";
 import Image from "next/image";
-import TopBanner from "../../components/TopBanner";
+import Footer from "@/app/components/Footer";
+import HeroCenter from "@/app/components/HeroCenter";
 
 type DirectedDonation = {
   name: string;
@@ -165,8 +166,8 @@ function DirectedDonationForm() {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/80 to-slate-950/95">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(248,113,113,0.18),_transparent_60%),_radial-gradient(circle_at_bottom,_rgba(59,130,246,0.18),_transparent_55%)]" />
+    <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-slate-900/80 to-slate-950/95">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(248,113,113,0.18),transparent_60%),radial-gradient(circle_at_bottom,rgba(59,130,246,0.18),transparent_55%)]" />
       <div className="relative p-6 md:p-8">
         <div className="flex items-center gap-3 text-white">
           <div className="p-2 rounded-xl bg-white/10">
@@ -324,21 +325,19 @@ function DirectedDonationForm() {
 export default function ContribuicaoPage() {
   return (
     <main className="min-h-dvh w-full bg-slate-950 text-white flex flex-col">
-      <TopBanner
-        badgeText="Generosidade com propósito"
-        title="Contribuição"
-        subtitle="Sua oferta abençoa pessoas, sustenta a obra e amplia o alcance do Evangelho. Escolha a forma de contribuir ou fale conosco para uma oferta direcionada."
-        bannerHeight="70vh"
-      />
+      <HeroCenter 
+        churchName="Contribuição"
+        mission="Generosidade com propósito"
+      /> 
 
       <div className="mx-auto max-w-6xl px-4 md:px-6 py-10 md:py-16 w-full">
         {/* Card pai das formas de contribuição */}
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/80 to-slate-950/95 shadow-xl">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(248,113,113,0.14),_transparent_60%),_radial-gradient(circle_at_bottom,_rgba(59,130,246,0.16),_transparent_55%)]" />
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-slate-900/80 to-slate-950/95 shadow-xl">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(248,113,113,0.14),transparent_60%),radial-gradient(circle_at_bottom,rgba(59,130,246,0.16),transparent_55%)]" />
           <div className="relative p-6 md:p-10">
             <SectionTitle>Formas de contribuição</SectionTitle>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 gap-6">
               <PixCard />
               {/* <BankCard /> */}
             </div>
@@ -359,6 +358,7 @@ export default function ContribuicaoPage() {
           </a>
         </div>
       </div>
+      <Footer />
     </main>
   );
 }
