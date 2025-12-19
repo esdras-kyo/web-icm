@@ -11,8 +11,9 @@ export default function ChurchHome() {
     <div className="min-h-screen bg-black text-white">
       <HeroMission
         churchName="Igreja de Cristo Maranata"
-        mission="Ganhar, consolidar, discipular e enviar"
+        mission="Somos Mil"
         imageSrc="/images/home.png"
+        subtitle="Ganhar, consolidar, discipular e enviar"
       />
 
       <YouTubeSection />

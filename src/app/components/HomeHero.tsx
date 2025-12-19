@@ -7,11 +7,13 @@ type HeroMissionProps = {
   churchName: string;
   mission: string;
   imageSrc?: string;
+  subtitle?: string;
 };
 
 export default function HeroMission({
   churchName,
   mission,
+  subtitle,
   imageSrc,
 }: HeroMissionProps) {
   return (
@@ -38,25 +40,32 @@ export default function HeroMission({
           <motion.span
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="block text-xs md:text-sm tracking-[0.3em] uppercase text-white/70"
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="block text-[14px] md:text-md tracking-[0.34em] uppercase text-white/65"
           >
             {churchName}
           </motion.span>
 
-          {/* Mission */}
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              ease: "easeOut",
-              delay: 0.08,
-            }}
-            className="mt-4 max-w-4xl text-3xl md:text-5xl font-semibold leading-tight tracking-tight text-white"
+            transition={{ duration: 0.7, ease: 'easeOut', delay: 0.08 }}
+            className="mt-3 md:mt-4 max-w-4xl text-5xl md:text-7xl font-semibold leading-[1.05] md:leading-[1.02] tracking-tight text-white"
           >
             {mission}
           </motion.h1>
+
+          {subtitle ? (
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: 'easeOut', delay: 0.16 }}
+              className="mt-3 md:mt-4 max-w-3xl text-base md:text-2xl font-medium leading-relaxed text-white/80 uppercase"
+            >
+              {subtitle}
+            </motion.p>
+          ) : null}
+
         </div>
       </div>
 
