@@ -1,5 +1,8 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
+import { decodeJwt } from "jose";
+
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 
 function toIntOrNull(v: FormDataEntryValue | null, min?: number, max?: number) {
@@ -12,11 +15,20 @@ function toIntOrNull(v: FormDataEntryValue | null, min?: number, max?: number) {
 }
 
 export async function createMeetingAction(formData: FormData) {
+  const { getToken } = await auth();
+  const jwt = await getToken({ template: "member_jwt" });
+  if (!jwt) return { success: false, message: "Token ausente." };
+
+  const decoded = decodeJwt(jwt) as {
+    claims?: { app_user_id?: string };
+  };
+
+  const createdBy = decoded?.claims?.app_user_id;
+
   const supabase = createSupabaseAdmin();
 
   const cellId = String(formData.get("cellId") ?? "");
   const occurredAt = String(formData.get("occurred_at") ?? "");
-  const createdBy = String(formData.get("created_by") ?? "");
 
   const notes = (formData.get("notes") as string) || null;
 
@@ -34,7 +46,7 @@ export async function createMeetingAction(formData: FormData) {
 
   if (!cellId) return { success: false, message: "Célula inválida." };
   if (!occurredAt) return { success: false, message: "Data da reunião é obrigatória." };
-  if (!createdBy) return { success: false, message: "Usuário não identificado (created_by)." };
+  if (!createdBy) return { success: false, message: "Usuário não identificado." };
 
   const { error } = await supabase.from("cell_meetings").insert([{
     cell_id: cellId,

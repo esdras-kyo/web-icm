@@ -1,12 +1,25 @@
-// /app/leader/cells/[name]/manage/page.tsx
 import Link from "next/link";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { addMemberAction } from "./actions/addMember";
 import { changeRoleAction } from "./actions/changeRole";
 import { removeMemberAction } from "./actions/removeMember";
-import { MeetingForm } from "../../_components/MeetingForm";
 import { CollapsibleCard } from "../../_components/CollapsibleCard";
 import type { PostgrestError } from "@supabase/supabase-js";
+import { ActionForm } from "./ActionForm";
+import { RoleField } from "./RoleField";
+
+const rowCard =
+  "rounded-md border p-3 bg-white/5 ring-1 ring-white/10 text-white";
+const titleTxt = "font-medium break-words";
+const metaTxt = "text-xs text-muted-foreground break-words";
+const actionBar =
+  "mt-3 sm:mt-0 flex flex-col sm:flex-row gap-2 sm:gap-2 sm:items-center w-full sm:w-auto";
+const actionRow =
+  "flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto";
+const selectBase =
+  "rounded-md border px-2 py-1 text-sm w-full sm:w-[160px] bg-transparent";
+const btnBase =
+  "cursor-pointer rounded-md border px-3 py-1 text-sm disabled:opacity-50 w-full sm:w-auto";
 
 export type MemberUser = {
   id: string;    
@@ -60,7 +73,7 @@ export default async function ManageCellPage({
     return (
       <div className="max-w-5xl mx-auto py-8">
         <div className="mb-4">
-          <Link href="/leader/cells" className="text-sm underline">
+          <Link href="/offc/cells" className="text-sm underline">
             ← Voltar
           </Link>
         </div>
@@ -83,24 +96,16 @@ export default async function ManageCellPage({
       error: PostgrestError | null;
     };
 
-  const memberOptions =
-    members?.map((m) => ({
-      userId: m.user?.id,
-      name: m.user?.name ?? "",
-    })) ?? [];
-
-    const currentUserId = "14607714-5f33-4be3-97e0-8156a74a8736";
-
   return (
     <div className="max-w-5xl mx-auto py-8 space-y-6 text-white">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-sm">
-            <Link href="/leader/cells" className="underline">
+            <Link href="/offc/cells" className="underline">
               ← Voltar
             </Link>
           </div>
-          <h1 className="text-2xl font-semibold mt-2">Gerenciar célula</h1>
+          <h1 className="text-2xl font-semibold mt-2">Gerenciar</h1>
           <p className="text-muted-foreground">{cell.name}</p>
         </div>
       </div>
@@ -112,18 +117,11 @@ export default async function ManageCellPage({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
+<div>
         <CollapsibleCard
   title="Adicionar membro"
-  subtitle="Adicione alguém à célula e escolha o papel."
+  subtitle="Adicione alguém e escolha o papel."
 >
-          <div className="p-4 border-b">
-            <h2 className="font-medium">Todos os usuários</h2>
-            <p className="text-xs text-muted-foreground">
-              Adicione alguém à célula e escolha o papel.
-            </p>
-          </div>
-
           <div className="p-4 space-y-3 max-h-[70vh] overflow-auto">
             {!users || users.length === 0 ? (
               <p className="text-sm text-muted-foreground">Nenhum usuário.</p>
@@ -134,61 +132,56 @@ export default async function ManageCellPage({
                 );
 
                 return (
-                  <div
-                    key={u.id}
-                    className="flex items-center justify-between rounded-md border p-3"
-                  >
-                    <div>
-                      <div className="font-medium">{u.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {u.email ?? "sem e-mail"}
-                      </div>
-                    </div>
+          <div
+            key={u.id}
+            className={`${rowCard} flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3`}
+          >
+            <div className="min-w-0">
+              <div className={titleTxt}>{u.name}</div>
+              <div className={metaTxt}>{u.email ?? "sem e-mail"}</div>
+            </div>
 
-                    {/* Form simples para adicionar membro */}
-                    <form action={onAddMember} className="flex items-center gap-2">
-                      <input type="hidden" name="cellId" value={cell.id} />
-                      <input type="hidden" name="userId" value={u.id} />
+            <ActionForm action={onAddMember} className={`${actionBar}`} statusPlacement="inline-end">
+              <div className={actionRow}>
+                <input type="hidden" name="cellId" value={cell.id} />
+                <input type="hidden" name="cellName" value={cell.name} />
+                <input type="hidden" name="userId" value={u.id} />
 
-                      <select
-                        name="role"
-                        className="rounded-md border px-2 py-1 text-sm"
-                        defaultValue="MEMBER"
-                        disabled={alreadyMember}
-                      >
-                        <option value="LEADER">LEADER</option>
-                        <option value="ASSISTANT">ASSISTANT</option>
-                        <option value="MEMBER">MEMBER</option>
-                      </select>
+                <select
+                  name="role"
+                  className={selectBase}
+                  defaultValue="MEMBER"
+                  disabled={alreadyMember}
+                >
+                  <option value="LEADER">Líder</option>
+                  <option value="ASSISTANT">Co-líder</option>
+                  <option value="MEMBER">Membro</option>
+                </select>
 
-                      <button
-                        type="submit"
-                        disabled={alreadyMember}
-                        className="rounded-md border px-3 py-1 text-sm disabled:opacity-50"
-                      >
-                        {alreadyMember ? "Já é membro" : "Adicionar"}
-                      </button>
-                    </form>
-                  </div>
+                <button
+                  type="submit"
+                  disabled={alreadyMember}
+                  className={btnBase}
+                >
+                  {alreadyMember ? "Já é membro" : "Adicionar"}
+                </button>
+              </div>
+            </ActionForm>
+          </div>
                 );
               })
             )}
           </div>
  
         </CollapsibleCard>
+        </div>
 
         {/* COLUNA: MEMBROS DA CÉLULA */}
+        <div>
         <CollapsibleCard
-  title="Membros da célula"
-  subtitle="Altere o papel ou remova da célula."
+  title="Membros"
+  subtitle="Altere o papel ou remova"
 >
-
-          <div className="p-4 border-b">
-            <h2 className="font-medium">Membros da célula</h2>
-            <p className="text-xs text-muted-foreground">
-              Altere o papel ou remova da célula.
-            </p>
-          </div>
 
           <div className="p-4 space-y-3 max-h-[70vh] overflow-auto">
             {!members || members.length === 0 ? (
@@ -196,68 +189,40 @@ export default async function ManageCellPage({
             ) : (
               members.map((m) => (
                 <div
-                  key={m.id}
-                  className="flex items-center justify-between rounded-md border p-3"
-                >
-                  <div>
-                    <div className="font-medium">{m.user?.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {m.user?.email ?? "sem e-mail"}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {/* Trocar papel */}
-                    <form action={onChangeRole} className="flex items-center gap-2">
-                      <input type="hidden" name="membershipId" value={m.id} />
-                      <input type="hidden" name="cellId" value={cell.id} />
-                      <select
-                        name="role"
-                        className="rounded-md border px-2 py-1 text-sm"
-                        defaultValue={m.role}
-                      >
-                        <option value="LEADER">LEADER</option>
-                        <option value="ASSISTANT">ASSISTANT</option>
-                        <option value="MEMBER">MEMBER</option>
-                      </select>
-                      <button type="submit" className="rounded-md border px-3 py-1 text-sm">
-                        Salvar
-                      </button>
-                    </form>
-
-                    {/* Remover */}
-                    <form action={onRemoveMember}>
-                      <input type="hidden" name="membershipId" value={m.id} />
-                      <input type="hidden" name="cellId" value={cell.id} />
-                      <button
-                        type="submit"
-                        className="rounded-md border px-3 py-1 text-sm"
-                      >
-                        Remover
-                      </button>
-                    </form>
-                  </div>
+                key={m.id}
+                className={`${rowCard} flex flex-col gap-3`}
+              >
+                <div className="min-w-0">
+                  <div className={titleTxt}>{m.user?.name}</div>
+                  <div className={metaTxt}>{m.user?.email ?? "sem e-mail"}</div>
                 </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                  {/* Trocar papel */}
+                  <ActionForm action={onChangeRole} className={`${actionRow}`} statusPlacement="inline-end">
+                    <input type="hidden" name="membershipId" value={m.id} />
+                    <input type="hidden" name="cellId" value={cell.id} />
+                    <input type="hidden" name="cellName" value={cell.name} />
+                    <RoleField initial={m.role} />
+                  </ActionForm>
+
+                  {/* Remover */}
+                  <ActionForm action={onRemoveMember} className={`${actionRow}`} statusPlacement="inline-end" successLabel="Removido">
+                    <input type="hidden" name="membershipId" value={m.id} />
+                    <input type="hidden" name="cellId" value={cell.id} />
+                    <input type="hidden" name="cellName" value={cell.name} />
+                    <button type="submit" className={`${btnBase} border-red-400/50 hover:border-red-400/80 md:-ml-8`}>
+                      Remover
+                    </button>
+                  </ActionForm>
+                </div>
+              </div>
               ))
             )}
           </div>
         </CollapsibleCard>
+        </div>
       </div>
-      <section className="rounded-lg border">
-  <div className="p-4 border-b">
-    <h2 className="font-medium">Novo relatório</h2>
-    <p className="text-xs text-muted-foreground">
-      Crie um relatório para a célula {cell.name}.
-    </p>
-  </div>
-  <div className="p-4">
-    <MeetingForm
-      cellId={cell.id}
-      members={memberOptions}
-      currentUserId={currentUserId}
-    />
-  </div>
-</section>
     </div>
   );
 }
