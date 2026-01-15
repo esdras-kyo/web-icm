@@ -25,7 +25,7 @@ const MINISTRIES: Ministry[] = [
   {
     name: "Teatro",
     description: "Arte que comunica o evangelho.",
-    imageSrc: "/images/teatro.png",
+    imageSrc: "/images/teatro.jpeg",
     icon: <Drama className="h-5 w-5" />,
   },
   {
@@ -38,7 +38,7 @@ const MINISTRIES: Ministry[] = [
   {
     name: "Rede Fire",
     description: "Discipulado e avivamento para os jovens.",
-    imageSrc: "/images/rede-fire.jpeg",
+    imageSrc: "/images/redefire.jpg",
     icon: <Flame className="h-5 w-5" />,
   },
   {
@@ -85,18 +85,15 @@ export default function MinistriesGrid() {
       ease: "easeOut",
       delay: 0.5,
      }}
-    className="w-full bg-black py-36 px-6">
+    className="w-full py-36 px-6">
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 text-center">
           <p className="text-xs uppercase tracking-[0.28em] text-white/60">
             Ministérios & Departamentos
           </p>
           <h2 className="mt-3 text-2xl md:text-4xl font-semibold tracking-tight text-white">
-            Ministérios & Departamentos
-          </h2>
-          <p className="mt-2 text-sm md:text-base text-white/70">
             Descubra onde você pode se envolver e servir na igreja.
-          </p>
+          </h2>
         </div>
 
         <motion.div

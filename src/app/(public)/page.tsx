@@ -25,7 +25,7 @@ export default function ChurchHome() {
       {/* <MinistriesGrid />
       
       <div className=" -top-px h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />  */}
-
+<div className="bg-linear-to-bl from-black to-[#0b2a3e]">
       <HomeFeatureCard
         href="/historia"
         kicker="Conheça nossas raízes"
@@ -47,6 +47,7 @@ export default function ChurchHome() {
         height="sm"
         align="left"
       />
+      </div>
 
       <Footer/>
 

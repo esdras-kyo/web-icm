@@ -458,6 +458,7 @@ export default function CellsPage() {
     <HeroCenter
         mission="A igreja que acontece de casa em casa."
         churchName="Nossas Células"
+        imageSrc="/images/celulas.jpeg"
       />
 
       <CellsIntroPremium />

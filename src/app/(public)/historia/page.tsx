@@ -229,7 +229,7 @@ export default function HistorySection() {
     <main className="min-h-screen bg-linear-to-br from-black to-[#0b2a3e] text-white">
       <HeroCenter
         churchName="NOSSA HISTÓRIA"
-        mission="Igreja de Cristo Maranata"
+       // mission="Igreja de Cristo Maranata"
         imageSrc="/images/maoslevantadas.jpeg"
       />
 
@@ -257,7 +257,7 @@ Já em 2004, a mudança para o galpão da Rua da Imprensa trouxe uma nova onda d
       <ImageTextBlock
         eyebrow="2005"
         title="Um Novo Tempo: A Casa Ganha Forma, a Visão Ganha Força"
-        img="/images/templo1.jpeg"
+        img="/images/historia2.jpeg"
         text="A mudança para a Av. Abel Coimbra, no bairro Cidade Jardim, marcou um ponto decisivo na caminhada da Igreja de Cristo Maranata. O que começou como um terreno simples se tornou, aos poucos, um espaço sagrado — erguido com esforço, oração, generosidade e o propósito firme de ver o Reino de Deus avançar.
 Cada parede levantada, cada tijolo colocado e cada recurso ofertado pelos irmãos carregava um significado profundo: ali nascia um lugar preparado para acolher vidas, ensinar a Palavra e construir uma igreja saudável, centrada exclusivamente em Cristo.
 Mesmo em meio ao processo de construção, os cultos aconteciam na tenda, sob sol ou chuva, revelando uma fé perseverante e uma igreja disposta a caminhar com simplicidade, união e coragem. Ano após ano, o templo foi ganhando forma e estrutura, mas manteve intacto aquilo que sempre definiu a nossa identidade: a centralidade em Jesus, o amor pela comunhão e o desejo de formar discípulos que impactam gerações.
@@ -270,14 +270,14 @@ Um templo construído por mãos humanas, mas sustentado pela fidelidade de Deus.
       reverse
       eyebrow="Hoje"
       title="Igreja de Cristo Maranata"
-      img=""
+      img="/images/igrejaatual.jpeg"
       text="O que começou em uma sala simples, depois cresceu em casas, galpões e tendas, hoje se tornou uma igreja viva, madura e comprometida com o Reino. A Igreja de Cristo Maranata segue firme na missão de formar discípulos, fortalecer famílias e anunciar o Evangelho com verdade e amor. Somos uma comunidade que honra o legado recebido, mas caminha com os olhos no futuro. Aqui, cada culto, cada célula, cada ministério e cada líder faz parte de uma construção contínua: uma igreja saudável, bíblica, acolhedora e movida pela presença do Espírito Santo. "/>
 
       <ImageTextBlock
       
       eyebrow=""
       title=""
-      img=""
+      img="/images/vivemos.jpeg"
       text="Vivemos a visão “Somos Mil” com fé e ação, entendendo que o crescimento não acontece apenas em números, mas em vidas transformadas, relacionamentos restaurados e líderes levantados para servir. Hoje, continuamos avançando — como família, como igreja e como corpo unido em Cristo — para cumprir o propósito que Deus nos confiou e alcançar gerações com o poder do Evangelho. Esta é a Igreja de Cristo Maranata: firme na fé, constante na missão e cheia de esperança pelo que ainda virá. "
       />
        <MVV />
