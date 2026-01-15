@@ -3,7 +3,7 @@ import {motion} from "framer-motion"
 
 type HeroMissionProps = {
   churchName: string;
-  mission: string;
+  mission?: string;
   imageSrc?: string;
 };
 
@@ -43,7 +43,8 @@ export default function HeroCenter({
           </motion.h1>
 
           {/* Mission */}
-          <motion.p
+          {mission && (
+            <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -55,6 +56,7 @@ export default function HeroCenter({
           >
             {mission}
           </motion.p>
+          )}
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import Link from "next/link";
 
 type ScheduleItem = {
   day: string;
-  title: string;
+  title: string | string[];
   time?: string;
 };
 
@@ -17,7 +17,7 @@ const SCHEDULE: ScheduleItem[] = [
   },
   {
     day: "Terça",
-    title: "Discipulado",
+    title: "Estudos | Discipulados",
   },
   {
     day: "Quarta",
@@ -25,21 +25,28 @@ const SCHEDULE: ScheduleItem[] = [
   },
   {
     day: "Quinta",
-    title: "Escola de Líderes e Ensaios",
+    title: "Escola de Líderes | Cursos | Ensaios",
   },
   {
     day: "Sexta",
-    title: "Casas de Paz",
+    title: [
+      "Visitas e Orações nas Casas",
+      "Toda primeira sexta do mês: Empreendendo com Cristo",
+      "Toda última sexta do mês: Culto de Homens",
+    ],
   },
   {
     day: "Sábado",
-    title: "Cultos de Jovens",
-    time: "Todo último sábado do mês",
+    title: [
+      "Penúltimo Sábado do mês: Culto de Mulheres",
+      "Ultimo Sábado do mês: Culto de Jovens"
+    ],
   },
   {
     day: "Domingo",
-    title: "Culto",
-    time: "09h (manhã) · 19h (noite)",
+    title: ["09h - Culto de Celebração",
+      "19h - Culto Resgate",
+      "Culto de Ceia todo primeiro domingo do mês"],
   },
 ];
 
@@ -88,16 +95,24 @@ export default function WeeklySchedule() {
                     {item.day}
                   </span>
 
-                  <span className="text-sm text-white/80">
-                    {item.title}
-                  </span>
-
-                  {item.time && (
-                    <span className="text-xs text-white/60">
-                      {item.time}
+                  {Array.isArray(item.title) ? (
+                    <ul className="list-disc list-inside marker:text-white/40 text-sm text-white/80 space-y-1">
+                      {item.title.map((t, index) => (
+                        <li key={index}>{t}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-sm text-white/80">
+                      {item.title}
                     </span>
                   )}
-                </div>
+
+  {item.time && (
+    <span className="text-xs text-white/60">
+      {item.time}
+    </span>
+  )}
+</div>
               </div>
             ))}
           </div>

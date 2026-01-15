@@ -31,46 +31,46 @@ const MINISTRIES: Ministry[] = [
   {
     name: "Escola de Líderes",
     description: "Formação e preparo para servir com excelência.",
-    imageSrc: "/images/escola-lideres.png",
+    imageSrc: "/images/escolalideres.jpeg",
     icon: <GraduationCap className="h-5 w-5" />,
     badge: "Formação",
   },
   {
     name: "Rede Fire",
     description: "Discipulado e avivamento para os jovens.",
-    imageSrc: "/images/rede-fire.png",
+    imageSrc: "/images/rede-fire.jpeg",
     icon: <Flame className="h-5 w-5" />,
   },
   {
     name: "Rede de Mulheres",
     description: "Edificação, cuidado e fortalecimento.",
-    imageSrc: "/images/mulheres.png",
+    imageSrc: "/images/redemulheres.jpeg",
     icon: <Users className="h-5 w-5" />,
   },
   {
     name: "Ministério de Adoração APE",
     description: "Louvor e adoração na presença de Deus.",
-    imageSrc: "/images/adoracao.png",
+    imageSrc: "/images/ape.jpeg",
     icon: <Music className="h-5 w-5" />,
     badge: "Adoração",
   },
   {
     name: "Empreendendo com Cristo",
     description: "Trabalho com princípios.",
-    imageSrc: "/images/empreendendo.png",
+    imageSrc: "/images/empreendendo.jpeg",
     icon: <BriefcaseBusiness className="h-5 w-5" />,
   },
   {
     name: "Casas de Paz",
     description: "Evangelismo e cuidado nas casas.",
-    imageSrc: "/images/casas-de-paz.png",
+    imageSrc: "/images/casadepaz.jpeg",
     icon: <HandHeart className="h-5 w-5" />,
     badge: "Missão",
   },
   {
     name: "Acolhimento & Integração",
     description: "Receber bem e conectar pessoas.",
-    imageSrc: "/images/acolhimento.png",
+    imageSrc: "/images/acolhimento.jpeg",
     icon: <Sparkles className="h-5 w-5" />,
   },
 ];
@@ -89,7 +89,7 @@ export default function MinistriesGrid() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 text-center">
           <p className="text-xs uppercase tracking-[0.28em] text-white/60">
-            Aqui você encontra
+            Ministérios & Departamentos
           </p>
           <h2 className="mt-3 text-2xl md:text-4xl font-semibold tracking-tight text-white">
             Ministérios & Departamentos

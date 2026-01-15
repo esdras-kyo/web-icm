@@ -4,13 +4,15 @@ import HeroMission from "@/app/components/HomeHero";
 import YouTubeSection from "@/app/components/YoutubeSection";
 import EventsGrid from "@/app/components/EventShowCase";
 import WeeklySchedule from "@/app/components/WeeklySchedule";
+import HomeFeatureCard from "@/app/components/HomeFeatureCard";
 
 export default function ChurchHome() {
   return (
     <div className="min-h-screen bg-black text-white">
       <HeroMission
         churchName="Igreja de Cristo Maranata"
-        mission="Somos Mil"
+        mission="SOMOS MIL"
+        imageSrc="/images/home1.jpeg"
         subtitle="Ganhar, consolidar, discipular e enviar"
       />
 
@@ -20,9 +22,34 @@ export default function ChurchHome() {
 
       <EventsGrid />
 
-      <div className=" -top-px h-px bg-linear-to-r from-transparent via-white/30 to-transparent" /> 
+      {/* <MinistriesGrid />
+      
+      <div className=" -top-px h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />  */}
+
+      <HomeFeatureCard
+        href="/historia"
+        kicker="Conheça nossas raízes"
+        title="Nossa História"
+        subtitle="Uma jornada marcada por fé, unidade e propósito — do começo até hoje."
+        // imageSrc="/images/historia.jpg"
+        variant="soft"
+        height="sm"
+        align="left"
+      />
+
+      <HomeFeatureCard
+        href="/celulas"
+        kicker="Conheça nossas Células"
+        title="Células"
+        subtitle="A asa da Igreja"
+        // imageSrc="/images/celula.jpg"
+        variant="soft"
+        height="sm"
+        align="left"
+      />
 
       <Footer/>
+
     </div>
   );
 }
