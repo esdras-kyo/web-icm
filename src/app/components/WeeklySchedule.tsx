@@ -31,15 +31,15 @@ const SCHEDULE: ScheduleItem[] = [
     day: "Sexta",
     title: [
       "Visitas e Orações nas Casas",
-      "Toda primeira sexta do mês: Empreendendo com Cristo",
+      "1ª sexta do mês: Empreendendo com Cristo",
       "Toda última sexta do mês: Culto de Homens",
+      "3ª sexta do mês: Culto das Mulheres"
     ],
   },
   {
     day: "Sábado",
     title: [
-      "Penúltimo Sábado do mês: Culto de Mulheres",
-      "Ultimo Sábado do mês: Culto de Jovens"
+      "4º Sábado do mês: Culto de Jovens"
     ],
   },
   {
