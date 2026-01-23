@@ -11,6 +11,7 @@ import {
   BriefcaseBusiness,
   HandHeart,
   Sparkles,
+  Baby,
 } from "lucide-react";
 
 type Ministry = {
@@ -72,6 +73,12 @@ const MINISTRIES: Ministry[] = [
     description: "Receber bem e conectar pessoas.",
     imageSrc: "/images/acolhimento.jpeg",
     icon: <Sparkles className="h-5 w-5" />,
+  },
+  {
+    name: "Kids",
+    description: "Cristo desde o início.",
+    imageSrc: "/images/kids.jpeg",
+    icon:  <Baby className="h-5 w-5" />,
   },
 ];
 
