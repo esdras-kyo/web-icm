@@ -13,7 +13,6 @@ import { TotalUsersKpi } from "./TotalUsers";
 export default function Office() {
 const [data, setData] = useState<RegistrationPoint[]>([])
 async function fetchNumbers(){
-  console.log("chamouuuuu")
   const data = await fetch("/api/events/registrations-over-time", {
     method: "POST",
     body: JSON.stringify({
