@@ -7,6 +7,7 @@ import { CollapsibleCard } from "../../_components/CollapsibleCard";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { ActionForm } from "./ActionForm";
 import { RoleField } from "./RoleField";
+import { MeetingForm } from "../../_components/MeetingForm";
 
 const rowCard =
   "rounded-md border p-3 bg-white/5 ring-1 ring-white/10 text-white";
@@ -73,7 +74,7 @@ export default async function ManageCellPage({
     return (
       <div className="max-w-5xl mx-auto py-8">
         <div className="mb-4">
-          <Link href="/offc/cells" className="text-sm underline">
+          <Link href="/leader/cells" className="text-sm underline">
             ← Voltar
           </Link>
         </div>
@@ -96,19 +97,23 @@ export default async function ManageCellPage({
       error: PostgrestError | null;
     };
 
+  const leaderMember = (members ?? []).find((m) => m.role === "LEADER");
+  const leaderUserId = leaderMember?.user?.id ?? undefined;
+  const leaderName = leaderMember?.user?.name ?? undefined;
+
   return (
     <div className="max-w-5xl mx-auto py-8 space-y-6 text-white">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-sm">
-            <Link href="/offc/cells" className="underline">
+            <Link href="/leader/cells" className="underline">
               ← Voltar
             </Link>
           </div>
-          <h1 className="text-2xl font-semibold mt-2">Gerenciar</h1>
-          <p className="text-muted-foreground">{cell.name}</p>
+          <h1 className="text-2xl font-semibold mt-2">{cell.name}</h1>
         </div>
       </div>
+      <MeetingForm cellId={cell.id} leaderName={leaderName} leaderUserId={leaderUserId} />
 
       {(usersErr || membersErr) && (
         <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -118,6 +123,9 @@ export default async function ManageCellPage({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
+
+
+
         <CollapsibleCard
   title="Adicionar membro"
   subtitle="Adicione alguém e escolha o papel."

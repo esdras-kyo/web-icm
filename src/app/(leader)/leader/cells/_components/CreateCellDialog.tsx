@@ -35,7 +35,7 @@ export function CreateCellDialog() {
         <form action={handleSubmit} className="space-y-4">
           <div>
             <label className="text-sm font-medium">Nome</label>
-            <Input name="name" placeholder="Ex: Célula João e Maria" required />
+            <Input name="name" placeholder="Ex: Célula de Jesus" required />
           </div>
 
           {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}

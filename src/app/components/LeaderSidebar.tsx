@@ -11,8 +11,8 @@ const items: SidebarItem[] = [
   { name: "Painel", href: "/leader", icon: House },
   { name: "Agenda", href: "/leader/agenda", icon: CalendarPlus2 },
   { name: "Materiais", href: "/leader/files", icon: FileText },
-  { name: "Cells", href: "/leader/cells", icon: HeartHandshake },
-  { name: "Departamentos", href: "/leader/departments", icon: Castle },
+  { name: "Célula", href: "/leader/cells", icon: HeartHandshake },
+  { name: "Ministérios", href: "/leader/departments", icon: Castle },
 ];
 
 export default function LeaderSidebar() {
