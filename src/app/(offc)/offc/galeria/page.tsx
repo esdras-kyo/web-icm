@@ -1,5 +1,6 @@
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { GallerySectionsList } from "./GallerySectionsList";
+import Link from "next/link";
 
 export const revalidate = 0;
 
@@ -34,12 +35,12 @@ export default async function GallerySectionsPage() {
           </p>
         </div>
 
-        <a
+        <Link
           href="/offc/galeria/new"
           className="rounded-lg hover:bg-emerald-200/30 border-white/40 border px-4 py-2 text-sm font-medium text-white cursor-pointer"
         >
           Nova seção +
-        </a>
+        </Link>
       </header>
 
       <GallerySectionsList sections={sections} />

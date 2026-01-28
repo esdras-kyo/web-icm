@@ -23,7 +23,6 @@ export default async function CellsPage() {
     return (
       <div className="max-w-3xl mx-auto py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold">celps</h1>
           <CreateCellDialog />
         </div>
         <p className="text-red-500">Erro ao carregar células.</p>
@@ -34,7 +33,7 @@ export default async function CellsPage() {
   return (
     <div className="max-w-3xl mx-auto py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Celps</h1>
+        <h1 className="text-2xl font-semibold">Células</h1>
         <CreateCellDialog />
       </div>
 
