@@ -184,7 +184,7 @@ export default async function CellMeetingsPage({
                     <div className='mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground'>
                       <div className='flex items-center gap-1'>
                         <MapPin size={14} />
-                        <span>Reunião: {m.occurred_at}</span>
+                        <span>Reunião: {formatDateTimeBR(m.occurred_at)}</span>
                       </div>
 
                       {ratio ? (
@@ -200,28 +200,11 @@ export default async function CellMeetingsPage({
                           <span>Visitantes: {visitors}</span>
                         </div>
                       ) : null}
-
-                      {typeof score === 'number' ? <span>Score: {score}/5</span> : null}
-
-                      {hasNotes ? (
-                        <div className='flex items-center gap-1'>
-                          <StickyNote size={14} />
-                          <span>Tem notas</span>
-                        </div>
-                      ) : null}
-
-                      <span>
-                        <span className='font-medium text-white/80'>Por:</span> {authorLabel}
-                      </span>
-                    </div>
-
-                    <div className='mt-2 text-[11px] text-muted-foreground'>
-                      Criado em: {formatDateTimeBR(m.created_at)}
                     </div>
                   </div>
 
                   <div className='shrink-0 flex items-center gap-2'>
-                    <Link href={`/offc/cell-meetings/${encodeURIComponent(m.id)}/manage`}>
+                    <Link href={`/offc/relatorios/celulas/${encodeURIComponent(m.id)}`}>
                       <Button size='sm' className='cursor-pointer'>
                         Ler
                       </Button>
@@ -244,7 +227,7 @@ function Header({ q, order }: { q: string; order: 'asc' | 'desc' }) {
   return (
     <div className='mb-6 flex flex-col gap-4'>
       {/* Top: voltar + título */}
-        <Link href="/offc/cells" className="text-sm underline">
+        <Link href="/offc/relatorios" className="text-sm underline">
             ← Voltar
           </Link>
       <div className='flex items-center justify-between gap-3'>

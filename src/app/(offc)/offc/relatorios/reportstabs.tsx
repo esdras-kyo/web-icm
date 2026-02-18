@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Users, MapPin, StickyNote, Sparkles } from 'lucide-react'
+import { Users, MapPin, StickyNote, Sparkles, ArrowUpRight } from 'lucide-react'
 
 type Cell = { id: string; name: string | null }
 
@@ -86,17 +86,17 @@ export default function ReportsTabs(props: {
         </button>
       </div>
 
-      {/* Conteúdo */}
       {tab === 'cells' ? (
         <>
-          <Link href='/offc/relatorios/celulas'>
-            <Button size='sm' variant='secondary' className='cursor-pointer'>
+            <Link
+              href="/offc/relatorios/celulas"
+              className="inline-flex items-center gap-1 rounded-md bg-white/10 p-2 text-sm font-medium hover:bg-white/40"
+            >
               Ver todos
-            </Button>
-          </Link>
-          {/* Lista de relatórios de células */}
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
           <section className='mb-10'>
-            <h2 className='text-lg font-semibold mb-3'>Relatórios Semanais de Células</h2>
+            <h2 className='text-lg font-semibold mb-3'>Células da semana</h2>
 
             {props.cellMeetings.length === 0 ? (
               <div className='rounded-lg border p-6 text-center text-sm text-muted-foreground'>
@@ -134,22 +134,6 @@ export default function ReportsTabs(props: {
                               </div>
                             ) : null}
 
-                            {visitors > 0 ? (
-                              <div className='flex items-center gap-1'>
-                                <Sparkles size={14} />
-                                <span>Visitantes: {visitors}</span>
-                              </div>
-                            ) : null}
-
-                            {typeof score === 'number' ? <span>Score: {score}/5</span> : null}
-                            {hasNotes ? (
-                              <div className='flex items-center gap-1'>
-                                <StickyNote size={14} />
-                                <span>Tem notas</span>
-                              </div>
-                            ) : null}
-
-                            <span>Por: {pickUserLabel(m.author)}</span>
                           </div>
                         </div>
 
@@ -171,9 +155,9 @@ export default function ReportsTabs(props: {
           <section className='mb-10'>
             <div className='flex items-end justify-between gap-4 mb-3'>
               <div>
-                <h2 className='text-lg font-semibold'>Células sem relatório</h2>
+                <h2 className='text-lg font-semibold'>Sem relatório da semana</h2>
                 <p className='text-xs text-muted-foreground'>
-                  {props.sentUnique}/{props.totalCells} enviaram • Cobertura: {props.coverage}%
+                  {props.sentUnique}/{props.totalCells} enviaram
                 </p>
               </div>
 
@@ -212,7 +196,14 @@ export default function ReportsTabs(props: {
         <>
           {/* Lista de relatórios de departamentos */}
           <section>
-            <h2 className='text-lg font-semibold mb-3'>Relatórios de Ministérios</h2>
+            <Link
+                href="/offc/relatorios/ministerios"
+                className="inline-flex items-center gap-1 rounded-md bg-white/10 p-2 text-sm font-medium hover:bg-white/40"
+              >
+              Ver todos
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <h2 className='text-lg font-semibold mb-3'>Relatórios da semana</h2>
 
             {props.departmentMeetings.length === 0 ? (
               <div className='rounded-lg border p-6 text-center text-sm text-muted-foreground'>

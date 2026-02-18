@@ -145,18 +145,6 @@ function startOfWeekSP(now = new Date()) {
   }
 }
 
-function avgRate(a: number | null, b: number | null, c: number | null) {
-  const vals = [a, b, c].filter((x): x is number => typeof x === 'number')
-  if (vals.length === 0) return null
-  const sum = vals.reduce((acc, v) => acc + v, 0)
-  return Math.round((sum / vals.length) * 10) / 10
-}
-
-function pickUserLabel(u: UserMini | null) {
-  if (!u) return '—'
-  return u.name ?? u.email ?? '—'
-}
-
 export default async function ReportsPage() {
   const supabase = createSupabaseAdmin()
   const week = startOfWeekSP(new Date())
