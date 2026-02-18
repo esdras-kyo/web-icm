@@ -2,6 +2,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ptBR } from "@clerk/localizations";
 import { dark } from "@clerk/themes";
+import CookieBanner from "./components/CookieBanner";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       signUpForceRedirectUrl="/welcome?from=signup"
     >
       <html lang="pt-BR">
-        <body className="bg-page bg-black">{children}</body>
+        <body className="bg-page bg-black">{children}<CookieBanner /></body>
       </html>
     </ClerkProvider>
   );
