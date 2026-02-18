@@ -9,6 +9,28 @@ function formatDateBR(isoDate: string) {
   return `${d}/${m}/${y}`;
 }
 
+type EmbeddedUser = { id: string; name: string } | null;
+
+export type CellMeeting = {
+  id: string;
+  cell_id: string | null;
+  occurred_at: string | null;
+  notes: string | null;
+
+  leader: EmbeddedUser | null;
+
+  assistant_user_id: string | null;
+  host_user_id: string | null;
+  members_count: number | null;
+  attendees_count: number | null;
+  icebreaker_rate: number | null;
+  worship_rate: number | null;
+  word_rate: number | null;
+  sunday_attendance_count: number | null;
+  visitors_count: number | null;
+  created_at: string;
+};
+
 function Stars({ value }: { value: number | null }) {
   const v = Math.max(0, Math.min(5, Number(value ?? 0)));
   const filled = "★".repeat(v);
@@ -30,7 +52,7 @@ export default async function CellMeetingReadPage({
 
   if (!id) notFound();
 
-  const { data: meeting, error } = await supabase
+  const { data, error } = await supabase
     .from("cell_meetings")
     .select(
       `
@@ -38,7 +60,10 @@ export default async function CellMeetingReadPage({
       cell_id,
       occurred_at,
       notes,
-      leader_user_id,
+      leader:leader_user_id (
+        id,
+        name
+      ),
       assistant_user_id,
       host_user_id,
       members_count,
@@ -53,6 +78,8 @@ export default async function CellMeetingReadPage({
     )
     .eq("id", id)
     .maybeSingle();
+
+    const meeting = data as CellMeeting | null;
 
   if (error) {
     // log server-side; na UI só mostra "não encontrado"
@@ -96,34 +123,34 @@ export default async function CellMeetingReadPage({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
+        <div className="rounded-md border border-white/10 bg-white/3 p-4">
           <h2 className="text-sm font-semibold mb-3">Pessoas</h2>
 
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between gap-3">
               <span className="text-muted-foreground">Líder</span>
-              <span className="text-white text-right break-words">
-                {meeting.leader_user_id ?? "-"}
+              <span className="text-white text-right wrap-break-words">
+                {meeting.leader?.name ?? "-"}
               </span>
             </div>
 
             <div className="flex items-center justify-between gap-3">
               <span className="text-muted-foreground">Líder em treinamento</span>
-              <span className="text-white text-right break-words">
+              <span className="text-white text-right wrap-break-words">
                 {meeting.assistant_user_id ?? "-"}
               </span>
             </div>
 
             <div className="flex items-center justify-between gap-3">
               <span className="text-muted-foreground">Anfitrião</span>
-              <span className="text-white text-right break-words">
+              <span className="text-white text-right wrap-break-words">
                 {meeting.host_user_id ?? "-"}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
+        <div className="rounded-md border border-white/10 bg-white/3 p-4">
           <h2 className="text-sm font-semibold mb-3">Números</h2>
 
           <div className="space-y-2 text-sm">
@@ -150,7 +177,7 @@ export default async function CellMeetingReadPage({
         </div>
       </div>
 
-      <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
+      <div className="rounded-md border border-white/10 bg-white/3 p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-sm font-semibold">Avaliações</h2>
@@ -182,10 +209,10 @@ export default async function CellMeetingReadPage({
         </div>
       </div>
 
-      <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
+      <div className="rounded-md border border-white/10 bg-white/3 p-4">
         <h2 className="text-sm font-semibold mb-2">Anotações</h2>
         {meeting.notes ? (
-          <p className="text-sm whitespace-pre-wrap break-words">{meeting.notes}</p>
+          <p className="text-sm whitespace-pre-wrap wrap-break-words">{meeting.notes}</p>
         ) : (
           <p className="text-sm text-muted-foreground">Sem anotações.</p>
         )}

@@ -138,7 +138,7 @@ export default function ReportsTabs(props: {
                         </div>
 
                         <div className='shrink-0'>
-                          <Link href={`/offc/cell-meetings/${encodeURIComponent(m.id)}/manage`}>
+                          <Link href={`/offc/relatorios/celulas/${encodeURIComponent(m.id)}`}>
                             <Button size='sm' className='cursor-pointer'>
                               Ler
                             </Button>
@@ -231,7 +231,7 @@ export default function ReportsTabs(props: {
                         </div>
 
                         <div className='shrink-0'>
-                          <Link href={`/offc/meetings/${encodeURIComponent(meet.id)}/manage`}>
+                          <Link href={`/offc/relatorios/ministerios/${encodeURIComponent(meet.id)}`}>
                             <Button size='sm' className='cursor-pointer'>
                               Ler
                             </Button>

@@ -69,46 +69,67 @@ export default async function MinistryMeetingReadPage({
   const title = meeting.title?.trim() || "Reunião (sem título)";
   const deptName = department?.name ?? "Sem ministério";
   const createdAt = meeting.created_at ? formatDateTimeBR(meeting.created_at) : "—";
+  const updatedAt = meeting.updated_at ? formatDateTimeBR(meeting.updated_at) : null;
   const authorLabel = pickUserLabel(author ?? null);
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-6 text-white space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <Link href="/offc/relatorios/ministerios" className="text-sm underline">
-            ← Voltar
-          </Link>
-
-          <h1 className="mt-2 text-2xl font-semibold wrap-break-word">{title}</h1>
-
-          <p className="mt-2 text-sm text-muted-foreground">
-            {deptName} • {createdAt} • <span className="text-white/80">Por:</span>{" "}
-            {authorLabel}
-          </p>
-
-          {meeting.updated_at ? (
-            <p className="mt-1 text-xs text-muted-foreground">
-              Atualizado em: {formatDateTimeBR(meeting.updated_at)}
+    <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 py-8 sm:py-10 text-white space-y-4 sm:space-y-6">
+      <header className="space-y-3">
+        <Link
+          href="/offc/relatorios/ministerios"
+          className="cursor-pointer inline-flex text-sm underline underline-offset-4 text-white/90 hover:text-white"
+        >
+          ← Voltar
+        </Link>
+  
+        <div className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-semibold wrap-break-words">
+            {title}
+          </h1>
+  
+          <div className="text-sm text-muted-foreground space-y-1">
+            <p>
+              <span className="text-white/80">Ministério:</span>{" "}
+              {deptName}
             </p>
-          ) : null}
+  
+            <p>
+              <span className="text-white/80">Criado em:</span>{" "}
+              {createdAt}
+            </p>
+  
+            <p>
+              <span className="text-white/80">Por:</span>{" "}
+              {authorLabel}
+            </p>
+  
+            {updatedAt ? (
+              <p className="text-xs">
+                Atualizado em: {updatedAt}
+              </p>
+            ) : null}
+          </div>
+        </div>
+  
+        <p className="text-xs text-muted-foreground break-all">
+          ID: {meeting.id}
+        </p>
+      </header>
+
+      <section className="grid gap-4 sm:gap-6">
+        <div className="rounded-lg border border-white/10 bg-white/3 p-4 sm:p-5">
+          <h2 className="text-sm font-semibold mb-2">Descrição</h2>
+          {meeting.description?.trim() ? (
+            <p className="text-sm whitespace-pre-wrap wrap-break-words text-white/95">
+              {meeting.description}
+            </p>
+          ) : (
+            <p className="text-sm text-muted-foreground">Sem descrição.</p>
+          )}
         </div>
 
-        <div className="shrink-0 text-xs text-muted-foreground whitespace-nowrap">
-          #{meeting.id}
-        </div>
-      </div>
-
-      <div className="rounded-lg border border-white/10 bg-white/3 p-4">
-        <h2 className="text-sm font-semibold mb-2">Descrição</h2>
-        {meeting.description?.trim() ? (
-          <p className="text-sm whitespace-pre-wrap wrap-break-words">{meeting.description}</p>
-        ) : (
-          <p className="text-sm text-muted-foreground">Sem descrição.</p>
-        )}
-      </div>
-
-      <div className="rounded-lg border border-white/10 bg-white/3 p-4">
-        <h2 className="text-sm font-semibold mb-2">Membros</h2>
+        <div className="rounded-lg border border-white/10 bg-white/3 p-4">
+        <h2 className="text-sm font-semibold mb-2">Membros Presentes</h2>
         {Array.isArray(meeting.members) && meeting.members.length ? (
           <ul className="list-disc pl-5 text-sm space-y-1">
             {meeting.members.map((x, idx) => (
@@ -121,6 +142,7 @@ export default async function MinistryMeetingReadPage({
           <p className="text-sm text-muted-foreground">Sem membros listados.</p>
         )}
       </div>
+      </section>
     </div>
   );
 }
