@@ -56,11 +56,11 @@ export default function WeeklySchedule() {
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.8,
+        duration: 0.6,
         ease: "easeOut",
       }}
-      viewport={{ once: true, amount: 0.4 }}
-      className="w-full py-36 px-6 bg-linear-to-tl from-black via-black to-sky-800/40"
+      viewport={{ once: true, amount: 0.2 }}
+      className="w-full py-36 px-6 "
     >
       <div className="mx-auto max-w-6xl">
         {/* Header */}

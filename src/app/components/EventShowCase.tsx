@@ -55,7 +55,7 @@ export default function EventsGrid() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.4 }}
-      className="w-full py-36 bg-linear-to-tr from-black via-black to-sky-800/50"
+      className="w-full py-36 bg-linear-to-tr from-white/10 via-black to-sky-800/30"
     >
       <div className="mx-auto max-w-6xl px-6 flex flex-col gap-10">
         {/* Header */}

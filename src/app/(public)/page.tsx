@@ -8,11 +8,18 @@ import HomeFeatureCard from "@/app/components/HomeFeatureCard";
 
 export default function ChurchHome() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen text-white">
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-32 -left-40 h-[520px] w-[520px] rounded-full bg-red-700/50 blur-3xl" />
+        <div className="absolute top-24 right-[-160px] h-[520px] w-[520px] rounded-full bg-blue-500/30 blur-3xl" />
+        <div className="absolute bottom-[-220px] left-1/3 h-[640px] w-[640px] rounded-full bg-red-500/25 blur-3xl" />
+      </div>
       <HeroMission
         churchName="Igreja de Cristo Maranata"
         mission="SOMOS MIL"
-        imageSrc="/images/home1.jpeg"
+        imageSrc={["/images/home2.jpg",
+          "/images/home3.jpg",
+        ]}
         subtitle="Ganhar, consolidar, discipular e enviar"
       />
 
@@ -22,15 +29,12 @@ export default function ChurchHome() {
 
       <EventsGrid />
 
-      {/* <MinistriesGrid />
-      
-      <div className=" -top-px h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />  */}
-<div className="bg-linear-to-bl from-black to-[#0b2a3e]">
+<div className="">
       <HomeFeatureCard
         href="/historia"
         kicker="Conheça nossas raízes"
         title="Nossa História"
-        subtitle="Uma jornada marcada por fé, unidade e propósito — do começo até hoje."
+        subtitle="Do começo até hoje"
         // imageSrc="/images/historia.jpg"
         variant="soft"
         height="sm"
