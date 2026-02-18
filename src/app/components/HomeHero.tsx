@@ -77,6 +77,7 @@ export default function HeroMission({
                 priority
                 className="object-cover"
                 sizes="100vw"
+                unoptimized
                 quality={100}
               />
             </motion.div>
