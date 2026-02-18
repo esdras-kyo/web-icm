@@ -24,6 +24,10 @@ export default function NavBar() {
     { href: "/contato", label: "CONTATO" },
     { href: "/contribua", label: "CONTRIBUA" },
     { href: "/events", label: "EVENTOS" },
+    { href: "/historia", label: "HISTORIA" },
+    { href: "/celulas", label: "CÉLULAS" },
+    { href: "/agenda", label: "AGENDA" },
+
   ];
 
   useEffect(() => {
@@ -43,7 +47,7 @@ export default function NavBar() {
         }}
         transition={{ duration: 0.22, ease: "easeOut" }}
       >
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-7xl px-4">
           <div className="h-16 flex items-center justify-between">
 
             <Link

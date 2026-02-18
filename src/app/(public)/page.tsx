@@ -17,8 +17,8 @@ export default function ChurchHome() {
       <HeroMission
         churchName="Igreja de Cristo Maranata"
         mission="SOMOS MIL"
-        imageSrc={["/images/home2.jpg",
-          "/images/home3.jpg",
+        imageSrc={["/images/home2.png",
+          "/images/home3.png",
         ]}
         subtitle="Ganhar, consolidar, discipular e enviar"
       />

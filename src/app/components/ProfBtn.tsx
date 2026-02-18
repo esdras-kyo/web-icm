@@ -1,6 +1,6 @@
 "use client";
 
-import { FlaskConical, ShieldUser, User2 } from "lucide-react";
+import { ShieldUser, User2 } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { useUserClaims } from "../hooks/useUserClaims";
 
@@ -30,38 +30,6 @@ export default function ProfBtn() {
               />
             )}
 
-            {isAdmin && (
-              <UserButton.Link
-                label="Historia - teste"
-                href="/historia"
-                labelIcon={<FlaskConical className="w-4 h-4" />}
-              />
-            )}
-
-            {isAdmin && (
-              <UserButton.Link
-                label="Agenda - teste"
-                href="/agenda"
-                labelIcon={<FlaskConical className="w-4 h-4" />}
-              />
-            )}
-
-            {isAdmin && (
-              <UserButton.Link
-                label="Celulas - teste"
-                href="/celulas"
-                labelIcon={<FlaskConical className="w-4 h-4" />}
-              />
-            )}
-
-            {isAdmin && (
-              <UserButton.Link
-                label="Home - teste"
-                href="/teste"
-                labelIcon={<FlaskConical className="w-4 h-4" />}
-              />
-            )}
-
             <UserButton.Link
               label="Área do Membro"
               href="/conta/personal"
@@ -73,9 +41,15 @@ export default function ProfBtn() {
 
       <SignedOut>
         <SignInButton>
-          <button className="flex cursor-pointer rounded-full border w-7 h-7 justify-center items-center">
-            <User2 className="w-4 h-4 text-white" />
-          </button>
+        <button
+          type="button"
+          className="cursor-pointer inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-sm font-mono text-white/85 transition hover:bg-white/[0.07] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+        >
+          <span className="">Entrar</span>
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/15">
+            <User2 className="h-4 w-4 text-white" />
+          </span>
+        </button>
         </SignInButton>
       </SignedOut>
     </div>
