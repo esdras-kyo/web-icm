@@ -26,8 +26,9 @@ export default function Footer() {
           <div className="flex-row flex gap-2 items-center justify-start">
           <MapPin className="text-zinc-300"/>
           <p className="text-sm leading-relaxed hover:text-zinc-200">
-            Av. Abel Coimbra, 86<br />
-            Cidade Jardim - Goiânia – GO
+            Av. Abel Coimbra, Quadra 86 Lotes: 09-17, <br/>
+            Cidade Jardim - Goiânia – GO <br />
+            CEP 74.425-250 <br />
           </p>
           </div>
           </a>
