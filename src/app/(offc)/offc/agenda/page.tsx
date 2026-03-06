@@ -1,6 +1,7 @@
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
-import { createAgendaItem, deleteAgendaItem } from "./actions";
+import { createAgendaItem, deleteAgendaItem, updateAgendaItem } from "./actions";
 import { Trash2 } from "lucide-react";
+import { AgendaEditDialog } from "./_components/AgendaEditDialog";
 
 export default async function AdminAgendaPage() {
   const supabase = createSupabaseAdmin();
@@ -24,6 +25,11 @@ export default async function AdminAgendaPage() {
   const makeDelete = (id: string) => async (): Promise<void> => {
     "use server";
     await deleteAgendaItem(id);
+  };
+
+  const makeUpdate = (id: string) => async (formData: FormData): Promise<void> => {
+    "use server";
+    await updateAgendaItem(id, formData);
   };
 
   return (
@@ -174,21 +180,32 @@ export default async function AdminAgendaPage() {
             <tbody>
               {events.map((ev) => (
                 <tr key={ev.id} className="border-b border-zinc-800">
-                  <td className="p-2">{ev.event_date}</td>
+                  <td className="p-2">
+                    {ev.event_date
+                      ? ev.event_date.split("-").reverse().join("/")
+                      : "—"}
+                  </td>
                   <td className="p-2">{ev.event_time ? ev.event_time.slice(0, 5) : "—"}</td>
                   <td className="p-2 font-medium">{ev.title}</td>
                   <td className="p-2">{ev.visibility}</td>
                   <td className="p-2">{ev.department_id || "—"}</td>
                   <td className="p-2">
-                    <form action={makeDelete(ev.id)}>
-                      <button
-                        type="submit"
-                        className="rounded border border-red-700 px-2 py-1 text-red-300 hover:bg-red-950/40"
-                        aria-label={`Excluir ${ev.title}`}
-                      >
-                        <Trash2 className="inline h-4 w-4" />
-                      </button>
-                    </form>
+                    <div className="flex items-center gap-2">
+                      <AgendaEditDialog
+                        event={ev}
+                        departments={departments ?? []}
+                        onSubmit={makeUpdate(ev.id)}
+                      />
+                      <form action={makeDelete(ev.id)}>
+                        <button
+                          type="submit"
+                          className="rounded border border-red-700 px-2 py-1 text-red-300 hover:bg-red-950/40"
+                          aria-label={`Excluir ${ev.title}`}
+                        >
+                          <Trash2 className="inline h-4 w-4" />
+                        </button>
+                      </form>
+                    </div>
                   </td>
                 </tr>
               ))}

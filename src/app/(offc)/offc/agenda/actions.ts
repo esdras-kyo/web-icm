@@ -38,7 +38,7 @@ export async function createAgendaItem(formData: FormData) {
   const { error } = await supabase.from("agenda_events").insert(payload);
   if (error) throw new Error(error.message);
 
-  revalidatePath("/admin/agenda");
+  revalidatePath("/offc/agenda");
   return { ok: true };
 }
 
@@ -49,6 +49,30 @@ export async function deleteAgendaItem(id: string) {
   const { error } = await supabase.from("agenda_events").delete().eq("id", id);
   if (error) throw new Error(error.message);
 
-  revalidatePath("/admin/agenda");
+  revalidatePath("/offc/agenda");
+  return { ok: true };
+}
+
+export async function updateAgendaItem(id: string, formData: FormData) {
+  await assertCanManageAgenda();
+
+  const payload = UpsertSchema.parse({
+    title: formData.get("title"),
+    description: formData.get("description") || undefined,
+    event_date: formData.get("event_date"),
+    event_time: (formData.get("event_time") as string | null) || undefined,
+    visibility: (formData.get("visibility") as "GLOBAL" | "INTERNAL") ?? "GLOBAL",
+    department_id: (formData.get("department_id") as string) || null,
+  });
+
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("agenda_events")
+    .update(payload)
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/offc/agenda");
   return { ok: true };
 }
