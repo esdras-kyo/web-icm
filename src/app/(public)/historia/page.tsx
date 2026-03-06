@@ -44,7 +44,7 @@ function ImageTextBlock({
   title,
 }: {
   text: string;
-  img: string;
+  img?: string;
   reverse?: boolean;
   eyebrow?: string;
   title?: string;
@@ -55,7 +55,7 @@ function ImageTextBlock({
         className={`max-w-6xl mx-auto px-4 md:px-6 flex flex-col items-center gap-10 md:gap-12 ${reverse ? "md:flex-row-reverse" : "md:flex-row"}`}
       >
         <motion.div
-          className="w-full md:w-1/2"
+          className={`w-full md:w-1/2 ${img ? "md:w-1/2" : "md:w-full"}`}
           initial={reverse ? { opacity: 0, x: 24 } : { opacity: 0, x: -24 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.35 }}
@@ -75,7 +75,7 @@ function ImageTextBlock({
             {text}
           </p>
         </motion.div>
-
+        {img && (
         <motion.div
           className="w-full md:w-1/2"
           initial={reverse ? { opacity: 0, x: -24 } : { opacity: 0, x: 24 }}
@@ -83,9 +83,10 @@ function ImageTextBlock({
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.6 }}
         >
+
           <div className="rounded-3xl  overflow-hidden shadow-2xl ring-1 ring-white/10">
             <Image
-              src={img}
+              src={img }
               alt=""
               className="w-full h-full object-cover aspect-16/10"
               loading="lazy"
@@ -94,6 +95,7 @@ function ImageTextBlock({
             />
           </div>
         </motion.div>
+          )}
       </div>
     </section>
   );
@@ -178,21 +180,16 @@ function MVV() {
 
 function Pioneers() {
   const people = [
-    'Edimar Santos',
-    'Geneci Coutinho',
-    'Edia Bueno',
-    'Roberta Braga',
-    'Rones Marques',
-    'Meire e Neomarcio',
-    'Simone Pinheiro',
-    'Gleisson Marcos',
-    'Ediberto Camilo',
-    'Carmem Pinheiro',
-    'Fabiana e Jodeilton',
-    'Júnior e Alessandra',
-    'Kenia Saraiva',
-    'Márcio Moreno',
-    'Rosane e suas crianças',
+    'Edimar Santos e Geneci Coutinho',
+    'Edia Bueno', 
+    'Rones Marques e Roberta Braga',
+    'Neomarcio Balduino e Meire',
+    'Gleisson Marques e Simone Pinheiro',
+    'Ediberto Camilo e Carmem Silvia', 
+    'Jodeilton e Fabiana',
+    'Alessandra e Júnior', 
+    'Kenia Saraiva', 
+    'Márcio Mendes e Rosane Souza',
   ];
 
   return (
@@ -238,8 +235,7 @@ export default function HistorySection() {
       <ImageTextBlock
         eyebrow="1999"
         title="O Começo de Tudo"
-        img="/images/velhos.jpeg"
-        text="A nossa história nasceu em abril de 1999, quando um pequeno grupo de irmãos se reuniu na casa da irmã Edia, na Vila Aurora Oeste, para orar, sonhar e buscar a vontade de Deus. Ali, entre comunhão e esperança, surgiram os primeiros passos do que se tornaria a Igreja de Cristo Maranata — uma igreja simples, bíblica e centrada no Evangelho.
+        text="A nossa história nasceu em abril de 1999, quando um pequeno grupo de irmãos se reuniu na casa da irmã Edia, na Vila Aurora Oeste, para orar, sonhar e buscar a vontade de Deus. Ali, entre comunhão e esperança, surgiram os primeiros passos do que se tornaria a Igreja de Cristo Maranata, uma igreja simples, bíblica e centrada no Evangelho.
 O que começou em um lar, com poucos, tornou-se uma família espiritual que segue crescendo, servindo e vivendo a missão que o Senhor nos confiou."
       />
 
