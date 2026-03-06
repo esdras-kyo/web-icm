@@ -5,13 +5,15 @@ import {
   BlocksIcon,
   PartyPopper,
   Images,
-  ScrollText
+  ScrollText,
+  Building2,
 } from "lucide-react";
 import DashboardSidebar, { SidebarItem } from "./DashboardSidebar";
 
 const items: SidebarItem[] = [
   { name: "Painel", href: "/offc", icon: HomeIcon },
   { name: "Membros", href: "/offc/users", icon: Users2 },
+  { name: "Departamentos", href: "/offc/departments", icon: Building2 },
   { name: "Agenda", href: "/offc/agenda", icon: CalendarPlus2 },
   { name: "Relatórios", href: "/offc/relatorios", icon: ScrollText },
   { name: "Células", href: "/offc/cells", icon: BlocksIcon },

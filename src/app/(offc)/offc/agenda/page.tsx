@@ -1,6 +1,6 @@
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { createAgendaItem, deleteAgendaItem, updateAgendaItem } from "./actions";
-import { Trash2 } from "lucide-react";
+import { ConfirmDeleteButton } from "@/app/components/ConfirmDeleteModal";
 import { AgendaEditDialog } from "./_components/AgendaEditDialog";
 
 export default async function AdminAgendaPage() {
@@ -15,6 +15,8 @@ export default async function AdminAgendaPage() {
     .from("agenda_events")
     .select("id, title, description, event_date, event_time, visibility, department_id")
     .order("event_date", { ascending: true });
+
+  const deptNameById = new Map(departments?.map((d) => [d.id, d.name]) ?? []);
 
   // server action wrappers must return void/Promise<void>
   const onCreate = async (formData: FormData): Promise<void> => {
@@ -162,55 +164,50 @@ export default async function AdminAgendaPage() {
 </form>
 
       {/* Lista de eventos */}
-      <div className="rounded-xl border border-zinc-700 overflow-hidden">
+      <div className="space-y-3">
         {!events || events.length === 0 ? (
-          <p className="p-4 text-sm opacity-70">Nenhum evento cadastrado.</p>
+          <p className="rounded-xl border border-zinc-700 p-4 text-sm text-zinc-400">
+            Nenhum evento cadastrado.
+          </p>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="border-b border-zinc-700 bg-zinc-900/50">
-              <tr>
-                <th className="p-2 text-left">Data</th>
-                <th className="p-2 text-left">Horário</th>
-                <th className="p-2 text-left">Título</th>
-                <th className="p-2 text-left">Visibilidade</th>
-                <th className="p-2 text-left">Departamento</th>
-                <th className="p-2 text-left">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.map((ev) => (
-                <tr key={ev.id} className="border-b border-zinc-800">
-                  <td className="p-2">
-                    {ev.event_date
-                      ? ev.event_date.split("-").reverse().join("/")
-                      : "—"}
-                  </td>
-                  <td className="p-2">{ev.event_time ? ev.event_time.slice(0, 5) : "—"}</td>
-                  <td className="p-2 font-medium">{ev.title}</td>
-                  <td className="p-2">{ev.visibility}</td>
-                  <td className="p-2">{ev.department_id || "—"}</td>
-                  <td className="p-2">
-                    <div className="flex items-center gap-2">
-                      <AgendaEditDialog
-                        event={ev}
-                        departments={departments ?? []}
-                        onSubmit={makeUpdate(ev.id)}
-                      />
-                      <form action={makeDelete(ev.id)}>
-                        <button
-                          type="submit"
-                          className="rounded border border-red-700 px-2 py-1 text-red-300 hover:bg-red-950/40"
-                          aria-label={`Excluir ${ev.title}`}
-                        >
-                          <Trash2 className="inline h-4 w-4" />
-                        </button>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          events.map((ev) => {
+            const dateStr = ev.event_date
+              ? ev.event_date.split("-").reverse().join("/")
+              : "—";
+            const timeStr = ev.event_time ? ev.event_time.slice(0, 5) : "—";
+            const deptName = ev.department_id
+              ? deptNameById.get(ev.department_id) ?? "—"
+              : "—";
+
+            return (
+              <div
+                key={ev.id}
+                className="rounded-xl border border-zinc-700 bg-zinc-900/40 p-4"
+              >
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-400">
+                  <span>{dateStr}</span>
+                  <span>{timeStr}</span>
+                  <span>{ev.visibility}</span>
+                  <span>{deptName}</span>
+                </div>
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-medium text-white">{ev.title}</span>
+                  <div className="flex items-center gap-2">
+                    <AgendaEditDialog
+                      event={ev}
+                      departments={departments ?? []}
+                      onSubmit={makeUpdate(ev.id)}
+                    />
+                    <ConfirmDeleteButton
+                      onConfirm={makeDelete(ev.id)}
+                      itemName={ev.title}
+                      entityLabel="evento"
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
     </div>
