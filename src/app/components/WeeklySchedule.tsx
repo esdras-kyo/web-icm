@@ -25,13 +25,12 @@ const SCHEDULE: ScheduleItem[] = [
   },
   {
     day: "Quinta",
-    title: "Escola de Líderes | Cursos | Ensaios",
+    title: "Escola de Líderes | Centro de Capacitação Maranata (CCM)",
   },
   {
     day: "Sexta",
     title: [
       "Visitas e Orações nas Casas",
-      "1ª sexta do mês: Empreendendo com Cristo",
       "Toda última sexta do mês: Culto de Homens",
       "3ª sexta do mês: Culto das Mulheres"
     ],

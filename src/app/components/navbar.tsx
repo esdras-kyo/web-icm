@@ -21,13 +21,13 @@ export default function NavBar() {
   }, [scrollY]);
 
   const links = [
+    { href: "/", label: "INICIO" },
     { href: "/contato", label: "CONTATO" },
     { href: "/contribua", label: "CONTRIBUA" },
     { href: "/events", label: "EVENTOS" },
     { href: "/historia", label: "HISTORIA" },
     { href: "/celulas", label: "CÉLULAS" },
     { href: "/agenda", label: "AGENDA" },
-
   ];
 
   useEffect(() => {
