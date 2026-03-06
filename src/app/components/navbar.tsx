@@ -22,12 +22,12 @@ export default function NavBar() {
 
   const links = [
     { href: "/", label: "INICIO" },
-    { href: "/contato", label: "CONTATO" },
-    { href: "/contribua", label: "CONTRIBUA" },
-    { href: "/events", label: "EVENTOS" },
     { href: "/historia", label: "HISTORIA" },
     { href: "/celulas", label: "CÉLULAS" },
+    { href: "/events", label: "EVENTOS" },
+    { href: "/contribua", label: "CONTRIBUA" },
     { href: "/agenda", label: "AGENDA" },
+    { href: "/contato", label: "CONTATO" },
   ];
 
   useEffect(() => {
