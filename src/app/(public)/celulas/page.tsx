@@ -2,12 +2,14 @@
 import Footer from "@/app/components/Footer";
 import HeroCenter from "@/app/components/HeroCenter";
 import { motion, Variants } from "framer-motion";
+import Image from "next/image";
 
 type Cell = {
   id: number,
   name: string,
   address: string,
-  leader: string
+  leader: string,
+  image: string
 }
 
 const cells: Cell[] = [
@@ -15,79 +17,92 @@ const cells: Cell[] = [
     id: 1,
     name: "Célula Resgate de Almas",
     leader: "Sílvia",
-    address: "Rua Fleury Curado n. 350, Cidade Jardim"
+    address: "Rua Fleury Curado n. 350, Cidade Jardim",
+    image: "/images/celulas/resgatealmas.jpg"
   },
   {
     id: 2,
     name: "Célula Metanoia",
     leader: "Pr. Márcio",
-    address: "Online"
+    address: "Online",
+    image: "/images/celulas/metanoia.jpg"
   },
   {
     id: 3,
     name: "Célula 60+",
     leader: "Pr. Edimar",
-    address: "Online"
+    address: "Online",
+    image: "/images/celulas/60mais.jpg"
   },
   {
     id: 4,
     name: "Célula Yeshua",
     leader: "Pr. Ilton",
-    address: "Rua Antônio Pereira, Quadra 21, Lote 18, Lorena Parque, Goiânia"
+    address: "Rua Antônio Pereira, Quadra 21, Lote 18, Lorena Parque, Goiânia",
+    image: "/images/celulas/yeshua.jpg"
   },
   {
     id: 5,
     name: "Célula Adonai",
     leader: "Dalva / Renato",
-    address: "Rua 7A, Quadra 7B, Lote 02, Residencial Cidade Verde"
+    address: "Rua 7A, Quadra 7B, Lote 02, Residencial Cidade Verde",
+    image: "/images/celulas/adonai.jpg"
   },
   {
     id: 6,
     name: "Célula Renascer",
     leader: "Cristiane / Nicoly",
-    address: "Rua Salinas 7, Quadra 28, Lote 25, Buena Vista 2"
+    address: "Rua Salinas 7, Quadra 28, Lote 25, Buena Vista 2",
+    image: "/images/celulas/renascer.jpg"
   },
   {
     id: 7,
     name: "Célula Habitar em Cristo",
     leader: "Wilian / Adrielle",
-    address: "Rua CP 50, Quadra 04, Lote 18, Casa 2, Carolina Parque Complemento"
+    address: "Rua CP 50, Quadra 04, Lote 18, Casa 2, Carolina Parque Complemento",
+    image: "/images/celulas/habitaremcristo.jpg"
   },
   {
     id: 8,
     name: "Célula Maanaim",
     leader: "Wagner",
-    address: "Rua Formosa, Quadra 03, Lote 01, Casa 02 - Cidade Jardim, Goiânia - GO, 74425-410"
+    address: "Rua Formosa, Quadra 03, Lote 01, Casa 02 - Cidade Jardim, Goiânia - GO, 74425-410",
+    image: "/images/celulas/manaain.jpg"
   },
   {
     id: 9,
     name: "Célula AbbaPai",
     leader: "Cadu / Ju",
-    address: "Rua Fuad Rassi, nº 320, Setor Chácara Santa Rita, Parque Goia Condomínio Clube"
+    address: "Rua Fuad Rassi, nº 320, Setor Chácara Santa Rita, Parque Goia Condomínio Clube",
+    image: "/images/celulas/abbapai.jpg"
   },
   {
     id: 10,
     name: "Célula Kadosh",
     leader: "Ivanneide / Robson",
-    address: "Rua Caetano de Franco, Quadra 7, Lote 18, Nº 299, Conjunto Guadalajara, Cidade Jardim"
+    address: "Rua Caetano de Franco, Quadra 7, Lote 18, Nº 299, Conjunto Guadalajara, Cidade Jardim",
+    image: "/images/celulas/kadosh.jpg"
   },
   {
     id: 11,
     name: "Célula Impactados",
     leader: "Anna Patrícia",
-    address: "Rua Caetano de Franco, Quadra 7, Lote 18, Nº 299, Conjunto Guadalajara, Cidade Jardim"
+    address: "Rua Caetano de Franco, Quadra 7, Lote 18, Nº 299, Conjunto Guadalajara, Cidade Jardim",
+    image: "/images/celulas/impactados.jpg"
   },
   {
     id: 12,
     name: "Célula Buena Vista",
     leader: "Marco / Idely",
-    address: "Rua Juca Rodrigues, Quadra 17, Lote 06, Buena Vista I"
+    address: "Rua Juca Rodrigues, Quadra 17, Lote 06, Buena Vista I",
+    image: "/images/celulas/buenavista.jpg"
   },
   {
     id: 13,
     name: "Célula Águias Celestiais",
     leader: "Celma",
-    address: "Rua CRP-8, Quadra 11, Lote 13 - Residencial Primavera, Goiânia - GO"
+    address: "Rua CRP-8, Quadra 11, Lote 13 - Residencial Primavera, Goiânia - GO",
+    image: "/images/celulas/aguiascelestiais.jpg"
   }
 ]
 
@@ -479,12 +494,12 @@ export default function CellsPage() {
                 className="rounded-2xl overflow-hidden shadow-[0_15px_40px_rgba(2,6,23,0.35)] ring-1 ring-white/10 bg-white/5 backdrop-blur hover:bg-white/7 transition cursor-pointer"
               >
                 <div className="relative h-48 w-full">
-                  {/* <Image
-                    src={`/images/cell-${i}.jpg`}
-                    alt={`Berodins ${i}`}
+                  <Image
+                    src={cell.image}
+                    alt={cell.name}
                     fill
                     className="object-cover"
-                  /> */}
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="text-xl font-medium text-sky-200">
