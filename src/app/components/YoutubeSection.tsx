@@ -112,10 +112,10 @@ export default function YouTubeSection({
         </div>
 
         {/* Last transmission block (half video / half text on desktop) */}
-        <div className="relative z-10 mt-8 overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black/35">
+        <div className="relative z-10 mt-8 min-h-[280px] overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black/35">
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Video */}
-            <div className="aspect-video w-full">
+            <div className="aspect-video w-full min-h-[200px]">
               {loading ? (
                 <Skeleton className="w-full h-full rounded-none" />
               ) : err || !currentSrc ? (

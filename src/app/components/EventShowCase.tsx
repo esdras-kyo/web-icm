@@ -71,7 +71,8 @@ export default function EventsGrid() {
           </p>
         </div>
 
-        {/* Content */}
+        {/* Content — min-height evita CLS ao trocar loading/empty/lista */}
+        <div className="min-h-[28rem] md:min-h-[35rem]">
         {loading ? (
           <div className="flex flex-col gap-4">
             <SkeletonRow />
@@ -143,6 +144,7 @@ export default function EventsGrid() {
             </div>
           </>
         )}
+        </div>
       </div>
     </motion.section>
   );

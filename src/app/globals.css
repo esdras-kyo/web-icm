@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Fallback com métricas próximas a DM Sans para reduzir CLS no font-swap */
+@font-face {
+  font-family: "Sans Fallback";
+  src: local("Arial");
+  size-adjust: 101%;
+  ascent-override: 92%;
+  descent-override: 24%;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -45,7 +54,7 @@
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), "Sans Fallback", sans-serif;
 }
 
 :root {
