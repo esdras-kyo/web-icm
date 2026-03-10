@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     const payload = (await req.json()) as EventCreatePayload;
 
     const supabase = createSupabaseAdmin();
-
+    console.log("CREATE EVENT STATUS:", payload.status);
     const { data, error } = await supabase
       .from("events")
       .insert({
@@ -20,8 +20,8 @@ export async function POST(req: Request) {
         capacity: payload.capacity,
         starts_at: payload.starts_at,
         ends_at: payload.ends_at,
-        registration_starts_at: payload.registrations_starts_at,
-        registration_ends_at: payload.registrations_ends_at,
+        registration_starts_at: payload.registration_starts_at,
+        registration_ends_at: payload.registration_ends_at,
         address: payload.address,
         registration_fields: payload.registration_fields,
         image_key: payload.image_key,

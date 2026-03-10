@@ -6,7 +6,7 @@ import { createSupabaseAdmin} from "../../../../utils/supabase/admin"; // ajuste
 export async function createEvent(data: {
   owner_department_id: string;
   visibility: "ORG" | "DEPARTMENT";
-  status: "ATIVO" | "INATIVO";
+  status: "ATIVO" | "DESATIVADO";
   title: string;
   description: string;
   price: number;

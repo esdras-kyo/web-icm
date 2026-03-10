@@ -1,17 +1,17 @@
 "use client";
 
+import { Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import InscritoCard, { Inscrito } from "../CardIns";
-import { Download, PencilIcon } from "lucide-react";
+import { AlertCircle, ChevronDown, ChevronUp, Download, Loader2, PencilIcon } from "lucide-react";
 import StatisticsChart, {
   RegistrationPoint,
 } from "@/app/components/EventChart";
 import { EventKpis } from "../../EventsKpis";
 import Link from "next/link";
 
-type Orders = "alpha" | "created_asc" | "created_desc"
-
+type Orders = "alpha" | "created_asc" | "created_desc";
 
 type EventDetails = {
   id: string;
@@ -21,34 +21,32 @@ type EventDetails = {
   ends_at: string | null;
 };
 
-export default function Inscricoes() {
+// ─── Inner component uses useSearchParams — must be inside <Suspense> ─────────
+function InscricoesContent() {
   const searchParams = useSearchParams();
   const eventTitleFromQuery = searchParams.get("title");
 
   const [loading, setLoading] = useState(false);
   const [inscritos, setInscritos] = useState<Inscrito[]>([]);
   const [warning, setWarning] = useState("");
+  const [csvWarning, setCsvWarning] = useState("");
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [order, setOrder] = useState<Orders>(
-    "created_desc"
-  );
+  const [order, setOrder] = useState<Orders>("created_desc");
 
   const params = useParams();
   const id = params.id?.toString();
 
-  const [data, setData] = useState<RegistrationPoint[]>([]);
+  const [chartData, setChartData] = useState<RegistrationPoint[]>([]);
 
   async function fetchNumbers() {
     if (!id) return;
     const json = await fetch("/api/events/registrations-over-time", {
       method: "POST",
       body: JSON.stringify({ event_id: id }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     }).then((r) => r.json());
-    setData(json);
+    setChartData(json);
   }
 
   async function fetchEventDetails() {
@@ -56,9 +54,7 @@ export default function Inscricoes() {
     const json = await fetch("/api/events/details", {
       method: "POST",
       body: JSON.stringify({ event_id: id }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     }).then((r) => r.json());
     if (!json.error) {
       setEventDetails(json);
@@ -66,23 +62,22 @@ export default function Inscricoes() {
   }
 
   function handleStatusChange(
-    id: string,
+    registrationId: string,
     newStatus: Inscrito["payment_status"]
   ) {
     setInscritos((prev) =>
-      prev.map((inscrito) =>
-        inscrito.id === id
-          ? { ...inscrito, payment_status: newStatus }
-          : inscrito
+      prev.map((i) =>
+        i.id === registrationId ? { ...i, payment_status: newStatus } : i
       )
     );
   }
 
   function handleDownloadCsv() {
     if (!inscritos.length) {
-      alert("Nenhum inscrito para exportar.");
+      setCsvWarning("Nenhum inscrito para exportar.");
       return;
     }
+    setCsvWarning("");
 
     const exportDate = new Date().toLocaleString("pt-BR", {
       day: "2-digit",
@@ -153,34 +148,32 @@ export default function Inscricoes() {
   }
 
   const sortedInscritos = useMemo(() => {
-    if (!inscritos) return [];
-  
     const copy = [...inscritos];
-  
     switch (order) {
       case "created_asc":
         return copy.sort(
-          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
-  
       case "created_desc":
         return copy.sort(
-          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
-  
       case "alpha":
         return copy.sort((a, b) =>
           a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" })
         );
-  
       default:
         return copy;
     }
   }, [inscritos, order]);
 
-  async function getRegistrations(id?: string) {
+  async function getRegistrations(eventId?: string) {
     setLoading(true);
-    const res = await fetch(`/api/getsubs?id=${id}`, { cache: "no-store" });
+    const res = await fetch(`/api/getsubs?id=${eventId}`, {
+      cache: "no-store",
+    });
     if (!res.ok) {
       console.error("GET /api/getsubs failed", res.status, res.statusText);
       setWarning("Falha ao carregar inscritos");
@@ -206,12 +199,16 @@ export default function Inscricoes() {
     fetchEventDetails();
   }, [id]);
 
-  if (loading)
+  if (loading) {
     return (
-      <main className="p-6 text-center text-white">
-        <p>Carregando inscritos...</p>
+      <main className="flex min-h-[50vh] items-center justify-center p-6">
+        <div className="flex items-center gap-3 text-zinc-400">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Carregando inscritos…</span>
+        </div>
       </main>
     );
+  }
 
   const totalRegistrations = inscritos.length;
 
@@ -225,8 +222,7 @@ export default function Inscricoes() {
 
   const todayRegistrations = inscritos.filter((i) => {
     if (!i.created_at) return false;
-    const iso = i.created_at.toString().slice(0, 10);
-    return iso === todayStr;
+    return i.created_at.toString().slice(0, 10) === todayStr;
   }).length;
 
   let daysToEvent: number | null = null;
@@ -249,15 +245,14 @@ export default function Inscricoes() {
     if (end && todayMid > end.getTime()) {
       daysToEvent = -1;
     } else {
-      const diffMs = startMid - todayMid;
-      daysToEvent = Math.round(diffMs / (1000 * 60 * 60 * 24));
+      daysToEvent = Math.round((startMid - todayMid) / (1000 * 60 * 60 * 24));
     }
   }
 
   let registrationsChangePercent: number | null = null;
-  if (data && data.length >= 2) {
-    const last = data[data.length - 1].registrations_in_day;
-    const prev = data[data.length - 2].registrations_in_day;
+  if (chartData && chartData.length >= 2) {
+    const last = chartData[chartData.length - 1].registrations_in_day;
+    const prev = chartData[chartData.length - 2].registrations_in_day;
     if (prev > 0) {
       registrationsChangePercent = ((last - prev) / prev) * 100;
     } else if (last > 0) {
@@ -270,10 +265,9 @@ export default function Inscricoes() {
     eventDetails?.title || eventTitleFromQuery || "Inscrições do evento";
 
   return (
-    <div className="flex min-h-dvh w-full flex-col  pt-6 pb-18 sm:px-8">
-      {/* Wrapper centralizado pra tudo ficar contido */}
+    <div className="flex min-h-dvh w-full flex-col pt-6 pb-18 sm:px-8">
       <div className="mx-auto flex w-full max-w-5xl flex-col">
-        {/* Cabeçalho + botão */}
+        {/* Cabeçalho */}
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-xl font-semibold text-white sm:text-2xl">
@@ -284,25 +278,34 @@ export default function Inscricoes() {
             )}
           </div>
 
-          <div className="flex gap-3">
-          <Link
-            href={`/offc/events/${id}/edit`}
-            className="rounded-md border flex flex-row items-center justify-center gap-2 border-white/20 px-4 py-2 text-sm text-white hover:bg-white/10"
-          >
-            Editar
-            <PencilIcon className="w-4 h-4" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/offc/events/${id}/edit`}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-white/20 px-4 py-2 text-sm text-white transition hover:bg-white/10"
+            >
+              Editar
+              <PencilIcon className="h-4 w-4" />
+            </Link>
 
-          <button
-            onClick={handleDownloadCsv}
-            disabled={!inscritos.length}
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600/70 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Baixar planilha
-            <Download className="h-4 w-4" />
-          </button>
+            <button
+              type="button"
+              onClick={handleDownloadCsv}
+              disabled={!inscritos.length}
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md bg-emerald-600/70 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Baixar planilha
+              <Download className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-        </div>
+
+        {/* Aviso inline sobre CSV vazio (substitui alert) */}
+        {csvWarning && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {csvWarning}
+          </div>
+        )}
 
         {/* KPIs */}
         <div className="mb-6 w-full">
@@ -317,32 +320,22 @@ export default function Inscricoes() {
 
         {/* Gráfico */}
         <div className="mb-8 w-full">
-          <StatisticsChart data={data} />
+          <StatisticsChart data={chartData} />
         </div>
 
         {/* Lista de inscritos */}
         <div className="mt-6 w-full">
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/10 sm:px-5 sm:py-4 sm:text-lg"
+            className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/10 sm:px-5 sm:py-4 sm:text-lg"
           >
             <span>Inscritos ({inscritos.length})</span>
-
-            <svg
-              className={`h-5 w-5 text-white/70 transition-transform duration-300 ${
-                isOpen ? "rotate-180" : "rotate-0"
-              }`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-              />
-            </svg>
+            {isOpen ? (
+              <ChevronUp className="h-5 w-5 text-white/70" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-white/70" />
+            )}
           </button>
 
           <div
@@ -351,15 +344,16 @@ export default function Inscricoes() {
             }`}
           >
             <div className="mt-4 space-y-3">
-            <select
-              className="form-control"
-              value={order}
-              onChange={(e) => setOrder(e.target.value as Orders)}
-            >
-              <option value="created_desc">Mais recentes primeiro</option>
-              <option value="created_asc">Mais antigos primeiro</option>
-              <option value="alpha">Ordem alfabética (A–Z)</option>
-            </select>
+              <select
+                className="w-full rounded-md border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 sm:w-auto"
+                value={order}
+                onChange={(e) => setOrder(e.target.value as Orders)}
+              >
+                <option value="created_desc">Mais recentes primeiro</option>
+                <option value="created_asc">Mais antigos primeiro</option>
+                <option value="alpha">Ordem alfabética (A–Z)</option>
+              </select>
+
               {sortedInscritos.map((inscrito) => (
                 <InscritoCard
                   key={inscrito.id}
@@ -378,5 +372,23 @@ export default function Inscricoes() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── Default export: wraps with Suspense (required for useSearchParams) ────────
+export default function InscricoesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <div className="flex items-center gap-3 text-zinc-400">
+            <Loader2 className="h-5 w-5 animate-spin" />
+            <span>Carregando…</span>
+          </div>
+        </div>
+      }
+    >
+      <InscricoesContent />
+    </Suspense>
   );
 }

@@ -23,38 +23,42 @@ export default function Members(){
         .replace(/^-+|-+$/g, "");
     }
     
+    async function fetchUsers() {
+      try {
+        const res = await fetch("/api/getEventus", { cache: "no-store" });
+        const data = await res.json();
+        setEvents(data);
+      } catch (err) {
+        console.error("Erro ao carregar eventos:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     async function handleCreate(payload: EventCreatePayload) {
       const res = await fetch("/api/events/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-  
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         console.error("create event error:", body);
         throw new Error(body?.error ?? "Falha ao criar evento");
       }
-  
+
       const { id } = (await res.json()) as { id: string };
-      return id; // isso volta como eventId lá dentro do EventCreateForm
+
+      // Recarrega a lista após criação
+      fetchUsers();
+
+      return id;
     }
-  
 
     useEffect(() => {
-        async function fetchUsers() {
-          try {
-            const res = await fetch("/api/getEventus", { cache: "no-store" });
-            const data = await res.json();
-            setEvents(data);
-          } catch (err) {
-            console.error("Erro ao carregar eventos:", err);
-          } finally {
-            setLoading(false);
-          }
-        }
-        fetchUsers();
-      }, []);
+      fetchUsers();
+    }, []);
       
       if (loading)
         return (

@@ -92,7 +92,7 @@ export default function EventoInscricaoCard() {
   );
 
   const isRegistrationsClosed = useMemo(() => {
-    if (!evento?.registration_ends_at) return true; // se não tiver data, considera ainda aberto
+    if (!evento?.registration_ends_at) return false; // sem data de fim = inscrições sempre abertas
     const now = new Date();
     const regEnd = new Date(evento.registration_ends_at);
     return regEnd.getTime() < now.getTime();

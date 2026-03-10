@@ -4,7 +4,7 @@ import { z } from "zod";
 
 // Se seus valores forem outros, ajuste aqui:
 const StatusEnum = z.enum(["ATIVO", "DESATIVADO"]).optional(); // status é nullable
-const VisibilityEnum = z.enum(["ORG", "GLOBAL", "INTERNAL"]);  // USER-DEFINED no banco
+const VisibilityEnum = z.enum(["ORG", "DEPARTMENT"]);  // USER-DEFINED no banco
 
 const FieldCfg = z.object({ enabled: z.boolean(), required: z.boolean() });
 const RegistrationFieldsSchema = z.object({
@@ -58,7 +58,7 @@ export async function PATCH(request: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Payload inválido", details: parsed.error.flatten() },
+        { error: "Payload inválido", details: parsed.error.issues },
         { status: 400 }
       );
     }

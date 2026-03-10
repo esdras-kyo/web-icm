@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   if (id) {
     const { data, error } = await supabase
       .from('events')
-      .select('*')
+      .select('id, title, description, price, image_key, starts_at, ends_at, address, status, visibility, registration_fields, registration_starts_at, registration_ends_at, payment_note, capacity')
       .eq('id', id)
       .single();
 
@@ -36,7 +36,10 @@ export async function GET(request: Request) {
 
   const now = new Date().toISOString();
 
-  let query = supabase.from('events').select('*').gte('ends_at', now);;
+  let query = supabase
+    .from('events')
+    .select('id, title, description, price, image_key, starts_at, ends_at, address')
+    .gte('ends_at', now);
   if (status) {
     query = query.eq('status', status);
   }
