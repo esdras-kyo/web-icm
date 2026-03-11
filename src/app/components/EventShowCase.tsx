@@ -103,23 +103,22 @@ export default function EventsGrid() {
                         transition={{ duration: 0.55, ease: "easeOut" }}
                         className="group rounded-2xl border border-white/10 bg-black overflow-hidden"
                       >
-                        {/* Imagem — altura fixa, visível por completo */}
-                        <div className="relative w-full h-52 md:h-72 overflow-hidden">
+                        {/* Imagem — área dedicada com altura proporcional */}
+                        <div className="relative w-full h-52 sm:h-60 md:h-72 overflow-hidden">
                           <Image
                             src={`${CDN}/${encodeURIComponent(ev.image_key)}`}
                             alt={ev.title ?? "Evento"}
                             fill
                             sizes="(max-width: 768px) 100vw, 1200px"
-                            className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                             priority={false}
                           />
-                          {/* Gradiente suave só na borda inferior da imagem, para transição visual */}
-                          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-black" />
+                          <div className="absolute bottom-0 left-0 right-0 h-10 bg-linear-to-b from-transparent to-black" />
                         </div>
 
                         {/* Área de texto — fundo preto, separado da imagem */}
-                        <div className="flex items-center justify-between gap-4 px-4 py-4 md:px-6 md:py-5">
-                          <p className="text-base md:text-xl font-semibold text-white line-clamp-2 leading-snug">
+                        <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-5 md:px-6 md:py-5">
+                          <p className="text-sm sm:text-base md:text-xl font-semibold text-white line-clamp-2 leading-snug">
                             {ev.title ?? ""}
                           </p>
                           <ChevronRight className="h-5 w-5 shrink-0 text-white/50 transition-colors group-hover:text-white" />

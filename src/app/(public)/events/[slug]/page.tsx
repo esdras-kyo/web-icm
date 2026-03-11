@@ -16,6 +16,10 @@ type RegistrationFields = {
   camisa: RegistrationFieldConfig;
   isMember: RegistrationFieldConfig;
   idade: RegistrationFieldConfig;
+  church: RegistrationFieldConfig;
+  how_heard: RegistrationFieldConfig;
+  isBeliever: RegistrationFieldConfig;
+  email: RegistrationFieldConfig;
 };
 
 type Evento = {
@@ -39,6 +43,10 @@ const DEFAULT_FIELDS: RegistrationFields = {
   camisa: { enabled: false, required: false },
   isMember: { enabled: false, required: false },
   idade: { enabled: false, required: false },
+  church: { enabled: false, required: false },
+  how_heard: { enabled: false, required: false },
+  isBeliever: { enabled: false, required: false },
+  email: { enabled: false, required: false },
 };
 
 export default function EventoInscricaoCard() {
@@ -50,6 +58,7 @@ export default function EventoInscricaoCard() {
 
   const [waningName, setWaningName] = useState("");
   const [waningCpf, setWaningCpf] = useState("");
+  const [waningEmail, setWaningEmail] = useState("");
   const [waningCamiseta, setWaningCamiseta] = useState("");
   const [waningPhone, setWaningPhone] = useState("");
   const [waningAge, setWaningAge] = useState("");
@@ -67,6 +76,9 @@ export default function EventoInscricaoCard() {
     payment_status: "",
     telefone: "",
     email: "",
+    church: "",
+    how_heard: "",
+    is_believer: "",
   });
 
   const router = useRouter();
@@ -124,6 +136,7 @@ export default function EventoInscricaoCard() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === "nome") setWaningName("");
     if (e.target.name === "cpf") setWaningCpf("");
+    if (e.target.name === "email") setWaningEmail("");
     if (e.target.name === "telefone") setWaningPhone("");
     if (e.target.name === "idade") setWaningAge("");
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -132,14 +145,14 @@ export default function EventoInscricaoCard() {
   async function handleFinalizar() {
     setWaningName("");
     setWaningCpf("");
+    setWaningEmail("");
     setWaningPhone("");
     setWaningCamiseta("");
     setWaningAge("");
-
     const cfg = fieldConfig;
 
     const invalidName = !formData.nome || formData.nome.trim().length < 3;
-
+    const invalidEmail = !formData.email || !formData.email.includes("@");
     const digitsCpf = formData.cpf.replace(/\D/g, "");
     const invalidCpf =
       cfg.cpf.enabled &&
@@ -165,12 +178,13 @@ export default function EventoInscricaoCard() {
     }
 
     if (invalidName) setWaningName("Nome é obrigatório");
+    if (invalidEmail) setWaningEmail("E-mail inválido");
     if (invalidCpf) setWaningCpf("CPF inválido");
     if (invalidPhone) setWaningPhone("Telefone inválido");
     if (invalidCamiseta) setWaningCamiseta("Escolha um tamanho de camiseta");
     if (invalidAge) setWaningAge("Informe uma idade válida");
 
-    if (invalidName || invalidCpf || invalidPhone || invalidCamiseta || invalidAge) return;
+    if (invalidName || invalidCpf || invalidPhone || invalidCamiseta || invalidAge || invalidEmail) return;
 
     setLoading(true);
 
@@ -181,12 +195,15 @@ export default function EventoInscricaoCard() {
         name: formData.nome,
         cpf: cfg.cpf.enabled ? formData.cpf : null,
         phone: cfg.number.enabled ? formData.telefone : null,
-        email: formData.email || null,
+        email: cfg.email.enabled ? formData.email : null,
         payment_status: "pending",
         event_id: evento?.id,
         shirt_size: cfg.camisa.enabled && tshirt_size ? tshirt_size : null,
         is_member: cfg.isMember.enabled ? isMember : null,
         age: cfg.idade.enabled && !Number.isNaN(ageNumber) ? ageNumber : null,
+        church: cfg.church.enabled ? formData.church : null,
+        how_heard: cfg.how_heard.enabled ? formData.how_heard : null,
+        is_believer: cfg.isBeliever.enabled ? formData.is_believer : null,
       }),
     });
 
@@ -221,39 +238,66 @@ export default function EventoInscricaoCard() {
 
   return (
     <main className="min-h-dvh w-full bg-black text-white">
-      <section className="relative w-full overflow-hidden h-[28vh] sm:h-[32vh] md:h-[52vh]">
+      {/* Hero — imagem */}
+      <section className="relative w-full overflow-hidden h-56 sm:h-72 md:h-[52vh]">
         <Image
           src={imageUrl}
           alt={evento?.title || "Imagem do evento"}
           fill
-          className="object-contain md:object-cover object-top"
+          className="object-cover object-center"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-4 pb-6">
-          {evento && (
-            <div className="flex flex-col gap-2">
-              <h1 className="text-2xl md:text-4xl font-bold drop-shadow-sm">
-                {evento.title}
-              </h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
-                {evento.starts_at && (
-                  <span className="inline-flex items-center gap-2">
-                    <CalendarDays className="h-4 w-4" />
-                    {formatDateTime(evento.starts_at)}
-                  </span>
-                )}
-                {evento.address && (
-                  <span className="inline-flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    {evento.address}
-                  </span>
-                )}
-              </div>
+        {/* Gradiente leve no topo (escurece o nav) */}
+        <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-transparent" />
+        {/* Gradiente na base — visível só no desktop para o título overlay */}
+        <div className="absolute inset-0 hidden md:block bg-linear-to-t from-black via-black/40 to-transparent" />
+
+        {/* Título overlay — somente desktop */}
+        {evento && (
+          <div className="hidden md:flex absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-6 pb-8 flex-col gap-2">
+            <h1 className="text-4xl font-bold drop-shadow-sm">
+              {evento.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
+              {evento.starts_at && (
+                <span className="inline-flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4" />
+                  {formatDateTime(evento.starts_at)}
+                </span>
+              )}
+              {evento.address && (
+                <span className="inline-flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  {evento.address}
+                </span>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </section>
+
+      {/* Título — somente mobile, abaixo da imagem */}
+      {evento && (
+        <div className="md:hidden bg-black px-4 py-4 flex flex-col gap-1">
+          <h1 className="text-xl sm:text-2xl font-bold leading-snug">
+            {evento.title}
+          </h1>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-400 mt-1">
+            {evento.starts_at && (
+              <span className="inline-flex items-center gap-1.5">
+                <CalendarDays className="h-4 w-4" />
+                {formatDateTime(evento.starts_at)}
+              </span>
+            )}
+            {evento.address && (
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" />
+                {evento.address}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       <section className="w-full px-4 py-6 flex justify-center">
         {evento?.description && (
@@ -322,14 +366,18 @@ export default function EventoInscricaoCard() {
                   )}
 
                   {/* E-mail */}
+                  {fieldConfig.email.enabled && (
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="email" className="text-sm text-gray-300">E-mail</label>
+                    <label htmlFor="email" className="text-sm text-gray-300">E-mail {fieldConfig.email.required && <span>*</span>}</label>
                     <input
                       id="email" name="email" type="email" placeholder="email@email.com"
                       className="w-full rounded-md border border-white/15 bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       onChange={handleChange}
-                    />
-                  </div>
+                        value={formData.email}
+                        />
+                    {waningEmail && <p className="text-xs text-red-300">{waningEmail}</p>}
+                    </div>
+                  )}
 
                   {/* Telefone */}
                   {fieldConfig.number.enabled && (

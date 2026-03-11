@@ -31,6 +31,7 @@ type RegistrationFields = {
   church: RegistrationFieldConfig;
   how_heard: RegistrationFieldConfig;
   isBeliever: RegistrationFieldConfig;
+  email: RegistrationFieldConfig;
 };
 
 type Visibility = "ORG" | "DEPARTMENT";
@@ -76,6 +77,7 @@ const DEFAULT_FIELDS: RegistrationFields = {
   church: { enabled: false, required: false },
   how_heard: { enabled: false, required: false },
   isBeliever: { enabled: false, required: false },
+  email: { enabled: false, required: false },
 };
 
 const REGISTRATION_FIELD_LABELS: Array<[keyof RegistrationFields, string]> = [
@@ -88,6 +90,7 @@ const REGISTRATION_FIELD_LABELS: Array<[keyof RegistrationFields, string]> = [
   ["church", "Igreja"],
   ["how_heard", "Como soube sobre o evento?"],
   ["isBeliever", "Você é cristão?"],
+  ["email", "E-mail"],
 ];
 
 /** Converts ISO string to "YYYY-MM-DDTHH:mm" for datetime-local inputs */
@@ -311,6 +314,7 @@ export default function EditEventPage() {
       church: event.registration_fields.church,
       how_heard: event.registration_fields.how_heard,
       isBeliever: event.registration_fields.isBeliever,
+      email: event.registration_fields.email,
     };
 
     try {

@@ -67,46 +67,43 @@ export default function Members() {
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  whileHover={{ opacity: 0.95, x: 10 }}
+                  whileHover={{ x: 6 }}
                   transition={{ duration: 0.7 }}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/50 w-full md:w-1/2"
+                  className="group overflow-hidden rounded-2xl border border-white/10 bg-black w-full md:w-1/2"
                 >
+                  {/* Imagem — área dedicada */}
                   {event.image_key ? (
-                    <div className="absolute inset-0 z-0">
+                    <div className="relative w-full h-48 sm:h-56 md:h-64 overflow-hidden">
                       <Image
                         src={`https://worker-1.esdrascamel.workers.dev/${encodeURIComponent(
                           event.image_key
                         )}`}
-                        alt=""
+                        alt={event.title || 'Evento'}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover object-left md:object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                        className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                         priority={false}
                       />
-                      <div className="absolute inset-0 bg-black/45 group-hover:bg-black/35 transition-colors duration-500" />
-                      <div className="absolute inset-0 bg-linear-to-b from-black/70 via-transparent to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 h-10 bg-linear-to-b from-transparent to-black" />
                     </div>
                   ) : null}
 
+                  {/* Texto — fundo preto, separado da imagem */}
                   <button
-                    onClick={() => {
-                      route.push(`/events/${event.slug}`)
-                    }}
-                    className="relative z-10 cursor-pointer w-full p-4 flex items-end justify-between bg-transparent"
+                    onClick={() => route.push(`/events/${event.slug}`)}
+                    className="cursor-pointer w-full px-4 py-4 sm:px-5 flex items-center justify-between bg-transparent"
                   >
-                    <div className="flex flex-col items-start justify-start">
-                      <p className="text-xl md:text-2xl font-semibold text-white">
+                    <div className="flex flex-col items-start gap-1">
+                      <p className="text-base sm:text-lg md:text-xl font-semibold text-white leading-snug">
                         {event.title || 'Sem nome'}
                       </p>
-
                       {event.price > 0 ? (
-                        <p className="mt-2 text-sm font-semibold text-white/80">
+                        <p className="text-sm text-white/70">
                           R$ {event.price}
                         </p>
                       ) : null}
                     </div>
-
-                    <ChevronRight className="h-10 w-10 text-white/90" />
+                    <ChevronRight className="h-6 w-6 shrink-0 text-white/60 transition-colors group-hover:text-white" />
                   </button>
                 </motion.div>
               </li>
