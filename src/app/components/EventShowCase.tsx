@@ -13,6 +13,7 @@ type Mini = {
   price: number;
   image_key: string;
   starts_at: string;
+  slug: string;
 };
 
 const CDN = "https://worker-1.esdrascamel.workers.dev";
@@ -93,7 +94,7 @@ export default function EventsGrid() {
             <ul className="flex flex-col gap-4">
               {top3.map((ev) => (
                 <li key={ev.id}>
-                  <Link href={`/events/${ev.id}`} className="cursor-pointer block">
+                  <Link href={`/events/${ev.slug}`} className="cursor-pointer block">
                     <motion.div
                       initial={{ opacity: 0, y: 18 }}
                       whileInView={{ opacity: 1, y: 0 }}

@@ -1,4 +1,4 @@
-// app/events/[id]/confirmation/page.tsx
+// app/events/[slug]/confirmation/page.tsx
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,23 +7,23 @@ import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import { CopyableRow } from "@/app/(public)/contribua/page";
 
 type ConfirmationPageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
   searchParams?: Promise<{ member?: string }>;
 };
 
 export default async function ConfirmationPage(props: ConfirmationPageProps) {
   const { params, searchParams } = props;
-  const { id } = await params;
+  const { slug } = await params;
   const sp = await searchParams;
   const isMemberFromUrl =
     sp?.member === "1" || sp?.member === "true";
-  
+
   const supabase = createSupabaseAdmin();
 
   const { data: event, error } = await supabase
     .from("events")
     .select("id, title, price, image_key, address, description, payment_note")
-    .eq("id", id)
+    .eq("slug", slug)
     .single();
 
   if (error || !event) {

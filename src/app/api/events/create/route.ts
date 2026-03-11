@@ -1,14 +1,48 @@
 // src/app/api/events/create/route.ts
 import { NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
-import type { EventCreatePayload } from "../../../components/EventCreator" // ajusta o path
+import { slugify } from "@/lib/slugify";
+import type { EventCreatePayload } from "../../../components/EventCreator";
+
+async function generateUniqueSlug(
+  supabase: ReturnType<typeof createSupabaseAdmin>,
+  title: string
+): Promise<string> {
+  const base = slugify(title);
+
+  // Tenta slug base, depois base-2, base-3, ... base-5, fallback com timestamp
+  const candidates = [
+    base,
+    `${base}-2`,
+    `${base}-3`,
+    `${base}-4`,
+    `${base}-5`,
+    `${base}-${Date.now()}`,
+  ];
+
+  for (const candidate of candidates) {
+    const { data } = await supabase
+      .from("events")
+      .select("id")
+      .eq("slug", candidate)
+      .maybeSingle();
+
+    if (!data) return candidate;
+  }
+
+  // fallback extremo (nunca deve chegar aqui)
+  return `${base}-${Date.now()}`;
+}
 
 export async function POST(req: Request) {
   try {
     const payload = (await req.json()) as EventCreatePayload;
 
     const supabase = createSupabaseAdmin();
-    console.log("CREATE EVENT STATUS:", payload.status);
+    const slug = await generateUniqueSlug(supabase, payload.title);
+
+    console.log("CREATE EVENT STATUS:", payload.status, "SLUG:", slug);
+
     const { data, error } = await supabase
       .from("events")
       .insert({
@@ -25,10 +59,10 @@ export async function POST(req: Request) {
         address: payload.address,
         registration_fields: payload.registration_fields,
         image_key: payload.image_key,
-        payment_note: payload.payment_note,  
-        // owner_department_id: ...  // aqui você coloca pelo contexto do usuário
+        payment_note: payload.payment_note,
+        slug,
       })
-      .select("id")
+      .select("id, slug")
       .single();
 
     if (error) {
@@ -36,7 +70,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ id: data.id });
+    return NextResponse.json({ id: data.id, slug: data.slug });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Create event error" }, { status: 500 });

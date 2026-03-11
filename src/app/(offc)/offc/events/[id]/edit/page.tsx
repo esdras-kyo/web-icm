@@ -24,6 +24,9 @@ type RegistrationFields = {
   camisa: RegistrationFieldConfig;
   isMember: RegistrationFieldConfig;
   idade: RegistrationFieldConfig;
+  church: RegistrationFieldConfig;
+  how_heard: RegistrationFieldConfig;
+  isBeliever: RegistrationFieldConfig;
 };
 
 type Visibility = "ORG" | "DEPARTMENT";
@@ -59,6 +62,9 @@ const DEFAULT_FIELDS: RegistrationFields = {
   camisa: { enabled: false, required: false },
   isMember: { enabled: false, required: false },
   idade: { enabled: false, required: false },
+  church: { enabled: false, required: false },
+  how_heard: { enabled: false, required: false },
+  isBeliever: { enabled: false, required: false },
 };
 
 const REGISTRATION_FIELD_LABELS: Array<[keyof RegistrationFields, string]> = [
@@ -68,6 +74,9 @@ const REGISTRATION_FIELD_LABELS: Array<[keyof RegistrationFields, string]> = [
   ["camisa", "Tamanho da camisa"],
   ["isMember", "É membro da igreja?"],
   ["idade", "Idade"],
+  ["church", "Igreja"],
+  ["how_heard", "Como soube sobre o evento?"],
+  ["isBeliever", "Você é cristão?"],
 ];
 
 /** Converts ISO string to "YYYY-MM-DDTHH:mm" for datetime-local inputs */
@@ -226,6 +235,9 @@ export default function EditEventPage() {
       address: event.address,
       registration_fields: event.registration_fields,
       payment_note: event.payment_note,
+      church: event.registration_fields.church,
+      how_heard: event.registration_fields.how_heard,
+      isBeliever: event.registration_fields.isBeliever,
     };
 
     try {

@@ -9,6 +9,7 @@ import Footer from '@/app/components/Footer'
 
 type Mini = {
   id: string
+  slug: string
   title: string | null
   description: string | null
   price: number
@@ -89,7 +90,7 @@ export default function Members() {
 
                   <button
                     onClick={() => {
-                      route.push(`/events/${event.id}`)
+                      route.push(`/events/${event.slug}`)
                     }}
                     className="relative z-10 cursor-pointer w-full p-4 flex items-end justify-between bg-transparent"
                   >

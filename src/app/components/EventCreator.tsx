@@ -58,6 +58,9 @@ type RegistrationFields = {
   camisa: RegistrationFieldConfig;
   isMember: RegistrationFieldConfig;
   idade: RegistrationFieldConfig;
+  church: RegistrationFieldConfig;
+  how_heard: RegistrationFieldConfig;
+  isBeliever: RegistrationFieldConfig;
 };
 
 export type EventCreatePayload = {
@@ -98,6 +101,9 @@ const registrationFieldsSchema = z.object({
   camisa: registrationFieldConfigSchema,
   isMember: registrationFieldConfigSchema,
   idade: registrationFieldConfigSchema,
+  church: registrationFieldConfigSchema,
+  how_heard: registrationFieldConfigSchema,
+  isBeliever: registrationFieldConfigSchema,
 });
 
 const formSchema = z
@@ -166,6 +172,9 @@ const registrationFieldList: { key: RegistrationFieldKey; label: string }[] = [
   { key: "camisa", label: "Tamanho da camisa" },
   { key: "isMember", label: "É membro da igreja?" },
   { key: "idade", label: "Idade" },
+  { key: "church", label: "Igreja" },
+  { key: "how_heard", label: "Como soube sobre o evento?" },
+  { key: "isBeliever", label: "Você é cristão?" },
 ];
 
 function freshDefaults(): FormValues {
@@ -190,6 +199,9 @@ function freshDefaults(): FormValues {
       camisa: { enabled: false, required: false },
       isMember: { enabled: false, required: false },
       idade: { enabled: false, required: false },
+      church: { enabled: false, required: false },
+      how_heard: { enabled: false, required: false },
+      isBeliever: { enabled: false, required: false },
     },
   };
 }
