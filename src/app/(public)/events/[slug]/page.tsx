@@ -239,50 +239,27 @@ export default function EventoInscricaoCard() {
   return (
     <main className="min-h-dvh w-full bg-black text-white">
       {/* Hero — imagem */}
-      <section className="relative w-full overflow-hidden h-56 sm:h-72 md:h-[52vh]">
+      <section className="relative w-full overflow-hidden h-56 sm:h-72 md:h-[65vh]">
         <Image
           src={imageUrl}
           alt={evento?.title || "Imagem do evento"}
           fill
-          className="object-cover object-center"
+          className="object-contain object-center"
           priority
         />
         {/* Gradiente leve no topo (escurece o nav) */}
-        <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-transparent" />
-        {/* Gradiente na base — visível só no desktop para o título overlay */}
-        <div className="absolute inset-0 hidden md:block bg-linear-to-t from-black via-black/40 to-transparent" />
-
-        {/* Título overlay — somente desktop */}
-        {evento && (
-          <div className="hidden md:flex absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-6 pb-8 flex-col gap-2">
-            <h1 className="text-4xl font-bold drop-shadow-sm">
-              {evento.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-300">
-              {evento.starts_at && (
-                <span className="inline-flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4" />
-                  {formatDateTime(evento.starts_at)}
-                </span>
-              )}
-              {evento.address && (
-                <span className="inline-flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  {evento.address}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
+        <div className="absolute inset-0 bg-linear-to-b from-black/50 via-transparent to-transparent" />
+        {/* Gradiente na base — apenas decorativo no desktop */}
+        <div className="absolute inset-0 hidden md:block bg-linear-to-t from-black/30 via-transparent to-transparent" />
       </section>
 
-      {/* Título — somente mobile, abaixo da imagem */}
+      {/* Título — abaixo da imagem em todos os viewports */}
       {evento && (
-        <div className="md:hidden bg-black px-4 py-4 flex flex-col gap-1">
-          <h1 className="text-xl sm:text-2xl font-bold leading-snug">
+        <div className="bg-black px-4 py-5 md:py-6 md:px-8 flex flex-col gap-1 max-w-6xl mx-auto w-full">
+          <h1 className="text-xl sm:text-2xl md:text-4xl font-bold leading-snug">
             {evento.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-400 mt-1">
+          <div className="flex flex-wrap items-center gap-3 md:gap-4 text-sm text-gray-400 mt-1">
             {evento.starts_at && (
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays className="h-4 w-4" />

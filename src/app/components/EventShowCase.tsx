@@ -104,13 +104,13 @@ export default function EventsGrid() {
                         className="group rounded-2xl border border-white/10 bg-black overflow-hidden"
                       >
                         {/* Imagem — área dedicada com altura proporcional */}
-                        <div className="relative w-full h-52 sm:h-60 md:h-72 overflow-hidden">
+                        <div className="relative w-full aspect-video md:h-72 md:aspect-auto overflow-hidden">
                           <Image
                             src={`${CDN}/${encodeURIComponent(ev.image_key)}`}
                             alt={ev.title ?? "Evento"}
                             fill
                             sizes="(max-width: 768px) 100vw, 1200px"
-                            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                            className="object-contain object-center sm:object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                             priority={false}
                           />
                           <div className="absolute bottom-0 left-0 right-0 h-10 bg-linear-to-b from-transparent to-black" />
