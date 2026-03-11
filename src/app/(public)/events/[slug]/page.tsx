@@ -152,7 +152,10 @@ export default function EventoInscricaoCard() {
     const cfg = fieldConfig;
 
     const invalidName = !formData.nome || formData.nome.trim().length < 3;
-    const invalidEmail = !formData.email || !formData.email.includes("@");
+    const invalidEmail =
+      cfg.email.enabled &&
+      (cfg.email.required || formData.email.length > 0) &&
+      !formData.email.includes("@");
     const digitsCpf = formData.cpf.replace(/\D/g, "");
     const invalidCpf =
       cfg.cpf.enabled &&

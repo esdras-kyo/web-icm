@@ -14,6 +14,10 @@ const RegistrationFieldsSchema = z.object({
   camisa: FieldCfg,
   isMember: FieldCfg,
   idade: FieldCfg,
+  church: FieldCfg,
+  how_heard: FieldCfg,
+  isBeliever: FieldCfg,
+  email: FieldCfg,
 });
 
 // Aceita ISO ou datetime-local
