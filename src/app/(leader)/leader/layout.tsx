@@ -29,6 +29,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <LeaderClientShell>{children}</LeaderClientShell>
+    <LeaderClientShell claims={claims}>{children}</LeaderClientShell>
   );
 }

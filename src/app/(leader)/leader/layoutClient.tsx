@@ -5,8 +5,9 @@ import Backdrop from "@/app/components/Backdrop";
 import { SidebarProvider, useSidebar } from "@/app/context/SidebarContext";
 import OffcHeader from "@/app/components/OffcHeader";
 import LeaderSidebar from "@/app/components/LeaderSidebar";
+import type { UserClaims } from "@/types/UserClaims";
 
-function Content({ children }: { children: React.ReactNode }) {
+function Content({ children, claims }: { children: React.ReactNode; claims: UserClaims }) {
   const { isExpanded, isMobile } = useSidebar();
 
   return (
@@ -16,7 +17,7 @@ function Content({ children }: { children: React.ReactNode }) {
         ${isMobile ? "" : isExpanded ? "pl-64" : "pl-20"}
       `}
     >
-      <OffcHeader title="Liderança" />
+      <OffcHeader title="Liderança" claims={claims} />
 
       <main className="flex-1 overflow-y-auto">
         <div className="p-4 mx-auto max-w-7xl md:p-6">
@@ -27,13 +28,13 @@ function Content({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function LeaderClientShell({ children }: { children: React.ReactNode }) {
+export default function LeaderClientShell({ children, claims }: { children: React.ReactNode; claims: UserClaims }) {
   return (
     <SidebarProvider>
       <div className="h-dvh overflow-hidden bg-zinc-950 relative text-white">
         <LeaderSidebar />
         <Backdrop />
-        <Content>{children}</Content>
+        <Content claims={claims}>{children}</Content>
       </div>
     </SidebarProvider>
   );

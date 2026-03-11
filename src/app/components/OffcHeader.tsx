@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { useSidebar } from "@/app/context/SidebarContext";
 import ProfBtn from "./ProfBtn";
+import type { UserClaims } from "@/types/UserClaims";
 
-export default function OffcHeader({title}: {title: string}) {
+export default function OffcHeader({ title, claims }: { title: string; claims: UserClaims }) {
   const { toggleMobile } = useSidebar();
 
   return (
@@ -27,7 +28,7 @@ export default function OffcHeader({title}: {title: string}) {
           {`< Voltar ao site`}
         </Link>
 
-        <ProfBtn />
+        <ProfBtn claims={claims} />
       </div>
     </header>
   );

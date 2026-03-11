@@ -2,10 +2,13 @@
 
 import { ShieldUser, User2 } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { useUserClaims } from "../hooks/useUserClaims";
+import type { UserClaims } from "@/types/UserClaims";
 
-export default function ProfBtn() {
-  const { claims } = useUserClaims();
+interface ProfBtnProps {
+  claims?: UserClaims | null;
+}
+
+export default function ProfBtn({ claims }: ProfBtnProps) {
   const isLeader = claims?.roles?.some((r) => r.role === "LEADER");
   const isAdmin = claims?.roles?.some((r) => r.role === "ADMIN");
 

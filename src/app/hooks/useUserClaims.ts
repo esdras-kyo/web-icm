@@ -26,7 +26,7 @@ function decodeJwt(jwt: string){
       const fetchClaims = async () => {
         try {
           if (!isSignedIn) return;
-          const jwt = await getToken({ template, skipCache: true });
+          const jwt = await getToken({ template });
           if (!jwt) return;
   
           const payload = decodeJwt(jwt);

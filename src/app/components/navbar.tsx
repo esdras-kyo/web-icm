@@ -7,8 +7,13 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useScroll } from "framer-motion";
 import ProfBtn from "./ProfBtn";
+import type { UserClaims } from "@/types/UserClaims";
 
-export default function NavBar() {
+interface NavBarProps {
+  claims?: UserClaims | null;
+}
+
+export default function NavBar({ claims }: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -78,12 +83,12 @@ export default function NavBar() {
               </div>
 
               <div className="ml-2">
-                <ProfBtn />
+                <ProfBtn claims={claims} />
               </div>
             </nav>
 
             <div className="flex items-center gap-3 md:hidden">
-              <ProfBtn />
+              <ProfBtn claims={claims} />
 
               <button
                 type="button"

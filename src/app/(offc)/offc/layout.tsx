@@ -18,5 +18,5 @@ export default async function OffcLayout({ children }: { children: React.ReactNo
   const allowed = claims.roles.some((r) => r.role === "ADMIN");
   if (!allowed) redirect("/conta");
 
-  return <OffcClientShell>{children}</OffcClientShell>;
+  return <OffcClientShell claims={claims}>{children}</OffcClientShell>;
 }
