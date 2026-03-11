@@ -30,7 +30,8 @@ export async function POST(req: Request) {
       registration_ends_at,
       address,
       registration_fields,
-      payment_note
+      payment_note,
+      image_key
     `)
     .eq("id", event_id)
     .single();

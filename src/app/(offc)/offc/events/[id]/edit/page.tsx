@@ -2,11 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import { useRef } from "react";
 import {
   AlertCircle,
   CheckCircle2,
   ChevronLeft,
+  ImageIcon,
   Loader2,
+  Upload,
   X,
   CalendarDays,
   ClipboardList,
@@ -47,7 +51,14 @@ type EventEdit = {
   address: string | null;
   registration_fields: RegistrationFields;
   payment_note: string | null;
+  image_key: string | null;
 };
+
+type ImageUploadState =
+  | { phase: "idle" }
+  | { phase: "uploading" }
+  | { phase: "success" }
+  | { phase: "error"; message: string };
 
 type FeedbackState =
   | { type: "idle" }
@@ -94,6 +105,14 @@ export default function EditEventPage() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState<FeedbackState>({ type: "idle" });
 
+  // Image upload state
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imgUpload, setImgUpload] = useState<
+    { phase: "idle" } | { phase: "uploading" } | { phase: "success" } | { phase: "error"; message: string }
+  >({ phase: "idle" });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const isSaving = feedback.type === "saving";
 
   useEffect(() => {
@@ -139,6 +158,7 @@ export default function EditEventPage() {
             ...(json.registration_fields ?? {}),
           } as RegistrationFields,
           payment_note: json.payment_note ?? null,
+          image_key: json.image_key ?? null,
         };
 
         setEvent(normalized);
@@ -206,6 +226,59 @@ export default function EditEventPage() {
       return "Defina também o fim das inscrições.";
 
     return null;
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPendingFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setImgUpload({ phase: "idle" });
+  }
+
+  async function handleImageUpload() {
+    if (!pendingFile || !event) return;
+    setImgUpload({ phase: "uploading" });
+
+    try {
+      // 1. Gera URL presignada
+      const presignRes = await fetch("/api/uploads/presign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: pendingFile.name, contentType: pendingFile.type }),
+      });
+      if (!presignRes.ok) throw new Error("Falha ao gerar URL de upload");
+      const { key, uploadUrl } = await presignRes.json() as { key: string; uploadUrl: string };
+
+      // 2. Faz PUT direto no R2
+      const putRes = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": pendingFile.type },
+        body: pendingFile,
+      });
+      if (!putRes.ok) throw new Error("Falha ao enviar arquivo");
+
+      // 3. Confirma no banco e deleta imagem antiga
+      const confirmRes = await fetch("/api/uploads/confirm-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventId: event.id,
+          fileKey: key,
+          oldKey: event.image_key ?? undefined,
+        }),
+      });
+      if (!confirmRes.ok) throw new Error("Falha ao confirmar upload");
+
+      // 4. Atualiza estado local
+      setEvent((prev) => prev ? { ...prev, image_key: key } : prev);
+      setPendingFile(null);
+      setPreviewUrl(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setImgUpload({ phase: "success" });
+    } catch (err) {
+      setImgUpload({ phase: "error", message: err instanceof Error ? err.message : "Erro desconhecido" });
+    }
   }
 
   async function handleSave(e: React.FormEvent) {
@@ -599,7 +672,115 @@ export default function EditEventPage() {
           </div>
         </FormSection>
 
-        {/* ── Seção 5: Campos do formulário de inscrição ── */}
+        {/* ── Seção 5: Imagem ── */}
+        <FormSection icon={<ImageIcon className="h-4 w-4" />} title="Imagem do evento">
+          <div className="space-y-4">
+            {/* Prévia atual ou nova */}
+            <div className="relative h-44 w-full overflow-hidden rounded-xl border border-white/10 bg-black/40">
+              {previewUrl ? (
+                <>
+                  <Image
+                    src={previewUrl}
+                    alt="Prévia da nova imagem"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                  <span className="absolute left-2 top-2 rounded-full bg-amber-500/80 px-2 py-0.5 text-xs font-medium text-black">
+                    Nova — ainda não salva
+                  </span>
+                </>
+              ) : event.image_key ? (
+                <Image
+                  src={`https://worker-1.esdrascamel.workers.dev/${event.image_key}`}
+                  alt="Imagem atual do evento"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center gap-2 text-zinc-500">
+                  <ImageIcon className="h-8 w-8" />
+                  <p className="text-sm">Nenhuma imagem</p>
+                </div>
+              )}
+            </div>
+
+            {/* Input de arquivo oculto */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Botão selecionar */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={imgUpload.phase === "uploading"}
+                className="cursor-pointer inline-flex items-center gap-2 rounded-md border border-white/20 px-4 py-2 text-sm text-white transition hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Upload className="h-4 w-4" />
+                {event.image_key ? "Trocar imagem" : "Selecionar imagem"}
+              </button>
+
+              {/* Botão confirmar upload — só aparece quando há arquivo pendente */}
+              {pendingFile && (
+                <button
+                  type="button"
+                  onClick={handleImageUpload}
+                  disabled={imgUpload.phase === "uploading"}
+                  className="cursor-pointer inline-flex items-center gap-2 rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {imgUpload.phase === "uploading" ? (
+                    <><Loader2 className="h-4 w-4 animate-spin" />Enviando…</>
+                  ) : (
+                    <><CheckCircle2 className="h-4 w-4" />Confirmar upload</>
+                  )}
+                </button>
+              )}
+
+              {/* Cancelar seleção */}
+              {pendingFile && imgUpload.phase !== "uploading" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPendingFile(null);
+                    setPreviewUrl(null);
+                    setImgUpload({ phase: "idle" });
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                  }}
+                  className="cursor-pointer inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-white transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                  Cancelar
+                </button>
+              )}
+            </div>
+
+            {/* Feedback do upload */}
+            {imgUpload.phase === "success" && (
+              <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                Imagem atualizada com sucesso!
+              </div>
+            )}
+            {imgUpload.phase === "error" && (
+              <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                {imgUpload.message}
+              </div>
+            )}
+
+            <p className="text-xs text-zinc-500">
+              Formatos aceitos: JPEG, PNG, WebP, AVIF. A imagem anterior será apagada automaticamente.
+            </p>
+          </div>
+        </FormSection>
+
+        {/* ── Seção 6: Campos do formulário de inscrição ── */}
         <FormSection
           icon={<ClipboardList className="h-4 w-4" />}
           title="Campos do formulário de inscrição"
