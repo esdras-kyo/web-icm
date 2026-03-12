@@ -87,9 +87,9 @@ const REGISTRATION_FIELD_LABELS: Array<[keyof RegistrationFields, string]> = [
   ["camisa", "Tamanho da camisa"],
   ["isMember", "É membro da igreja?"],
   ["idade", "Idade"],
-  ["church", "Igreja"],
-  ["how_heard", "Como soube sobre o evento?"],
-  ["isBeliever", "Você é cristão?"],
+  ["church", "Qual sua igreja?"],
+  ["how_heard", "Como soube desse evento?"],
+  ["isBeliever", "Já aceitou Jesus?"],
   ["email", "E-mail"],
 ];
 

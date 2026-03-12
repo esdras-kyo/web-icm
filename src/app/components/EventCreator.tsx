@@ -175,9 +175,9 @@ const registrationFieldList: { key: RegistrationFieldKey; label: string }[] = [
   { key: "isMember", label: "É membro da igreja?" },
   { key: "email", label: "E-mail" },
   { key: "idade", label: "Idade" },
-  { key: "church", label: "Igreja" },
-  { key: "how_heard", label: "Como soube sobre o evento?" },
-  { key: "isBeliever", label: "Você é cristão?" },
+  { key: "church", label: "Qual sua igreja?" },
+  { key: "how_heard", label: "Como soube desse evento?" },
+  { key: "isBeliever", label: "Já aceitou Jesus?" },
 ];
 
 function freshDefaults(): FormValues {
