@@ -62,6 +62,8 @@ export default function EventoInscricaoCard() {
   const [waningCamiseta, setWaningCamiseta] = useState("");
   const [waningPhone, setWaningPhone] = useState("");
   const [waningAge, setWaningAge] = useState("");
+  const [waningChurch, setWaningChurch] = useState("");
+  const [waningHowHeard, setWaningHowHeard] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [isDone, setDone] = useState(false);
@@ -69,6 +71,8 @@ export default function EventoInscricaoCard() {
 
   const [isMember, setIsMember] = useState(false);
   const [idade, setIdade] = useState("");
+
+  const [isBeliever, setIsBeliever] = useState(false);
 
   const [formData, setFormData] = useState({
     nome: "",
@@ -78,7 +82,6 @@ export default function EventoInscricaoCard() {
     email: "",
     church: "",
     how_heard: "",
-    is_believer: "",
   });
 
   const router = useRouter();
@@ -95,7 +98,7 @@ export default function EventoInscricaoCard() {
       evento?.image_key?.length
         ? `https://worker-1.esdrascamel.workers.dev/${evento.image_key}`
         : "/images/fundo-geometrico.jpg",
-    [evento]
+    [evento],
   );
 
   const isRegistrationsClosed = useMemo(() => {
@@ -138,7 +141,8 @@ export default function EventoInscricaoCard() {
     if (e.target.name === "cpf") setWaningCpf("");
     if (e.target.name === "email") setWaningEmail("");
     if (e.target.name === "telefone") setWaningPhone("");
-    if (e.target.name === "idade") setWaningAge("");
+    if (e.target.name === "church") setWaningChurch("");
+    if (e.target.name === "how_heard") setWaningHowHeard("");
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -149,9 +153,20 @@ export default function EventoInscricaoCard() {
     setWaningPhone("");
     setWaningCamiseta("");
     setWaningAge("");
+    setWaningChurch("");
+    setWaningHowHeard("");
     const cfg = fieldConfig;
 
     const invalidName = !formData.nome || formData.nome.trim().length < 3;
+    const invalidChurch =
+      cfg.church.enabled &&
+      cfg.church.required &&
+      (!formData.church || formData.church.trim().length < 3);
+
+    const invalidHowHeard =
+      cfg.how_heard.enabled &&
+      cfg.how_heard.required &&
+      (!formData.how_heard || formData.how_heard.trim().length < 3);
     const invalidEmail =
       cfg.email.enabled &&
       (cfg.email.required || formData.email.length > 0) &&
@@ -171,7 +186,8 @@ export default function EventoInscricaoCard() {
     let invalidCamiseta = false;
     if (cfg.camisa.enabled) {
       if (cfg.camisa.required && !tshirt_size) invalidCamiseta = true;
-      if (!cfg.camisa.required && camiseta && !tshirt_size) invalidCamiseta = true;
+      if (!cfg.camisa.required && camiseta && !tshirt_size)
+        invalidCamiseta = true;
     }
 
     const ageNumber = idade ? Number(idade) : NaN;
@@ -181,13 +197,25 @@ export default function EventoInscricaoCard() {
     }
 
     if (invalidName) setWaningName("Nome é obrigatório");
+    if (invalidChurch) setWaningChurch("Nos diga qual sua igreja");
+    if (invalidHowHeard) setWaningHowHeard("Nos diga como soube desse evento");
     if (invalidEmail) setWaningEmail("E-mail inválido");
     if (invalidCpf) setWaningCpf("CPF inválido");
     if (invalidPhone) setWaningPhone("Telefone inválido");
     if (invalidCamiseta) setWaningCamiseta("Escolha um tamanho de camiseta");
     if (invalidAge) setWaningAge("Informe uma idade válida");
 
-    if (invalidName || invalidCpf || invalidPhone || invalidCamiseta || invalidAge || invalidEmail) return;
+    if (
+      invalidName ||
+      invalidCpf ||
+      invalidPhone ||
+      invalidCamiseta ||
+      invalidAge ||
+      invalidEmail ||
+      invalidChurch ||
+      invalidHowHeard
+    )
+      return;
 
     setLoading(true);
 
@@ -206,7 +234,7 @@ export default function EventoInscricaoCard() {
         age: cfg.idade.enabled && !Number.isNaN(ageNumber) ? ageNumber : null,
         church: cfg.church.enabled ? formData.church : null,
         how_heard: cfg.how_heard.enabled ? formData.how_heard : null,
-        is_believer: cfg.isBeliever.enabled ? formData.is_believer : null,
+        is_believer: cfg.isBeliever.enabled ? isBeliever : null,
       }),
     });
 
@@ -218,7 +246,9 @@ export default function EventoInscricaoCard() {
       setStatus("ok");
       setLoading(false);
       if (slug) {
-        router.push(`/events/${slug}/confirmation?member=${isMember ? "1" : "0"}`);
+        router.push(
+          `/events/${slug}/confirmation?member=${isMember ? "1" : "0"}`,
+        );
       }
     }
   }
@@ -303,30 +333,40 @@ export default function EventoInscricaoCard() {
             <h2 className="text-xl md:text-2xl font-semibold mb-4 text-gray-200">
               Inscrição
             </h2>
-            {show && (
-              isRegistrationsClosed ? (
+            {show &&
+              (isRegistrationsClosed ? (
                 <div className="py-4 text-center text-sm text-red-300">
                   Inscrições encerradas
                   {evento?.registration_ends_at && (
                     <p className="mt-1 text-xs text-gray-400">
-                      Encerradas em {formatDateTime(evento.registration_ends_at)}
+                      Encerradas em{" "}
+                      {formatDateTime(evento.registration_ends_at)}
                     </p>
                   )}
                 </div>
               ) : (
                 <form
                   className="flex flex-col gap-3"
-                  onSubmit={(e) => { e.preventDefault(); handleFinalizar(); }}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleFinalizar();
+                  }}
                 >
                   {/* Nome */}
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="nome" className="text-sm text-gray-300">Nome *</label>
+                    <label htmlFor="nome" className="text-sm text-gray-300">
+                      Nome *
+                    </label>
                     <input
-                      id="nome" name="nome" placeholder="Insira seu nome..."
+                      id="nome"
+                      name="nome"
+                      placeholder="Insira seu nome..."
                       className={`w-full rounded-md border bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${waningName ? "border-red-400" : "border-white/15"}`}
                       onChange={handleChange}
                     />
-                    {waningName && <p className="text-xs text-red-300">{waningName}</p>}
+                    {waningName && (
+                      <p className="text-xs text-red-300">{waningName}</p>
+                    )}
                   </div>
 
                   {/* CPF */}
@@ -336,42 +376,72 @@ export default function EventoInscricaoCard() {
                         CPF {fieldConfig.cpf.required && <span>*</span>}
                       </label>
                       <input
-                        id="cpf" name="cpf" placeholder="000.000.000-00"
+                        id="cpf"
+                        name="cpf"
+                        placeholder="000.000.000-00"
                         className={`w-full rounded-md border bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${waningCpf ? "border-red-400" : "border-white/15"}`}
-                        onChange={(e) => { handleChange(e); setFormData((prev) => ({ ...prev, cpf: maskCPF(e.target.value) })); }}
+                        onChange={(e) => {
+                          handleChange(e);
+                          setFormData((prev) => ({
+                            ...prev,
+                            cpf: maskCPF(e.target.value),
+                          }));
+                        }}
                         value={formData.cpf}
                       />
-                      {waningCpf && <p className="text-xs text-red-300">{waningCpf}</p>}
+                      {waningCpf && (
+                        <p className="text-xs text-red-300">{waningCpf}</p>
+                      )}
                     </div>
                   )}
 
                   {/* E-mail */}
                   {fieldConfig.email.enabled && (
-                  <div className="flex flex-col gap-1">
-                    <label htmlFor="email" className="text-sm text-gray-300">E-mail {fieldConfig.email.required && <span>*</span>}</label>
-                    <input
-                      id="email" name="email" type="email" placeholder="email@email.com"
-                      className="w-full rounded-md border border-white/15 bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      onChange={handleChange}
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="email" className="text-sm text-gray-300">
+                        E-mail {fieldConfig.email.required && <span>*</span>}
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="email@email.com"
+                        className={`w-full rounded-md border bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${waningEmail ? "border-red-400" : "border-white/15"}`}
+                        onChange={handleChange}
                         value={formData.email}
-                        />
-                    {waningEmail && <p className="text-xs text-red-300">{waningEmail}</p>}
+                      />
+                      {waningEmail && (
+                        <p className="text-xs text-red-300">{waningEmail}</p>
+                      )}
                     </div>
                   )}
 
                   {/* Telefone */}
                   {fieldConfig.number.enabled && (
                     <div className="flex flex-col gap-1">
-                      <label htmlFor="telefone" className="text-sm text-gray-300">
+                      <label
+                        htmlFor="telefone"
+                        className="text-sm text-gray-300"
+                      >
                         Telefone {fieldConfig.number.required && <span>*</span>}
                       </label>
                       <input
-                        id="telefone" name="telefone" placeholder="(00) 90000-0000"
+                        id="telefone"
+                        name="telefone"
+                        placeholder="(00) 90000-0000"
                         className={`w-full rounded-md border bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${waningPhone ? "border-red-400" : "border-white/15"}`}
-                        onChange={(e) => { handleChange(e); setFormData((prev) => ({ ...prev, telefone: maskPhone(e.target.value) })); }}
+                        onChange={(e) => {
+                          handleChange(e);
+                          setFormData((prev) => ({
+                            ...prev,
+                            telefone: maskPhone(e.target.value),
+                          }));
+                        }}
                         value={formData.telefone}
                       />
-                      {waningPhone && <p className="text-xs text-red-300">{waningPhone}</p>}
+                      {waningPhone && (
+                        <p className="text-xs text-red-300">{waningPhone}</p>
+                      )}
                     </div>
                   )}
 
@@ -384,7 +454,10 @@ export default function EventoInscricaoCard() {
                             type="checkbox"
                             className="h-4 w-4 rounded border-white/20 bg-black/60"
                             checked={camiseta}
-                            onChange={(e) => { setCamiseta(e.target.checked); if (!e.target.checked) setWaningCamiseta(""); }}
+                            onChange={(e) => {
+                              setCamiseta(e.target.checked);
+                              if (!e.target.checked) setWaningCamiseta("");
+                            }}
                           />
                           Quero camiseta
                         </label>
@@ -393,9 +466,16 @@ export default function EventoInscricaoCard() {
                         <select
                           className={`rounded-md border bg-black/40 px-3 py-2 text-sm ${waningCamiseta ? "border-red-400" : "border-white/15"}`}
                           value={tshirt_size}
-                          onChange={(e) => { setTshirtSize(e.target.value); setWaningCamiseta(""); }}
+                          onChange={(e) => {
+                            setTshirtSize(e.target.value);
+                            setWaningCamiseta("");
+                          }}
                         >
-                          <option value="">{fieldConfig.camisa.required ? "Selecione o tamanho" : "Tamanho (opcional)"}</option>
+                          <option value="">
+                            {fieldConfig.camisa.required
+                              ? "Selecione o tamanho"
+                              : "Tamanho (opcional)"}
+                          </option>
                           <option value="PP">PP</option>
                           <option value="P">P</option>
                           <option value="M">M</option>
@@ -403,7 +483,78 @@ export default function EventoInscricaoCard() {
                           <option value="GG">GG</option>
                         </select>
                       )}
-                      {waningCamiseta && <p className="col-span-2 -mt-2 text-xs text-red-300">{waningCamiseta}</p>}
+                      {waningCamiseta && (
+                        <p className="col-span-2 -mt-2 text-xs text-red-300">
+                          {waningCamiseta}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Idade */}
+                  {fieldConfig.idade.enabled && (
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="idade" className="text-sm text-gray-300">
+                        Idade {fieldConfig.idade.required && <span>*</span>}
+                      </label>
+                      <input
+                        id="idade"
+                        name="idade"
+                        type="number"
+                        min={0}
+                        className={`w-full rounded-md border bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${waningAge ? "border-red-400" : "border-white/15"}`}
+                        value={idade}
+                        onChange={(e) => {
+                          setIdade(e.target.value);
+                          setWaningAge("");
+                        }}
+                      />
+                      {waningAge && (
+                        <p className="text-xs text-red-300">{waningAge}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {fieldConfig.church.enabled && (
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="church" className="text-sm text-gray-300">
+                        Qual sua igreja?{" "}
+                        {fieldConfig.church.required && <span>*</span>}
+                      </label>
+                      <input
+                        id="church"
+                        name="church"
+                        value={formData.church}
+                        placeholder="Insira o nome da sua igreja..."
+                        className={`w-full rounded-md border bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${waningChurch ? "border-red-400" : "border-white/15"}`}
+                        onChange={handleChange}
+                      />
+                      {waningChurch && (
+                        <p className="text-xs text-red-300">{waningChurch}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {fieldConfig.how_heard.enabled && (
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="how_heard"
+                        className="text-sm text-gray-300"
+                      >
+                        Como soube desse evento?{" "}
+                        {fieldConfig.how_heard.required && <span>*</span>}
+                      </label>
+                      <input
+                        id="how_heard"
+                        name="how_heard"
+                        value={formData.how_heard}
+                        placeholder="Insira como soube desse evento..."
+                        className={`w-full rounded-md border bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${waningHowHeard ? "border-red-400" : "border-white/15"}`}
+                        onChange={handleChange}
+                      />
+                      {waningHowHeard && (
+                        <p className="text-xs text-red-300">{waningHowHeard}</p>
+                      )}
                     </div>
                   )}
 
@@ -420,20 +571,16 @@ export default function EventoInscricaoCard() {
                     </label>
                   )}
 
-                  {/* Idade */}
-                  {fieldConfig.idade.enabled && (
-                    <div className="flex flex-col gap-1">
-                      <label htmlFor="idade" className="text-sm text-gray-300">
-                        Idade {fieldConfig.idade.required && <span>*</span>}
-                      </label>
+                  {fieldConfig.isBeliever.enabled && (
+                    <label className="mt-1 inline-flex items-center gap-2 text-sm text-gray-300">
                       <input
-                        id="idade" name="idade" type="number" min={0}
-                        className={`w-full rounded-md border bg-black/40 px-3 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${waningAge ? "border-red-400" : "border-white/15"}`}
-                        value={idade}
-                        onChange={(e) => { setIdade(e.target.value); setWaningAge(""); }}
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-white/20 bg-black/60"
+                        checked={isBeliever}
+                        onChange={(e) => setIsBeliever(e.target.checked)}
                       />
-                      {waningAge && <p className="text-xs text-red-300">{waningAge}</p>}
-                    </div>
+                      Já aceitou a Jesus?
+                    </label>
                   )}
 
                   <button
@@ -442,17 +589,30 @@ export default function EventoInscricaoCard() {
                     className="group mt-2 cursor-pointer inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2 font-medium bg-black hover:bg-slate-900 text-white shadow-lg shadow-sky-900/20 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {loading ? (
-                      <><Loader2 className="h-4 w-4 animate-spin" />Processando...</>
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Processando...
+                      </>
                     ) : (
-                      <>Continuar<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></>
+                      <>
+                        Continuar
+                        <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </>
                     )}
                   </button>
 
-                  {isDone && <p className="mt-2 text-sm text-emerald-300">✅ Inscrição realizada!</p>}
-                  {status === "erro" && <p className="mt-2 text-sm text-red-300">❌ Falha ao inscrever. Tente novamente.</p>}
+                  {isDone && (
+                    <p className="mt-2 text-sm text-emerald-300">
+                      ✅ Inscrição realizada!
+                    </p>
+                  )}
+                  {status === "erro" && (
+                    <p className="mt-2 text-sm text-red-300">
+                      ❌ Falha ao inscrever. Tente novamente.
+                    </p>
+                  )}
                 </form>
-              )
-            )}
+              ))}
           </div>
         </div>
       </section>

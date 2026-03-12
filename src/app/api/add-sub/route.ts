@@ -14,11 +14,16 @@ export async function POST(request: Request) {
       phone: body.phone ?? null,
       email: body.email ?? null,
       payment_status: body.payment_status ?? "pending",
-
-      // extras do registro que você configurou
+    
+      // extras
       shirt_size: body.shirt_size ?? null,
       is_member: body.is_member ?? null,
       age: body.age ?? null,
+    
+      // novos campos
+      church: body.church ?? null,
+      how_heard: body.how_heard ?? null,
+      is_believer: body.is_believer ?? null,
     };
 
     const { data, error } = await supabase
