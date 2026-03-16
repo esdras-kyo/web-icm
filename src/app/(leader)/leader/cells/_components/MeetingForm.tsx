@@ -9,10 +9,12 @@ export function MeetingForm({
   cellId,
   leaderUserId,
   leaderName,
+  defaultMembersCount,
 }: {
   cellId: string;
-  leaderUserId?: string; 
-  leaderName?: string;   
+  leaderUserId?: string;
+  leaderName?: string;
+  defaultMembersCount?: number;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -23,6 +25,13 @@ export function MeetingForm({
   const [icebreakerRate, setIcebreakerRate] = useState<number>(0);
   const [worshipRate, setWorshipRate] = useState<number>(0);
   const [wordRate, setWordRate] = useState<number>(0);
+  const [membersCount, setMembersCount] = useState<number | "">(
+    defaultMembersCount ?? ""
+  );
+
+  useEffect(() => {
+    setMembersCount(defaultMembersCount ?? "");
+  }, [defaultMembersCount]);
 
 
   useEffect(() => {
@@ -57,6 +66,7 @@ export function MeetingForm({
       setIcebreakerRate(0);
       setWorshipRate(0);
       setWordRate(0);
+      setMembersCount(defaultMembersCount ?? "");
 
       router.refresh();
     });
@@ -153,6 +163,10 @@ export function MeetingForm({
               name="members_count"
               min={0}
               placeholder="0"
+              value={membersCount}
+              onChange={(e) =>
+                setMembersCount(e.target.value === "" ? "" : Number(e.target.value))
+              }
             />
           </div>
 

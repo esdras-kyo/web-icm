@@ -1,69 +1,38 @@
 import Link from "next/link";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
-import { addMemberAction } from "./actions/addMember";
-import { changeRoleAction } from "./actions/changeRole";
-import { removeMemberAction } from "./actions/removeMember";
+import { addInformalMemberAction } from "./actions/addInformalMember";
+import { removeInformalMemberAction } from "./actions/removeInformalMember";
 import { CollapsibleCard } from "../../_components/CollapsibleCard";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { ActionForm } from "./ActionForm";
-import { RoleField } from "./RoleField";
 import { MeetingForm } from "../../_components/MeetingForm";
 
 const rowCard =
   "rounded-md border p-3 bg-white/5 ring-1 ring-white/10 text-white";
-const titleTxt = "font-medium break-words";
-const metaTxt = "text-xs text-muted-foreground break-words";
-const actionBar =
-  "mt-3 sm:mt-0 flex flex-col sm:flex-row gap-2 sm:gap-2 sm:items-center w-full sm:w-auto";
-const actionRow =
-  "flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto";
-const selectBase =
-  "rounded-md border px-2 py-1 text-sm w-full sm:w-[160px] bg-transparent";
+const titleTxt = "font-medium break-words min-w-0";
 const btnBase =
-  "cursor-pointer rounded-md border px-3 py-1 text-sm disabled:opacity-50 w-full sm:w-auto";
-
-export type MemberUser = {
-  id: string;    
-  email: string;    
-  name: string | null; 
-};
-
-export type CellRole = "LEADER" | "ASSISTANT" | "MEMBER";
-
-export type CellMembershipWithUser = {
-  id: string; 
-  role: CellRole;  
-  user: MemberUser;   
-};
+  "cursor-pointer rounded-md border px-2 py-1 text-sm disabled:opacity-50 shrink-0";
 
 export default async function ManageCellPage({
   params,
 }: {
-
   params: Promise<{ name: string }>;
 }) {
-  const { name } = await params;                  // <-- aguarda params
+  const { name } = await params;
   const cellName = decodeURIComponent(name);
 
   const supabase = createSupabaseAdmin();
 
-
-  const onAddMember = async (formData: FormData): Promise<void> => {
+  const onAddInformalMember = async (formData: FormData): Promise<void> => {
     "use server";
-    await addMemberAction(formData);
+    await addInformalMemberAction(formData);
   };
 
-  const onChangeRole = async (formData: FormData): Promise<void> => {
+  const onRemoveInformalMember = async (formData: FormData): Promise<void> => {
     "use server";
-    await changeRoleAction(formData);
+    await removeInformalMemberAction(formData);
   };
 
-  const onRemoveMember = async (formData: FormData): Promise<void> => {
-    "use server";
-    await removeMemberAction(formData);
-  };
-
-  // 1) Buscar célula por name
   const { data: cell, error: cellErr } = await supabase
     .from("cells")
     .select("id, name")
@@ -83,23 +52,28 @@ export default async function ManageCellPage({
     );
   }
 
-  const { data: users, error: usersErr } = await supabase
-    .from("users")
-    .select("id, name, email")
-    .order("name", { ascending: true });
-
-  const { data: members, error: membersErr } = await supabase
+  const { data: members } = await supabase
     .from("cell_memberships")
-    .select("id, role, user:users(id, name, email)")
+    .select("role, user:users(id, name)")
     .eq("cell_id", cell.id)
-    .order("role", { ascending: true }) as {
-      data: CellMembershipWithUser[] | null;
+    .eq("role", "LEADER")
+    .limit(1) as {
+      data: { role: string; user: { id: string; name: string | null } }[] | null;
       error: PostgrestError | null;
     };
 
-  const leaderMember = (members ?? []).find((m) => m.role === "LEADER");
-  const leaderUserId = leaderMember?.user?.id ?? undefined;
-  const leaderName = leaderMember?.user?.name ?? undefined;
+  const { data: informalMembers } = await supabase
+    .from("cell_informal_members")
+    .select("id, name")
+    .eq("cell_id", cell.id)
+    .order("name", { ascending: true }) as {
+      data: { id: string; name: string }[] | null;
+      error: PostgrestError | null;
+    };
+
+  const leaderUserId = members?.[0]?.user?.id ?? undefined;
+  const leaderName = members?.[0]?.user?.name ?? undefined;
+  const informalCount = informalMembers?.length ?? 0;
 
   return (
     <div className="max-w-5xl mx-auto py-8 space-y-6 text-white">
@@ -113,124 +87,54 @@ export default async function ManageCellPage({
           <h1 className="text-2xl font-semibold mt-2">{cell.name}</h1>
         </div>
       </div>
-      <MeetingForm cellId={cell.id} leaderName={leaderName} leaderUserId={leaderUserId} />
 
-      {(usersErr || membersErr) && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          Não foi possível carregar {usersErr ? "usuários" : "membros"}.
-        </div>
-      )}
+      <MeetingForm
+        cellId={cell.id}
+        leaderName={leaderName}
+        leaderUserId={leaderUserId}
+        defaultMembersCount={informalCount > 0 ? informalCount : undefined}
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div>
+      <CollapsibleCard
+        title="Membros"
+        subtitle={`${informalCount} membro(s) cadastrado(s)`}
+      >
+        <div className=" space-y-3">
+          <ActionForm action={onAddInformalMember} className="flex gap-2" statusPlacement="inline-end">
+            <input type="hidden" name="cellId" value={cell.id} />
+            <input type="hidden" name="cellName" value={cell.name} />
+            <input
+              type="text"
+              name="name"
+              required
+              placeholder="Nome do membro"
+              className="flex-1 rounded-md border border-white/10 bg-transparent px-3 py-1 text-sm"
+            />
+            <button type="submit" className={btnBase}>
+              Adicionar
+            </button>
+          </ActionForm>
 
-
-
-        <CollapsibleCard
-  title="Adicionar membro"
-  subtitle="Adicione alguém e escolha o papel."
->
-          <div className="p-4 space-y-3 max-h-[70vh] overflow-auto">
-            {!users || users.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nenhum usuário.</p>
+          <div className="max-h-[60vh] overflow-auto space-y-2 pt-1">
+            {!informalMembers || informalMembers.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Nenhum membro adicionado ainda.</p>
             ) : (
-              users.map((u) => {
-                const alreadyMember = (members ?? []).some(
-                  (m) => m.user?.id === u.id
-                );
-
-                return (
-          <div
-            key={u.id}
-            className={`${rowCard} flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3`}
-          >
-            <div className="min-w-0">
-              <div className={titleTxt}>{u.name}</div>
-              <div className={metaTxt}>{u.email ?? "sem e-mail"}</div>
-            </div>
-
-            <ActionForm action={onAddMember} className={`${actionBar}`} statusPlacement="inline-end">
-              <div className={actionRow}>
-                <input type="hidden" name="cellId" value={cell.id} />
-                <input type="hidden" name="cellName" value={cell.name} />
-                <input type="hidden" name="userId" value={u.id} />
-
-                <select
-                  name="role"
-                  className={selectBase}
-                  defaultValue="MEMBER"
-                  disabled={alreadyMember}
-                >
-                  <option value="LEADER">Líder</option>
-                  <option value="ASSISTANT">Co-líder</option>
-                  <option value="MEMBER">Membro</option>
-                </select>
-
-                <button
-                  type="submit"
-                  disabled={alreadyMember}
-                  className={btnBase}
-                >
-                  {alreadyMember ? "Já é membro" : "Adicionar"}
-                </button>
-              </div>
-            </ActionForm>
-          </div>
-                );
-              })
-            )}
-          </div>
- 
-        </CollapsibleCard>
-        </div>
-
-        {/* COLUNA: MEMBROS DA CÉLULA */}
-        <div>
-        <CollapsibleCard
-  title="Membros"
-  subtitle="Altere o papel ou remova"
->
-
-          <div className="p-4 space-y-3 max-h-[70vh] overflow-auto">
-            {!members || members.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Sem membros.</p>
-            ) : (
-              members.map((m) => (
-                <div
-                key={m.id}
-                className={`${rowCard} flex flex-col gap-3`}
-              >
-                <div className="min-w-0">
-                  <div className={titleTxt}>{m.user?.name}</div>
-                  <div className={metaTxt}>{m.user?.email ?? "sem e-mail"}</div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                  {/* Trocar papel */}
-                  <ActionForm action={onChangeRole} className={`${actionRow}`} statusPlacement="inline-end">
-                    <input type="hidden" name="membershipId" value={m.id} />
-                    <input type="hidden" name="cellId" value={cell.id} />
+              informalMembers.map((im) => (
+                <div key={im.id} className={`${rowCard} flex items-center justify-between gap-3`}>
+                  <span className={`${titleTxt} flex-1 truncate min-w-2/3`}>{im.name}</span>
+                  <ActionForm action={onRemoveInformalMember} className=" ml-auto flex items-center justify-center" statusPlacement="inline-end" successLabel="Removido">
+                    <input type="hidden" name="informalMemberId" value={im.id} />
                     <input type="hidden" name="cellName" value={cell.name} />
-                    <RoleField initial={m.role} />
-                  </ActionForm>
-
-                  {/* Remover */}
-                  <ActionForm action={onRemoveMember} className={`${actionRow}`} statusPlacement="inline-end" successLabel="Removido">
-                    <input type="hidden" name="membershipId" value={m.id} />
-                    <input type="hidden" name="cellId" value={cell.id} />
-                    <input type="hidden" name="cellName" value={cell.name} />
-                    <button type="submit" className={`${btnBase} border-red-400/50 hover:border-red-400/80 md:-ml-8`}>
+                    <button type="submit" className={`${btnBase} border-red-400/50 hover:border-red-400/80`}>
                       Remover
                     </button>
                   </ActionForm>
                 </div>
-              </div>
               ))
             )}
           </div>
-        </CollapsibleCard>
         </div>
-      </div>
+      </CollapsibleCard>
     </div>
   );
 }
