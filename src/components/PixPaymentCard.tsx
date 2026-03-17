@@ -87,12 +87,6 @@ export default function PixPaymentCard({
         </div>
       </div>
 
-      {/* Chave Pix legível */}
-      <div className="w-full flex items-center justify-between gap-3 rounded-xl bg-white/5 ring-1 ring-white/10 px-3 py-3">
-        <div className="text-xs text-white/70">Chave PIX</div>
-        <div className="flex-1 truncate text-sm text-white text-right">{pixKey}</div>
-      </div>
-
       {paymentNote && (
         <p className="mt-1 text-xs text-gray-400 whitespace-pre-line text-center">
           {paymentNote}

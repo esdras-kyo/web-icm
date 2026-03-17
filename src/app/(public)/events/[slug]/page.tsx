@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
-import { ArrowRightIcon, Loader2, CalendarDays, MapPin } from "lucide-react";
+import Link from "next/link";
+import { ArrowRightIcon, Loader2, CalendarDays, MapPin, QrCode } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -34,6 +35,8 @@ type Evento = {
   registration_fields?: RegistrationFields | null;
   registration_ends_at?: string | null;
   capacity?: number | null;
+  price?: number | null;
+  pix_key?: string | null;
 };
 
 const DEFAULT_FIELDS: RegistrationFields = {
@@ -616,6 +619,19 @@ export default function EventoInscricaoCard() {
           </div>
         </div>
       </section>
+
+      {/* Link para página de pagamento — só eventos pagos com pix_key */}
+      {evento && (evento.price ?? 0) > 0 && evento.pix_key && (
+        <section className="pb-10 flex justify-center px-4">
+          <Link
+            href={`/events/${evento.slug}/payment`}
+            className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-300 transition hover:bg-white/10 hover:text-white cursor-pointer"
+          >
+            <QrCode className="h-4 w-4 shrink-0" />
+            Já inscrito? Clique aqui para efetuar o pagamento
+          </Link>
+        </section>
+      )}
     </main>
   );
 }

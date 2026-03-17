@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   const supabase = createSupabaseAdmin();
 
   const DETAIL_SELECT =
-    'id, title, description, price, image_key, starts_at, ends_at, address, status, visibility, registration_fields, registration_starts_at, registration_ends_at, payment_note, capacity, slug';
+    'id, title, description, price, image_key, starts_at, ends_at, address, status, visibility, registration_fields, registration_starts_at, registration_ends_at, payment_note, pix_key, pix_description, capacity, slug';
 
   if (id) {
     const { data, error } = await supabase
