@@ -34,7 +34,7 @@ export default function HomeClient({
 }) {
   return (
     <div className="min-h-dvh w-full text-white pb-12 ">
-      <div className="sticky top-0 z-10 border-b border-white/10">
+      <div className="border-b border-white/10  backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-4 py-5 flex flex-col md:flex-row items-center justify-between">
           <div>
             <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Área do Líder</h1>

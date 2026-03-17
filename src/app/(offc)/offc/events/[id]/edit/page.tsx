@@ -52,6 +52,8 @@ type EventEdit = {
   address: string | null;
   registration_fields: RegistrationFields;
   payment_note: string | null;
+  pix_key: string | null;
+  pix_description: string | null;
   image_key: string | null;
 };
 
@@ -161,6 +163,8 @@ export default function EditEventPage() {
             ...(json.registration_fields ?? {}),
           } as RegistrationFields,
           payment_note: json.payment_note ?? null,
+          pix_key: json.pix_key ?? null,
+          pix_description: json.pix_description ?? null,
           image_key: json.image_key ?? null,
         };
 
@@ -311,6 +315,8 @@ export default function EditEventPage() {
       address: event.address,
       registration_fields: event.registration_fields,
       payment_note: event.payment_note,
+      pix_key: event.pix_key,
+      pix_description: event.pix_description,
       church: event.registration_fields.church,
       how_heard: event.registration_fields.how_heard,
       isBeliever: event.registration_fields.isBeliever,
@@ -860,25 +866,70 @@ export default function EditEventPage() {
           icon={<CreditCard className="h-4 w-4" />}
           title="Pagamento"
         >
-          <div>
-            <FieldLabel>
-              Instruções de pagamento{" "}
-              <span className="font-normal text-zinc-500">(opcional)</span>
-            </FieldLabel>
-            <textarea
-              className={`${inputCls} min-h-[90px] resize-y`}
-              placeholder={`Ex.: Membros pagam metade. Crianças até 12 anos não pagam.\nApresente o comprovante no dia do evento.`}
-              value={event.payment_note ?? ""}
-              onChange={(e) =>
-                setEvent((p) =>
-                  p ? { ...p, payment_note: e.target.value || null } : p,
-                )
-              }
-              disabled={isSaving}
-            />
-            <p className="mt-1 text-xs text-zinc-500">
-              Aparecerá na tela de confirmação de inscrição.
-            </p>
+          <div className="space-y-4">
+            <div>
+              <FieldLabel>
+                Instruções de pagamento{" "}
+                <span className="font-normal text-zinc-500">(opcional)</span>
+              </FieldLabel>
+              <textarea
+                className={`${inputCls} min-h-[90px] resize-y`}
+                placeholder={`Ex.: Membros pagam metade. Crianças até 12 anos não pagam.\nApresente o comprovante no dia do evento.`}
+                value={event.payment_note ?? ""}
+                onChange={(e) =>
+                  setEvent((p) =>
+                    p ? { ...p, payment_note: e.target.value || null } : p,
+                  )
+                }
+                disabled={isSaving}
+              />
+              <p className="mt-1 text-xs text-zinc-500">
+                Aparecerá na tela de confirmação de inscrição.
+              </p>
+            </div>
+
+            <div>
+              <FieldLabel>
+                Chave Pix{" "}
+                <span className="font-normal text-zinc-500">(opcional — apenas para eventos pagos)</span>
+              </FieldLabel>
+              <input
+                className={inputCls}
+                placeholder="CNPJ, CPF, e-mail, telefone ou chave aleatória"
+                value={event.pix_key ?? ""}
+                onChange={(e) =>
+                  setEvent((p) =>
+                    p ? { ...p, pix_key: e.target.value || null } : p,
+                  )
+                }
+                disabled={isSaving}
+              />
+              <p className="mt-1 text-xs text-zinc-500">
+                Usado para gerar o QR Code Pix na confirmação de inscrição.
+              </p>
+            </div>
+
+            <div>
+              <FieldLabel>
+                Descrição do Pix{" "}
+                <span className="font-normal text-zinc-500">(opcional — máx. 72 caracteres)</span>
+              </FieldLabel>
+              <input
+                className={inputCls}
+                placeholder="Ex.: Inscrição retiro 2025"
+                maxLength={72}
+                value={event.pix_description ?? ""}
+                onChange={(e) =>
+                  setEvent((p) =>
+                    p ? { ...p, pix_description: e.target.value || null } : p,
+                  )
+                }
+                disabled={isSaving}
+              />
+              <p className="mt-1 text-xs text-zinc-500">
+                Aparece como identificação na transferência Pix.
+              </p>
+            </div>
           </div>
         </FormSection>
 

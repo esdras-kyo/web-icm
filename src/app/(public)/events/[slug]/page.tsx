@@ -247,7 +247,7 @@ export default function EventoInscricaoCard() {
       setLoading(false);
       if (slug) {
         router.push(
-          `/events/${slug}/confirmation?member=${isMember ? "1" : "0"}`,
+          `/events/${slug}/confirmation`,
         );
       }
     }

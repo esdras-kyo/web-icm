@@ -107,6 +107,9 @@ export default async function CellMeetingReadPage({
               ← Voltar
             </Link>
           </div>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">
+          #{meeting.id}
+        </span>
 
           <h1 className="text-2xl mt-2 wrap-break-words">
             Célula{cell?.name ? ` - ${cell.name}` : ""}
@@ -117,9 +120,7 @@ export default async function CellMeetingReadPage({
           </p>
         </div>
 
-        <span className="text-xs text-muted-foreground whitespace-nowrap">
-          #{meeting.id}
-        </span>
+
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">

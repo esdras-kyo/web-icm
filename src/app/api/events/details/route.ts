@@ -31,6 +31,8 @@ export async function POST(req: Request) {
       address,
       registration_fields,
       payment_note,
+      pix_key,
+      pix_description,
       image_key
     `)
     .eq("id", event_id)

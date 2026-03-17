@@ -60,6 +60,8 @@ export async function POST(req: Request) {
         registration_fields: payload.registration_fields,
         image_key: payload.image_key,
         payment_note: payload.payment_note,
+        pix_key: payload.pix_key ?? null,
+        pix_description: payload.pix_description ?? null,
         slug,
       })
       .select("id, slug")

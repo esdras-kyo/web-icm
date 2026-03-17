@@ -53,6 +53,8 @@ const UpdateSchema = z.object({
   registration_fields: RegistrationFieldsSchema, // NOT NULL
 
   payment_note: z.string().nullable().optional(),
+  pix_key: z.string().max(140).nullable().optional(),
+  pix_description: z.string().max(72).nullable().optional(),
 });
 
 export async function PATCH(request: Request) {
@@ -93,6 +95,8 @@ export async function PATCH(request: Request) {
       registration_fields: v.registration_fields,
 
       payment_note: v.payment_note ?? null,
+      pix_key: v.pix_key ?? null,
+      pix_description: v.pix_description ?? null,
     };
 
     // Segurança extra: se starts_at/ends_at inválidos, toIsoOrNull vira null
@@ -110,7 +114,7 @@ export async function PATCH(request: Request) {
       .update(updatePayload)
       .eq("id", v.id)
       .select(
-        "id,title,description,starts_at,ends_at,capacity,price,status,visibility,registration_starts_at,registration_ends_at,address,registration_fields,payment_note"
+        "id,title,description,starts_at,ends_at,capacity,price,status,visibility,registration_starts_at,registration_ends_at,address,registration_fields,payment_note,pix_key,pix_description"
       )
       .single();
 

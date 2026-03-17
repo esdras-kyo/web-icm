@@ -79,6 +79,8 @@ export type EventCreatePayload = {
   registration_fields: RegistrationFields;
   image_key: string | null;
   payment_note: string | null;
+  pix_key: string | null;
+  pix_description: string | null;
 };
 
 type FeedbackState =
@@ -127,6 +129,8 @@ const formSchema = z
     image_key: z.string().optional().default(""),
     registration_fields: registrationFieldsSchema,
     payment_note: z.string().max(1000).optional().nullable(),
+    pix_key: z.string().max(140).optional().nullable(),
+    pix_description: z.string().max(72).optional().nullable(),
   })
   .superRefine((data, ctx) => {
     if (data.ends_at <= data.starts_at) {
@@ -191,6 +195,8 @@ function freshDefaults(): FormValues {
     image_key: "",
     address: "",
     payment_note: "",
+    pix_key: "",
+    pix_description: "",
     starts_at: new Date(),
     ends_at: new Date(Date.now() + 60 * 60 * 1000),
     registrations_starts_at: null,
@@ -279,6 +285,14 @@ export default function EventCreateForm({
       payment_note:
         values.payment_note && values.payment_note.trim() !== ""
           ? values.payment_note.trim()
+          : null,
+      pix_key:
+        values.pix_key && values.pix_key.trim() !== ""
+          ? values.pix_key.trim()
+          : null,
+      pix_description:
+        values.pix_description && values.pix_description.trim() !== ""
+          ? values.pix_description.trim()
           : null,
     };
 
@@ -685,6 +699,65 @@ export default function EventCreateForm({
                             </FormControl>
                             <p className="text-xs text-zinc-500">
                               Aparecerá na tela de confirmação de inscrição.
+                            </p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name="pix_key"
+                        render={({ field }) => (
+                          <FormItem className="md:col-span-2">
+                            <FormLabel>
+                              Chave Pix{" "}
+                              <span className="text-zinc-500 font-normal">
+                                (opcional — apenas para eventos pagos)
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="CNPJ, CPF, e-mail, telefone ou chave aleatória"
+                                value={field.value ?? ""}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                onBlur={field.onBlur}
+                                name={field.name}
+                                ref={field.ref}
+                              />
+                            </FormControl>
+                            <p className="text-xs text-zinc-500">
+                              Usado para gerar o QR Code Pix na confirmação de inscrição.
+                            </p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name="pix_description"
+                        render={({ field }) => (
+                          <FormItem className="md:col-span-2">
+                            <FormLabel>
+                              Descrição do Pix{" "}
+                              <span className="text-zinc-500 font-normal">
+                                (opcional — máx. 72 caracteres)
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Ex.: Inscrição retiro 2025"
+                                maxLength={72}
+                                value={field.value ?? ""}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                onBlur={field.onBlur}
+                                name={field.name}
+                                ref={field.ref}
+                              />
+                            </FormControl>
+                            <p className="text-xs text-zinc-500">
+                              Aparece como identificação na transferência Pix.
                             </p>
                             <FormMessage />
                           </FormItem>

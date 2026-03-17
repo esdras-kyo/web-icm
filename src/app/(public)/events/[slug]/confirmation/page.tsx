@@ -4,25 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, HomeIcon } from "lucide-react";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
-import { CopyableRow } from "@/app/(public)/contribua/page";
+import PixPaymentCard from "@/components/PixPaymentCard";
 
 type ConfirmationPageProps = {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ member?: string }>;
 };
 
 export default async function ConfirmationPage(props: ConfirmationPageProps) {
-  const { params, searchParams } = props;
+  const { params } = props;
   const { slug } = await params;
-  const sp = await searchParams;
-  const isMemberFromUrl =
-    sp?.member === "1" || sp?.member === "true";
 
   const supabase = createSupabaseAdmin();
 
   const { data: event, error } = await supabase
     .from("events")
-    .select("id, title, price, image_key, address, description, payment_note")
+    .select(
+      "id, title, price, image_key, address, description, payment_note, pix_key, pix_description"
+    )
     .eq("slug", slug)
     .single();
 
@@ -34,22 +32,10 @@ export default async function ConfirmationPage(props: ConfirmationPageProps) {
   const basePrice = event.price ?? 0;
   const isFree = !basePrice || basePrice <= 0;
 
-  // calcula valor final
-  let effectivePrice = basePrice;
-  let memberDiscountApplied = false;
-
-  if (!isFree && isMemberFromUrl) {
-    effectivePrice = basePrice / 2;
-    memberDiscountApplied = true;
-  }
-
   const imageUrl = event.image_key
     ? `https://worker-1.esdrascamel.workers.dev/${event.image_key}`
     : "/images/fundo-geometrico.jpg";
 
-  // caminho da imagem fixa de QR – coloca essa imagem em /public/images/
-  const staticQrPath = "/images/qrcode.jpeg";
-  const pixKey = "04.391.808/0001-06";
   return (
     <main className="min-h-dvh w-full bg-black text-white flex flex-col">
       {/* Banner do evento */}
@@ -97,57 +83,36 @@ export default async function ConfirmationPage(props: ConfirmationPageProps) {
 
           {/* BLOCO DE PAGAMENTO – só se evento tiver preço > 0 */}
           {!isFree && (
-            <div className="mt-2 flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-black/40 px-4 py-4">
-              <p className="text-sm text-gray-200 text-center">
-                Escaneie o QR Code abaixo
-              </p>
-
-              <div className="bg-white p-3 rounded-lg">
-                <Image
-                  src={staticQrPath}
-                  alt="QR Code Pix"
-                  width={220}
-                  height={220}
+            <>
+              {event.pix_key ? (
+                <PixPaymentCard
+                  pixKey={event.pix_key}
+                  amount={basePrice}
+                  eventTitle={event.title}
+                  pixDescription={event.pix_description}
+                  paymentNote={event.payment_note}
                 />
-               
-              </div>
-              <div className="mt-2  max-w-[75%] flex flex-col items-center gap-3 rounded-xl px-4 py-4">
-              <CopyableRow label="Chave PIX" value={pixKey} />
-              </div>
-
-              
-
-              {effectivePrice > 0 && (
-                <div className="text-center space-y-1">
+              ) : (
+                <div className="mt-2 flex flex-col gap-2 rounded-xl border border-white/10 bg-black/40 px-4 py-4 text-center">
                   <p className="text-sm text-gray-300">
-                    Valor a pagar:{" "}
-                    <span className="font-semibold">
-                      R{"$ "}
-                      {effectivePrice
-                        .toFixed(2)
-                        .replace(".", ",")}
-                    </span>
+                    As instruções de pagamento serão enviadas em breve.
                   </p>
-
-                  {memberDiscountApplied && (
-                    <p className="text-xs text-emerald-300">
-                      Desconto de membro aplicado
+                  {basePrice > 0 && (
+                    <p className="text-sm text-gray-300">
+                      Valor a pagar:{" "}
+                      <span className="font-semibold">
+                        R$ {basePrice.toFixed(2).replace(".", ",")}
+                      </span>
+                    </p>
+                  )}
+                  {event.payment_note && (
+                    <p className="text-xs text-gray-400 whitespace-pre-line">
+                      {event.payment_note}
                     </p>
                   )}
                 </div>
               )}
-              {!isFree && event.payment_note && (
-                  <p className="mt-2 text-xs text-gray-400 whitespace-pre-line text-center">
-                    {event.payment_note}
-                  </p>
-                )}
-
-<div className="mx-auto max-w-sm rounded-lg border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-100 text-center">
-<span className="font-semibold block">
-            Na descrição do pagamento/PIX coloque: &quot;{event.title}&quot;
-          </span>
-          </div>
-            </div>
+            </>
           )}
 
           {/* Botões */}
