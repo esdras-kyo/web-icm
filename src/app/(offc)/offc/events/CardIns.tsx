@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 
 export type Inscrito = {
@@ -17,13 +17,16 @@ export type Inscrito = {
 type Props = {
   inscrito: Inscrito;
   onStatusChange?: (id: string, newStatus: Inscrito["payment_status"]) => void;
+  onDelete?: (id: string) => void;
 };
 
-export default function InscritoCard({ inscrito, onStatusChange }: Props) {
+export default function InscritoCard({ inscrito, onStatusChange, onDelete }: Props) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(inscrito.payment_status);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const createdDate = new Date(inscrito.created_at);
   const dataFormatada = createdDate.toLocaleString("pt-BR", {
@@ -85,7 +88,64 @@ export default function InscritoCard({ inscrito, onStatusChange }: Props) {
       }
     
 
+  async function handleDelete() {
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/registrations/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: inscrito.id }),
+      });
+      if (res.ok) {
+        onDelete?.(inscrito.id);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setErrorMsg(body?.error || "Falha ao excluir inscrição");
+        setConfirmDelete(false);
+      }
+    } catch {
+      setErrorMsg("Erro de rede ao excluir inscrição");
+      setConfirmDelete(false);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
+    <>
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-sm rounded-xl border border-zinc-700 bg-zinc-900 p-6 shadow-xl">
+            <h3 className="text-base font-semibold text-white mb-2">
+              Excluir inscrição
+            </h3>
+            <p className="text-sm text-zinc-300 mb-6">
+              Tem certeza que deseja excluir a inscrição de{" "}
+              <span className="font-medium text-white">{inscrito.name}</span>?
+              Esta ação não pode ser desfeita.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(false)}
+                disabled={deleting}
+                className="cursor-pointer rounded-md border border-zinc-600 px-4 py-2 text-sm text-zinc-300 transition hover:bg-zinc-800 disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="cursor-pointer rounded-md bg-red-600/80 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500 disabled:opacity-50"
+              >
+                {deleting ? "Excluindo..." : "Excluir"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     <li className="w-full rounded-xl border border-zinc-700 bg-zinc-900/40 p-4 hover:bg-zinc-800/60 transition-all duration-150 text-white my-2">
       <button
         type="button"
@@ -162,8 +222,20 @@ export default function InscritoCard({ inscrito, onStatusChange }: Props) {
               <span className="text-[11px] text-red-400">{errorMsg}</span>
             )}
           </div>
+
+          <div className="mt-4 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              className="cursor-pointer inline-flex items-center gap-1.5 rounded-md border border-red-700/50 px-3 py-1.5 text-xs text-red-400 transition hover:bg-red-600/20"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Excluir inscrição
+            </button>
+          </div>
         </div>
       )}
     </li>
+    </>
   );
 }

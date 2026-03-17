@@ -72,6 +72,10 @@ function InscricoesContent() {
     );
   }
 
+  function handleDelete(registrationId: string) {
+    setInscritos((prev) => prev.filter((i) => i.id !== registrationId));
+  }
+
   function handleDownloadCsv() {
     if (!inscritos.length) {
       setCsvWarning("Nenhum inscrito para exportar.");
@@ -359,6 +363,7 @@ function InscricoesContent() {
                   key={inscrito.id}
                   inscrito={inscrito}
                   onStatusChange={handleStatusChange}
+                  onDelete={handleDelete}
                 />
               ))}
 
