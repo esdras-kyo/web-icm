@@ -1,12 +1,18 @@
 "use client";
 
 import { UserProfile } from "@clerk/nextjs";
-import { HouseIcon, SwordsIcon } from "lucide-react";
+import { HouseIcon, PencilIcon, SwordsIcon } from "lucide-react";
 import { MemberForm } from "@/app/components/MemberForm";
+import { EditProfileForm } from "@/app/components/EditProfileForm";
 import { useRouter } from "next/navigation";
 import type { UserClaims } from "@/types/UserClaims";
 
-export default function ContaPageClient({ claims }: { claims: UserClaims | null }) {
+interface ContaPageClientProps {
+  claims: UserClaims | null;
+  initialPhone: string | null;
+}
+
+export default function ContaPageClient({ claims, initialPhone }: ContaPageClientProps) {
   const router = useRouter();
 
   const isLeader = claims?.roles?.some((r) => r.role === "LEADER");
@@ -85,6 +91,16 @@ export default function ContaPageClient({ claims }: { claims: UserClaims | null 
             )}
           </div>
         </UserProfile.Page>
+
+        {!isVisitant ? (
+          <UserProfile.Page
+            label="Editar Dados"
+            labelIcon={<PencilIcon size={16} />}
+            url="/edit"
+          >
+            <EditProfileForm initialPhone={initialPhone} />
+          </UserProfile.Page>
+        ) : null}
 
         {isLeader ? (
           <UserProfile.Link url="/leader" label="Area do Líder" labelIcon={<SwordsIcon size={16} />} />

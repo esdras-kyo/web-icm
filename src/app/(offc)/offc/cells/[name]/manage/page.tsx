@@ -1,68 +1,43 @@
 import Link from "next/link";
+import { Crown, UserX } from "lucide-react";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
-import { addMemberAction } from "./actions/addMember";
-import { changeRoleAction } from "./actions/changeRole";
-import { removeMemberAction } from "./actions/removeMember";
-import { CollapsibleCard } from "../../_components/CollapsibleCard";
-import type { PostgrestError } from "@supabase/supabase-js";
+import { assignLeaderAction } from "./actions/assignLeader";
+import { removeLeaderAction } from "./actions/removeLeader";
 import { ActionForm } from "./ActionForm";
-import { RoleField } from "./RoleField";
+import { LeaderCandidatesList } from "./LeaderCandidatesList";
+import type { PostgrestError } from "@supabase/supabase-js";
 
-const rowCard =
-  "rounded-md border p-3 bg-white/5 ring-1 ring-white/10 text-white";
-const titleTxt = "font-medium break-words";
-const metaTxt = "text-xs text-muted-foreground break-words";
-const actionBar =
-  "mt-3 sm:mt-0 flex flex-col sm:flex-row gap-2 sm:gap-2 sm:items-center w-full sm:w-auto";
-const actionRow =
-  "flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto";
-const selectBase =
-  "rounded-md border px-2 py-1 text-sm w-full sm:w-[160px] bg-transparent";
-const btnBase =
-  "cursor-pointer rounded-md border px-3 py-1 text-sm disabled:opacity-50 w-full sm:w-auto";
-
-export type MemberUser = {
-  id: string;    
-  email: string;    
-  name: string | null; 
+type LeaderMembership = {
+  id: string;
+  user: { id: string; name: string | null; email: string };
 };
 
-export type CellRole = "LEADER" | "ASSISTANT" | "MEMBER";
-
-export type CellMembershipWithUser = {
-  id: string; 
-  role: CellRole;  
-  user: MemberUser;   
-};
+function getInitials(name: string | null): string {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 export default async function ManageCellPage({
   params,
 }: {
-
   params: Promise<{ name: string }>;
 }) {
-  const { name } = await params;                  // <-- aguarda params
+  const { name } = await params;
   const cellName = decodeURIComponent(name);
-
   const supabase = createSupabaseAdmin();
 
-
-  const onAddMember = async (formData: FormData): Promise<void> => {
+  const onAssignLeader = async (formData: FormData): Promise<void> => {
     "use server";
-    await addMemberAction(formData);
+    await assignLeaderAction(formData);
   };
 
-  const onChangeRole = async (formData: FormData): Promise<void> => {
+  const onRemoveLeader = async (formData: FormData): Promise<void> => {
     "use server";
-    await changeRoleAction(formData);
+    await removeLeaderAction(formData);
   };
 
-  const onRemoveMember = async (formData: FormData): Promise<void> => {
-    "use server";
-    await removeMemberAction(formData);
-  };
-
-  // 1) Buscar célula por name
   const { data: cell, error: cellErr } = await supabase
     .from("cells")
     .select("id, name")
@@ -71,158 +46,95 @@ export default async function ManageCellPage({
 
   if (cellErr || !cell) {
     return (
-      <div className="max-w-5xl mx-auto py-8">
-        <div className="mb-4">
-          <Link href="/offc/cells" className="text-sm underline">
-            ← Voltar
-          </Link>
-        </div>
-        <p className="text-red-600">Célula não encontrada.</p>
+      <div className="max-w-2xl mx-auto py-8 text-white">
+        <Link href="/offc/cells" className="text-sm underline">← Voltar</Link>
+        <p className="mt-4 text-red-400">Célula não encontrada.</p>
       </div>
     );
   }
 
-  const { data: users, error: usersErr } = await supabase
+  const { data: leaderRow } = await supabase
+    .from("cell_memberships")
+    .select("id, user:users(id, name, email)")
+    .eq("cell_id", cell.id)
+    .eq("role", "LEADER")
+    .limit(1)
+    .maybeSingle() as { data: LeaderMembership | null; error: PostgrestError | null };
+
+  const { data: users } = await supabase
     .from("users")
     .select("id, name, email")
     .order("name", { ascending: true });
 
-  const { data: members, error: membersErr } = await supabase
-    .from("cell_memberships")
-    .select("id, role, user:users(id, name, email)")
-    .eq("cell_id", cell.id)
-    .order("role", { ascending: true }) as {
-      data: CellMembershipWithUser[] | null;
-      error: PostgrestError | null;
-    };
+  const hasLeader = !!leaderRow;
 
   return (
-    <div className="max-w-5xl mx-auto py-8 space-y-6 text-white">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-sm">
-            <Link href="/offc/cells" className="underline">
-              ← Voltar
-            </Link>
-          </div>
-          <h1 className="text-2xl font-semibold mt-2">Gerenciar</h1>
-          <p className="text-muted-foreground">{cell.name}</p>
-        </div>
+    <div className="max-w-2xl mx-auto py-8 space-y-8 text-white px-4">
+      {/* Header */}
+      <div>
+        <Link href="/offc/cells" className="text-sm text-white/50 hover:text-white/80 transition-colors">
+          ← Voltar
+        </Link>
+        <h1 className="text-2xl font-semibold mt-3">Liderança da Célula</h1>
+        <p className="text-white/50 mt-0.5">{cell.name}</p>
       </div>
 
-      {(usersErr || membersErr) && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          Não foi possível carregar {usersErr ? "usuários" : "membros"}.
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div>
-        <CollapsibleCard
-  title="Adicionar membro"
-  subtitle="Adicione alguém e escolha o papel."
->
-          <div className="p-4 space-y-3 max-h-[70vh] overflow-auto">
-            {!users || users.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nenhum usuário.</p>
-            ) : (
-              users.map((u) => {
-                const alreadyMember = (members ?? []).some(
-                  (m) => m.user?.id === u.id
-                );
-
-                return (
-          <div
-            key={u.id}
-            className={`${rowCard} flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3`}
-          >
-            <div className="min-w-0">
-              <div className={titleTxt}>{u.name}</div>
-              <div className={metaTxt}>{u.email ?? "sem e-mail"}</div>
+      {hasLeader ? (
+        <>
+          {/* Leader card */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 flex flex-col items-center text-center space-y-5">
+            <div className="w-20 h-20 rounded-full bg-[#0c49ac] flex items-center justify-center text-3xl font-bold text-white select-none">
+              {getInitials(leaderRow.user.name)}
             </div>
 
-            <ActionForm action={onAddMember} className={`${actionBar}`} statusPlacement="inline-end">
-              <div className={actionRow}>
-                <input type="hidden" name="cellId" value={cell.id} />
-                <input type="hidden" name="cellName" value={cell.name} />
-                <input type="hidden" name="userId" value={u.id} />
+            <div className="space-y-1">
+              <h2 className="text-xl font-semibold">{leaderRow.user.name ?? "—"}</h2>
+              <p className="text-sm text-white/50">{leaderRow.user.email}</p>
+            </div>
 
-                <select
-                  name="role"
-                  className={selectBase}
-                  defaultValue="MEMBER"
-                  disabled={alreadyMember}
-                >
-                  <option value="LEADER">Líder</option>
-                  <option value="ASSISTANT">Co-líder</option>
-                  <option value="MEMBER">Membro</option>
-                </select>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-300">
+              <Crown size={12} />
+              Líder da Célula
+            </span>
+          </div>
 
-                <button
-                  type="submit"
-                  disabled={alreadyMember}
-                  className={btnBase}
-                >
-                  {alreadyMember ? "Já é membro" : "Adicionar"}
-                </button>
-              </div>
+          {/* Remove — subtle */}
+          <div className="flex justify-end">
+            <ActionForm action={onRemoveLeader} successLabel="Removido" statusPlacement="inline-end">
+              <input type="hidden" name="membershipId" value={leaderRow.id} />
+              <input type="hidden" name="cellName" value={cell.name} />
+              <button
+                type="submit"
+                className="text-xs text-white/30 hover:text-red-400 cursor-pointer transition-colors underline underline-offset-2"
+              >
+                Remover líder
+              </button>
             </ActionForm>
           </div>
-                );
-              })
-            )}
+        </>
+      ) : (
+        <>
+          {/* Empty state */}
+          <div className="rounded-2xl border border-dashed border-white/15 p-8 flex flex-col items-center text-center space-y-2">
+            <UserX size={32} className="text-white/20 mb-1" />
+            <h2 className="font-medium text-white/80">Nenhum líder definido</h2>
+            <p className="text-sm text-white/40 max-w-xs">
+              Escolha um membro abaixo para assumir a liderança desta célula.
+            </p>
           </div>
- 
-        </CollapsibleCard>
-        </div>
 
-        {/* COLUNA: MEMBROS DA CÉLULA */}
-        <div>
-        <CollapsibleCard
-  title="Membros"
-  subtitle="Altere o papel ou remova"
->
-
-          <div className="p-4 space-y-3 max-h-[70vh] overflow-auto">
-            {!members || members.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Sem membros.</p>
-            ) : (
-              members.map((m) => (
-                <div
-                key={m.id}
-                className={`${rowCard} flex flex-col gap-3`}
-              >
-                <div className="min-w-0">
-                  <div className={titleTxt}>{m.user?.name}</div>
-                  <div className={metaTxt}>{m.user?.email ?? "sem e-mail"}</div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                  {/* Trocar papel */}
-                  <ActionForm action={onChangeRole} className={`${actionRow}`} statusPlacement="inline-end">
-                    <input type="hidden" name="membershipId" value={m.id} />
-                    <input type="hidden" name="cellId" value={cell.id} />
-                    <input type="hidden" name="cellName" value={cell.name} />
-                    <RoleField initial={m.role} />
-                  </ActionForm>
-
-                  {/* Remover */}
-                  <ActionForm action={onRemoveMember} className={`${actionRow}`} statusPlacement="inline-end" successLabel="Removido">
-                    <input type="hidden" name="membershipId" value={m.id} />
-                    <input type="hidden" name="cellId" value={cell.id} />
-                    <input type="hidden" name="cellName" value={cell.name} />
-                    <button type="submit" className={`${btnBase} border-red-400/50 hover:border-red-400/80 md:-ml-8`}>
-                      Remover
-                    </button>
-                  </ActionForm>
-                </div>
-              </div>
-              ))
-            )}
-          </div>
-        </CollapsibleCard>
-        </div>
-      </div>
+          {/* Candidates */}
+          {!users || users.length === 0 ? (
+            <p className="text-sm text-white/40 text-center">Nenhum membro cadastrado no sistema.</p>
+          ) : (
+            <LeaderCandidatesList
+              users={users}
+              cell={cell}
+              action={onAssignLeader}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }

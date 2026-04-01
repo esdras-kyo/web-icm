@@ -1,171 +1,239 @@
-'use client';
-import { useEffect, useState, useTransition } from 'react';
-import { useParams } from 'next/navigation';
-import { addRoleAction, removeRoleAction } from './rolesActions';
+import Link from "next/link";
+import { revalidatePath } from "next/cache";
+import { Shield, Crown, User, UserX } from "lucide-react";
+import { createSupabaseAdmin } from "@/utils/supabase/admin";
+import { removeRoleAction } from "./rolesActions";
+import { AddRoleForm } from "./AddRoleForm";
 
-type Dept = { id: string; name: string };
+// ─── helpers ────────────────────────────────────────────────────────────────
+
+function getInitials(name: string | null): string {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("pt-BR", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+interface RoleConfig {
+  label: string;
+  icon: React.ReactNode;
+  className: string;
+}
+
+function roleConfig(role: string): RoleConfig {
+  switch (role) {
+    case "ADMIN":
+      return {
+        label: "Administrador",
+        icon: <Shield size={11} />,
+        className: "text-amber-300 border-amber-400/30 bg-amber-400/10",
+      };
+    case "LEADER":
+      return {
+        label: "Líder",
+        icon: <Crown size={11} />,
+        className: "text-blue-300 border-blue-400/30 bg-blue-400/10",
+      };
+    case "MEMBER":
+      return {
+        label: "Membro",
+        icon: <User size={11} />,
+        className: "text-white/70 border-white/20 bg-white/5",
+      };
+    case "VISITANT":
+      return {
+        label: "Visitante",
+        icon: <User size={11} />,
+        className: "text-white/40 border-white/10 bg-white/5",
+      };
+    default:
+      return {
+        label: role,
+        icon: null,
+        className: "text-white/50 border-white/10 bg-white/5",
+      };
+  }
+}
+
+function scopeLabel(scope: string | null | undefined): string {
+  if (scope === "DEPARTMENT") return "Ministério";
+  return "Organização";
+}
+
+// ─── types ───────────────────────────────────────────────────────────────────
+
 type Role = {
   id: string;
   role: string;
-  scope_type?: 'ORG' | 'DEPARTMENT';
-  department_id?: string | null;
-  department?: { id: string; name: string } | null;
+  scope_type: "ORG" | "DEPARTMENT" | null;
+  department_id: string | null;
+  department: { id: string; name: string } | null;
 };
-type User = {
+
+type UserRow = {
   id: string;
   name: string | null;
   email: string | null;
+  public_code: string | number | null;
+  created_at: string | null;
+  baptized: boolean | null;
+  gender: string | null;
   roles: Role[];
 };
 
-export default function UserDetailPage() {
-  const params = useParams<{ id: string }>();
-  const userId = params.id;
+// ─── page ────────────────────────────────────────────────────────────────────
 
-  const [user, setUser] = useState<User | null>(null);
-  const [depts, setDepts] = useState<Dept[]>([]);
-  const [pending, startTransition] = useTransition();
+export default async function UserDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const supabase = createSupabaseAdmin();
 
-  const [role, setRole] = useState<'ADMIN'|'LEADER'|'MEMBER'>('MEMBER');
-  const [scope, setScope] = useState<'ORG'|'DEPARTMENT'>('ORG');
-  const [deptId, setDeptId] = useState<string>('');
+  const onRemoveRole = async (formData: FormData): Promise<void> => {
+    "use server";
+    formData.set("user_id", id);
+    await removeRoleAction(formData);
+    revalidatePath(`/offc/users/${id}`);
+  };
 
-  async function load() {
-    const [uRes, dRes] = await Promise.all([
-      fetch("/api/getBros", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId }),
-      }),
-      fetch(`/api/departments?mode=all`, { cache: "no-store" }),
-    ]);
-  
-    const uData = await uRes.json();
-    const dData = await dRes.json();
-  
-    setUser(uData);
-    setDepts(dData);
+  const [{ data: user }, { data: depts }] = await Promise.all([
+    supabase
+      .from("users")
+      .select(
+        `id, name, email, public_code, created_at, baptized, gender,
+         roles:role_assignments (
+           id, role, scope_type, department_id,
+           department:departments (id, name)
+         )`
+      )
+      .eq("id", id)
+      .single<UserRow>(),
+    supabase
+      .from("departments")
+      .select("id, name")
+      .order("name", { ascending: true }),
+  ]);
+
+  if (!user) {
+    return (
+      <div className="max-w-2xl mx-auto py-8 px-4 text-white">
+        <Link href="/offc/users" className="text-sm text-white/50 hover:text-white/80 transition-colors">
+          ← Usuários
+        </Link>
+        <p className="mt-6 text-white/50">Usuário não encontrado.</p>
+      </div>
+    );
   }
 
-  useEffect(() => { load(); }, [userId]);
-
-  async function onAddRole(e: React.FormEvent) {
-    e.preventDefault();
-    startTransition(async () => {
-      const form = new FormData();
-      form.set('user_id', userId);
-      form.set('role', role);
-      form.set('scope_type', scope);
-      if (scope === 'DEPARTMENT') form.set('department_id', deptId);
-      const res = await addRoleAction(form);
-      if (res?.success) await load();
-      else alert(res?.message || 'Falha ao adicionar role');
-    });
-  }
-
-  async function onRemoveRole(roleId: string) {
-    startTransition(async () => {
-      const form = new FormData();
-      form.set('role_assignment_id', roleId);
-      form.set('user_id', userId);
-      const res = await removeRoleAction(form);
-      if (res?.success) await load();
-      else alert(res?.message || 'Falha ao remover role');
-    });
-  }
-
-  if (!user) return <main className="p-8 text-white">Carregando...</main>;
+  const genderLabel =
+    user.gender === "M" ? "Masculino" : user.gender === "F" ? "Feminino" : null;
 
   return (
-    <main className="mx-auto max-w-3xl p-6 text-white">
-      <h1 className="text-2xl font-bold mb-2">{user.name || 'Sem nome'}</h1>
-      <p className="text-white/70 mb-6">{user.email}</p>
+    <div className="max-w-2xl mx-auto py-8 px-4 space-y-8 text-white">
+      {/* Back */}
+      <Link
+        href="/offc/users"
+        className="text-sm text-white/50 hover:text-white/80 transition-colors"
+      >
+        ← Usuários
+      </Link>
 
-      <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-2">Papeis atuais</h2>
-        {user.roles?.length ? (
-          <ul className="space-y-2">
-            {user.roles.map((r) => (
-              <li key={r.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-3">
-                <div className="space-x-2">
-                  <span className="text-sm">{r.role}</span>
-                  <span className="text-xs text-white/60">[{r.scope_type || 'ORG'}]</span>
-                  {r.department?.name && (
-                    <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs">
-                      {r.department.name}
-                    </span>
-                  )}
-                </div>
-                <button
-                  onClick={() => onRemoveRole(r.id)}
-                  disabled={pending}
-                  className="rounded-md border border-white/20 bg-white/10 px-3 py-1 text-sm hover:bg-white/15 disabled:opacity-50"
-                >
-                  Remover
-                </button>
-              </li>
-            ))}
-          </ul>
+      {/* Profile card */}
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+          <div className="shrink-0 w-16 h-16 rounded-full bg-[#0c49ac] flex items-center justify-center text-2xl font-bold select-none">
+            {getInitials(user.name)}
+          </div>
+
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold truncate">{user.name ?? "Sem nome"}</h1>
+            <p className="text-sm text-white/50 truncate mt-0.5">{user.email ?? "—"}</p>
+
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-white/35">
+              {user.public_code != null && (
+                <span>ICM #{user.public_code}</span>
+              )}
+              {user.created_at && (
+                <span>Cadastrado em {formatDate(user.created_at)}</span>
+              )}
+              {genderLabel && <span>{genderLabel}</span>}
+              {user.baptized != null && (
+                <span>{user.baptized ? "Batizado" : "Não batizado"}</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Current roles */}
+      <section className="space-y-3">
+        <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">
+          Permissões
+        </h2>
+
+        {!user.roles?.length ? (
+          <div className="rounded-2xl border border-dashed border-white/15 p-8 flex flex-col items-center text-center gap-2">
+            <UserX size={28} className="text-white/20" />
+            <p className="text-sm text-white/40">Nenhuma permissão atribuída.</p>
+          </div>
         ) : (
-          <p className="text-white/60">Sem papeis.</p>
+          <div className="space-y-2">
+            {user.roles.map((r) => {
+              const cfg = roleConfig(r.role);
+              return (
+                <div
+                  key={r.id}
+                  className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${cfg.className}`}
+                    >
+                      {cfg.icon}
+                      {cfg.label}
+                    </span>
+                    <span className="text-sm text-white/50">
+                      {scopeLabel(r.scope_type)}
+                    </span>
+                    {r.department?.name && (
+                      <span className="text-sm text-white/35">
+                        · {r.department.name}
+                      </span>
+                    )}
+                  </div>
+
+                  <form action={onRemoveRole}>
+                    <input type="hidden" name="role_assignment_id" value={r.id} />
+                    <button
+                      type="submit"
+                      className="shrink-0 text-xs text-white/30 hover:text-red-400 cursor-pointer transition-colors"
+                    >
+                      Remover
+                    </button>
+                  </form>
+                </div>
+              );
+            })}
+          </div>
         )}
       </section>
 
-      <section className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Adicionar papel</h2>
-        <form onSubmit={onAddRole} className="grid gap-3 md:grid-cols-3">
-          <label className="flex flex-col gap-1">
-            <span className="text-xs text-white/70">Role</span>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'ADMIN' | 'LEADER' | 'MEMBER')}
-              className="rounded-md border border-white/20 bg-transparent p-2"
-            >
-              <option value="ADMIN">ADMIN</option>
-              <option value="LEADER">LEADER</option>
-              <option value="MEMBER">MEMBER</option>
-            </select>
-          </label>
-
-          <label className="flex flex-col gap-1">
-            <span className="text-xs text-white/70">Escopo</span>
-            <select
-              value={scope}
-              onChange={(e) => setScope(e.target.value as 'ORG'|'DEPARTMENT')}
-              className="rounded-md border border-white/20 bg-transparent p-2"
-            >
-              <option value="ORG">ORG</option>
-              <option value="DEPARTMENT">DEPARTMENT</option>
-            </select>
-          </label>
-
-          {scope === 'DEPARTMENT' && (
-            <label className="flex flex-col gap-1 md:col-span-1">
-              <span className="text-xs text-white/70">Departamento</span>
-              <select
-                value={deptId}
-                onChange={(e) => setDeptId(e.target.value)}
-                className="rounded-md border border-white/20 bg-transparent p-2"
-              >
-                <option value="">Selecione...</option>
-                {depts.map((d) => (
-                  <option key={d.id} value={d.id}>{d.name}</option>
-                ))}
-              </select>
-            </label>
-          )}
-
-          <div className="md:col-span-3">
-            <button
-              type="submit"
-              disabled={pending || (scope === 'DEPARTMENT' && !deptId)}
-              className="rounded-md border border-white/20 bg-white/10 px-4 py-2 hover:bg-white/15 disabled:opacity-50"
-            >
-              {pending ? 'Salvando...' : 'Adicionar'}
-            </button>
-          </div>
-        </form>
+      {/* Add role */}
+      <section className="space-y-3">
+        <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest">
+          Adicionar permissão
+        </h2>
+        <AddRoleForm userId={user.id} depts={depts ?? []} />
       </section>
-    </main>
+    </div>
   );
 }
