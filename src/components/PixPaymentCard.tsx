@@ -23,12 +23,22 @@ export default function PixPaymentCard({
   const [copied, setCopied] = useState(false);
 
   const brCode = useMemo(() => {
+    const stripAccents = (str: string) =>
+      str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    // CNPJ/CPF come formatted (04.391.808/0001-06) — PIX spec needs raw digits
+    const cleanKey = /^[\d.\-/]+$/.test(pixKey)
+      ? pixKey.replace(/\D/g, "")
+      : pixKey;
+
     const pix = createStaticPix({
       merchantName: "ICM",
       merchantCity: "BRASIL",
-      pixKey,
+      pixKey: cleanKey,
       transactionAmount: amount,
-      infoAdicional: (pixDescription ?? eventTitle).slice(0, 72),
+      infoAdicional: stripAccents(
+        (pixDescription ?? eventTitle).slice(0, 72)
+      ),
       txid: "***",
     });
     if (hasError(pix)) return "";
