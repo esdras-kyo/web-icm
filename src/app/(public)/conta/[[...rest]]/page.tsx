@@ -10,7 +10,7 @@ const supabase = createClient(
 
 export default async function ContaPage() {
   const { userId, getToken } = await auth();
-  const token = await getToken({ template: "member_jwt" });
+  const token = userId ? await getToken({ template: "member_jwt" }) : null;
   const claims = token ? extractClaimsFromJwt(token) : null;
 
   let initialPhone: string | null = null;

@@ -12,8 +12,8 @@ const dmSans = DM_Sans({
 });
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const { getToken } = await auth();
-  const token = await getToken({ template: "member_jwt" });
+  const { userId, getToken } = await auth();
+  const token = userId ? await getToken({ template: "member_jwt" }) : null;
   const claims = token ? extractClaimsFromJwt(token) : null;
 
   return (
