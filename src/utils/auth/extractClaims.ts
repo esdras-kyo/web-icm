@@ -16,6 +16,7 @@ function isUserClaims(v: unknown): v is UserClaims {
         r &&
         (r.role === "VISITANT" ||
           r.role === "MEMBER" ||
+          r.role === "ASSISTANT" ||
           r.role === "LEADER" ||
           r.role === "ADMIN") &&
         (r.scope_type === "ORG" || r.scope_type === "DEPARTMENT" || r.scope_type === "CELL")

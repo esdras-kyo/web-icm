@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ShieldCheck } from "lucide-react";
 import { ActionForm } from "./ActionForm";
 
@@ -14,6 +14,8 @@ interface LeaderCandidatesListProps {
   users: User[];
   cell: { id: string; name: string };
   action: (formData: FormData) => Promise<void>;
+  buttonLabel?: string;
+  buttonIcon?: ReactNode;
 }
 
 function getInitials(name: string | null): string {
@@ -23,7 +25,7 @@ function getInitials(name: string | null): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export function LeaderCandidatesList({ users, cell, action }: LeaderCandidatesListProps) {
+export function LeaderCandidatesList({ users, cell, action, buttonLabel = "Tornar Líder", buttonIcon }: LeaderCandidatesListProps) {
   const [query, setQuery] = useState("");
 
   const filtered = query.trim()
@@ -79,8 +81,8 @@ export function LeaderCandidatesList({ users, cell, action }: LeaderCandidatesLi
                   type="submit"
                   className="shrink-0 flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 px-3 py-1.5 text-xs font-medium text-white/80 cursor-pointer transition-colors"
                 >
-                  <ShieldCheck size={13} />
-                  Tornar Líder
+                  {buttonIcon ?? <ShieldCheck size={13} />}
+                  {buttonLabel}
                 </button>
               </ActionForm>
             </div>

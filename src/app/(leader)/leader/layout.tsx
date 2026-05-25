@@ -22,7 +22,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   const allowed = claims.roles.some(
-    (r) => r.role === "LEADER" || r.role === "ADMIN"
+    (r) => r.role === "LEADER" || r.role === "ADMIN" || r.role === "ASSISTANT"
   );
   if (!allowed) {
     redirect("/conta");

@@ -9,7 +9,7 @@ interface ProfBtnProps {
 }
 
 export default function ProfBtn({ claims }: ProfBtnProps) {
-  const isLeader = claims?.roles?.some((r) => r.role === "LEADER");
+  const isLeader = claims?.roles?.some((r) => r.role === "LEADER" || r.role === "ASSISTANT");
   const isAdmin = claims?.roles?.some((r) => r.role === "ADMIN");
 
   return (

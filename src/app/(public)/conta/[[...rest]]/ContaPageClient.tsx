@@ -15,7 +15,7 @@ interface ContaPageClientProps {
 export default function ContaPageClient({ claims, initialPhone }: ContaPageClientProps) {
   const router = useRouter();
 
-  const isLeader = claims?.roles?.some((r) => r.role === "LEADER");
+  const isLeader = claims?.roles?.some((r) => r.role === "LEADER" || r.role === "ASSISTANT");
   const isVisitant = claims?.roles?.some((r) => r.role === "VISITANT");
   const isAdmin = claims?.roles?.some((r) => r.role === "ADMIN");
 
@@ -48,7 +48,13 @@ export default function ContaPageClient({ claims, initialPhone }: ContaPageClien
                   <p className="text-white/80">
                     Cargo:{" "}
                     <span className="font-semibold text-white">
-                      {isLeader ? "Líder" : isAdmin ? "Administrador" : "Membro"}
+                      {isAdmin
+                        ? "Administrador"
+                        : claims?.roles?.some((r) => r.role === "LEADER")
+                          ? "Líder"
+                          : claims?.roles?.some((r) => r.role === "ASSISTANT")
+                            ? "Co-líder"
+                            : "Membro"}
                     </span>
                   </p>
                 </div>

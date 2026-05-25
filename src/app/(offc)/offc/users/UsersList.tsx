@@ -9,6 +9,7 @@ function primaryRole(roles: User["roles"]) {
   const has = (r: string) => roles?.some(x => x.role === r);
   if (has("ADMIN")) return "ADMIN";
   if (has("LEADER")) return "LEADER";
+  if (has("ASSISTANT")) return "ASSISTANT";
   if (has("MEMBER")) return "MEMBER";
   return null;
 }
@@ -16,6 +17,7 @@ function primaryRole(roles: User["roles"]) {
 function roleLabelPt(role: string | null) {
   if (role === "ADMIN") return "Administrador";
   if (role === "LEADER") return "Líder";
+  if (role === "ASSISTANT") return "Co-líder";
   if (role === "MEMBER") return "Membro";
   return null;
 }

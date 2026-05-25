@@ -1,7 +1,7 @@
 // src/types/UserClaims.ts
 export type UserRole = {
-    role: "VISITANT" | "MEMBER" | "LEADER" | "ADMIN";
-    scope_type: "ORG" | "DEPARTMENT";
+    role: "VISITANT" | "MEMBER" | "ASSISTANT" | "LEADER" | "ADMIN";
+    scope_type: "ORG" | "DEPARTMENT" | "CELL";
     department_id: string | null;
   };
   

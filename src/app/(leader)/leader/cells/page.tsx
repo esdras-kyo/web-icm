@@ -21,7 +21,7 @@ export default async function CellsPage() {
   const cellRole = meta?.cell_role;
   const primaryCellId = meta?.primary_cell_id;
 
-  if (cellRole !== "LEADER" || !primaryCellId) {
+  if ((cellRole !== "LEADER" && cellRole !== "ASSISTANT") || !primaryCellId) {
     return (
       <div className="max-w-3xl mx-auto py-8">
         <h1 className="text-2xl font-semibold mb-6">Célula</h1>
