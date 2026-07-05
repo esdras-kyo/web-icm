@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { type User } from "./getBrosAction";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Download } from "lucide-react";
+import { downloadCsv } from "@/lib/csv";
 
 function primaryRole(roles: User["roles"]) {
   const has = (r: string) => roles?.some(x => x.role === r);
@@ -49,6 +50,47 @@ export default function MembersClient({ users }: { users: User[] }) {
     });
   }, [q, gender, birthThisMonth, users]);
 
+  function handleDownloadCsv() {
+    if (!filtered.length) return;
+
+    const exportDate = new Date().toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const stamp = new Date().toLocaleDateString("pt-BR").replace(/\//g, "-");
+
+    const header = [
+      "Nome",
+      "Email",
+      "Código público",
+      "Gênero",
+      "Data de nascimento",
+      "Papel",
+    ];
+
+    const rows = filtered.map((u) => [
+      u.name ?? "",
+      u.email ?? "",
+      u.public_code ?? "",
+      genderLabelPt(u.gender),
+      u.date_of_birth ?? "",
+      roleLabelPt(primaryRole(u.roles)) ?? "",
+    ]);
+
+    downloadCsv({
+      fileName: `membros-${stamp}.csv`,
+      header,
+      rows,
+      meta: [
+        ["Data de exportação", exportDate],
+        ["Total de membros", filtered.length],
+      ],
+    });
+  }
+
   return (
     <main className="mx-auto w-full md:max-w-7xl px-2 py-2">
       <h1 className="text-xl font-bold text-white mb-4">Lista de Membros</h1>
@@ -81,6 +123,16 @@ export default function MembersClient({ users }: { users: User[] }) {
           />
           Aniversariantes do mês
         </label>
+
+        <button
+          type="button"
+          onClick={handleDownloadCsv}
+          disabled={!filtered.length}
+          className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg bg-emerald-600/70 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 md:ml-auto"
+        >
+          Baixar planilha
+          <Download className="h-4 w-4" />
+        </button>
       </div>
 
       <ul className="space-y-3">
