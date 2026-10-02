@@ -451,6 +451,9 @@ export default function EventoInscricaoCard() {
                   {/* Camiseta */}
                   {fieldConfig.camisa.enabled && (
                     <div className="mt-1 grid grid-cols-1 gap-3 md:grid-cols-2">
+                      <label className="text-sm text-gray-300 md:col-span-2">
+                        Camiseta {fieldConfig.camisa.required && <span>*</span>}
+                      </label>
                       {!fieldConfig.camisa.required && (
                         <label className="inline-flex items-center gap-2 text-sm text-gray-300">
                           <input

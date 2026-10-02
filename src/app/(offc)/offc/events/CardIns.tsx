@@ -12,6 +12,7 @@ export type Inscrito = {
   is_member: boolean;
   payment_status: "pending" | "paid" | "failed" | string;
   created_at: string;
+  shirt_size?: string | null;
 };
 
 type Props = {
@@ -193,6 +194,12 @@ export default function InscritoCard({
             <span className="font-semibold text-zinc-300">Membro: </span>
             {inscrito.is_member ? "Sim": "Não"}
           </p>
+          {inscrito.shirt_size && (
+            <p>
+              <span className="font-semibold text-zinc-300">Camiseta: </span>
+              {inscrito.shirt_size}
+            </p>
+          )}
           <p>
             <span className="font-semibold text-zinc-300">
               Data da inscrição:{" "}

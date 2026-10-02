@@ -120,6 +120,7 @@ export default function EventInscricoesView({
       "Telefone",
       "Email",
       "Membro?",
+      "Camiseta",
       "Status pagamento",
       "Data inscrição",
     ];
@@ -130,6 +131,7 @@ export default function EventInscricoesView({
       i.phone,
       i.email,
       i.is_member ? "sim" : "não",
+      i.shirt_size ?? "",
       i.payment_status,
       i.created_at ? new Date(i.created_at).toLocaleString("pt-BR") : "",
     ]);
