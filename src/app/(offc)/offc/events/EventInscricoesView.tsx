@@ -1,0 +1,403 @@
+"use client";
+
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import InscritoCard, { Inscrito } from "./CardIns";
+import {
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Loader2,
+  PencilIcon,
+} from "lucide-react";
+import StatisticsChart, {
+  RegistrationPoint,
+} from "@/app/components/EventChart";
+import { EventKpis } from "../EventsKpis";
+import Link from "next/link";
+
+type Orders = "alpha" | "created_asc" | "created_desc";
+
+type EventDetails = {
+  id: string;
+  title: string | null;
+  capacity: number | null;
+  starts_at: string | null;
+  ends_at: string | null;
+};
+
+type Props = {
+  eventId: string;
+  titleFallback?: string;
+  /** mostra o link "Editar" (admin). */
+  canEdit?: boolean;
+  /** mostra o botão de excluir inscrito (admin). */
+  canDelete?: boolean;
+  /** conteúdo extra no cabeçalho (ex: toggle do monitor). */
+  headerExtra?: ReactNode;
+};
+
+export default function EventInscricoesView({
+  eventId,
+  titleFallback,
+  canEdit = true,
+  canDelete = true,
+  headerExtra,
+}: Props) {
+  const id = eventId;
+
+  const [loading, setLoading] = useState(false);
+  const [inscritos, setInscritos] = useState<Inscrito[]>([]);
+  const [warning, setWarning] = useState("");
+  const [csvWarning, setCsvWarning] = useState("");
+  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [order, setOrder] = useState<Orders>("created_desc");
+
+  const [chartData, setChartData] = useState<RegistrationPoint[]>([]);
+
+  async function fetchNumbers() {
+    if (!id) return;
+    const json = await fetch("/api/events/registrations-over-time", {
+      method: "POST",
+      body: JSON.stringify({ event_id: id }),
+      headers: { "Content-Type": "application/json" },
+    }).then((r) => r.json());
+    if (Array.isArray(json)) setChartData(json);
+  }
+
+  async function fetchEventDetails() {
+    if (!id) return;
+    const json = await fetch("/api/events/details", {
+      method: "POST",
+      body: JSON.stringify({ event_id: id }),
+      headers: { "Content-Type": "application/json" },
+    }).then((r) => r.json());
+    if (!json.error) {
+      setEventDetails(json);
+    }
+  }
+
+  function handleStatusChange(
+    registrationId: string,
+    newStatus: Inscrito["payment_status"]
+  ) {
+    setInscritos((prev) =>
+      prev.map((i) =>
+        i.id === registrationId ? { ...i, payment_status: newStatus } : i
+      )
+    );
+  }
+
+  function handleDelete(registrationId: string) {
+    setInscritos((prev) => prev.filter((i) => i.id !== registrationId));
+  }
+
+  function handleDownloadCsv() {
+    if (!inscritos.length) {
+      setCsvWarning("Nenhum inscrito para exportar.");
+      return;
+    }
+    setCsvWarning("");
+
+    const exportDate = new Date().toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const titleForHeader = eventDetails?.title || titleFallback || "Evento";
+
+    const fileName = titleForHeader
+      ? `inscritos-${titleForHeader}.csv`
+      : "inscritos.csv";
+
+    const header = [
+      "Nome",
+      "CPF",
+      "Telefone",
+      "Email",
+      "Membro?",
+      "Status pagamento",
+      "Data inscrição",
+    ];
+
+    const rows = inscritos.map((i) => [
+      i.name,
+      i.cpf,
+      i.phone,
+      i.email,
+      i.is_member ? "sim" : "não",
+      i.payment_status,
+      i.created_at ? new Date(i.created_at).toLocaleString("pt-BR") : "",
+    ]);
+
+    const csvBlocks = [
+      ["Evento", titleForHeader],
+      ["Data de exportação", exportDate],
+      [],
+      header,
+      ...rows,
+    ];
+
+    const csvString = csvBlocks
+      .map((row) =>
+        row
+          .map((field) => {
+            const value = (field ?? "").toString();
+            return `"${value.replace(/"/g, '""')}"`;
+          })
+          .join(";")
+      )
+      .join("\n");
+
+    const blob = new Blob(["﻿" + csvString], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  const sortedInscritos = useMemo(() => {
+    const copy = [...inscritos];
+    switch (order) {
+      case "created_asc":
+        return copy.sort(
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+      case "created_desc":
+        return copy.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      case "alpha":
+        return copy.sort((a, b) =>
+          a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" })
+        );
+      default:
+        return copy;
+    }
+  }, [inscritos, order]);
+
+  async function getRegistrations(targetId: string) {
+    setLoading(true);
+    const res = await fetch(`/api/getsubs?id=${targetId}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      console.error("GET /api/getsubs failed", res.status, res.statusText);
+      setWarning("Falha ao carregar inscritos");
+      setInscritos([]);
+      setLoading(false);
+      return;
+    }
+    const data = await res.json();
+    setWarning("");
+    if (Array.isArray(data) && data.length > 0) {
+      setInscritos(data);
+    } else {
+      setInscritos([]);
+      setWarning("Nenhum inscrito no momento");
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    if (!id) return;
+    getRegistrations(id);
+    fetchNumbers();
+    fetchEventDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="flex min-h-[50vh] items-center justify-center p-6">
+        <div className="flex items-center gap-3 text-zinc-400">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Carregando inscritos…</span>
+        </div>
+      </main>
+    );
+  }
+
+  const totalRegistrations = inscritos.length;
+
+  const todayStr = (() => {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  })();
+
+  const todayRegistrations = inscritos.filter((i) => {
+    if (!i.created_at) return false;
+    return i.created_at.toString().slice(0, 10) === todayStr;
+  }).length;
+
+  let daysToEvent: number | null = null;
+  if (eventDetails?.starts_at) {
+    const now = new Date();
+    const start = new Date(eventDetails.starts_at);
+    const end = eventDetails.ends_at ? new Date(eventDetails.ends_at) : null;
+
+    const todayMid = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    ).getTime();
+    const startMid = new Date(
+      start.getFullYear(),
+      start.getMonth(),
+      start.getDate()
+    ).getTime();
+
+    if (end && todayMid > end.getTime()) {
+      daysToEvent = -1;
+    } else {
+      daysToEvent = Math.round((startMid - todayMid) / (1000 * 60 * 60 * 24));
+    }
+  }
+
+  let registrationsChangePercent: number | null = null;
+  if (chartData && chartData.length >= 2) {
+    const last = chartData[chartData.length - 1].registrations_in_day;
+    const prev = chartData[chartData.length - 2].registrations_in_day;
+    if (prev > 0) {
+      registrationsChangePercent = ((last - prev) / prev) * 100;
+    } else if (last > 0) {
+      registrationsChangePercent = 100;
+    }
+  }
+
+  const capacity = eventDetails?.capacity ?? null;
+  const title =
+    eventDetails?.title || titleFallback || "Inscrições do evento";
+
+  return (
+    <div className="flex min-h-dvh w-full flex-col pt-6 pb-18 sm:px-8">
+      <div className="mx-auto flex w-full max-w-5xl flex-col">
+        {/* Cabeçalho */}
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-white sm:text-2xl">
+              {title}
+            </h1>
+            {warning && (
+              <p className="mt-1 text-sm text-amber-400">{warning}</p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {headerExtra}
+
+            {canEdit && (
+              <Link
+                href={`/offc/events/${id}/edit`}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-white/20 px-4 py-2 text-sm text-white transition hover:bg-white/10"
+              >
+                Editar
+                <PencilIcon className="h-4 w-4" />
+              </Link>
+            )}
+
+            <button
+              type="button"
+              onClick={handleDownloadCsv}
+              disabled={!inscritos.length}
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md bg-emerald-600/70 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Baixar planilha
+              <Download className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Aviso inline sobre CSV vazio (substitui alert) */}
+        {csvWarning && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {csvWarning}
+          </div>
+        )}
+
+        {/* KPIs */}
+        <div className="mb-6 w-full">
+          <EventKpis
+            totalRegistrations={totalRegistrations}
+            capacity={capacity}
+            todayRegistrations={todayRegistrations}
+            daysToEvent={daysToEvent}
+            registrationsChangePercent={registrationsChangePercent}
+          />
+        </div>
+
+        {/* Gráfico */}
+        <div className="mb-8 w-full">
+          <StatisticsChart data={chartData} />
+        </div>
+
+        {/* Lista de inscritos */}
+        <div className="mt-6 w-full">
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/10 sm:px-5 sm:py-4 sm:text-lg"
+          >
+            <span>Inscritos ({inscritos.length})</span>
+            {isOpen ? (
+              <ChevronUp className="h-5 w-5 text-white/70" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-white/70" />
+            )}
+          </button>
+
+          <div
+            className={`overflow-hidden transition-all duration-150 mb-16 ${
+              isOpen ? "opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="mt-4 space-y-3">
+              <select
+                className="w-full rounded-md border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 sm:w-auto"
+                value={order}
+                onChange={(e) => setOrder(e.target.value as Orders)}
+              >
+                <option value="created_desc">Mais recentes primeiro</option>
+                <option value="created_asc">Mais antigos primeiro</option>
+                <option value="alpha">Ordem alfabética (A–Z)</option>
+              </select>
+
+              {sortedInscritos.map((inscrito) => (
+                <InscritoCard
+                  key={inscrito.id}
+                  inscrito={inscrito}
+                  onStatusChange={handleStatusChange}
+                  onDelete={handleDelete}
+                  canDelete={canDelete}
+                />
+              ))}
+
+              {sortedInscritos.length === 0 && (
+                <p className="mt-4 text-center text-white/60">
+                  Nenhum inscrito encontrado.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -18,9 +18,15 @@ type Props = {
   inscrito: Inscrito;
   onStatusChange?: (id: string, newStatus: Inscrito["payment_status"]) => void;
   onDelete?: (id: string) => void;
+  canDelete?: boolean;
 };
 
-export default function InscritoCard({ inscrito, onStatusChange, onDelete }: Props) {
+export default function InscritoCard({
+  inscrito,
+  onStatusChange,
+  onDelete,
+  canDelete = true,
+}: Props) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(inscrito.payment_status);
   const [saving, setSaving] = useState(false);
@@ -113,7 +119,7 @@ export default function InscritoCard({ inscrito, onStatusChange, onDelete }: Pro
 
   return (
     <>
-      {confirmDelete && (
+      {canDelete && confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
           <div className="w-full max-w-sm rounded-xl border border-zinc-700 bg-zinc-900 p-6 shadow-xl">
             <h3 className="text-base font-semibold text-white mb-2">
@@ -223,16 +229,18 @@ export default function InscritoCard({ inscrito, onStatusChange, onDelete }: Pro
             )}
           </div>
 
-          <div className="mt-4 flex justify-end">
-            <button
-              type="button"
-              onClick={() => setConfirmDelete(true)}
-              className="cursor-pointer inline-flex items-center gap-1.5 rounded-md border border-red-700/50 px-3 py-1.5 text-xs text-red-400 transition hover:bg-red-600/20"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Excluir inscrição
-            </button>
-          </div>
+          {canDelete && (
+            <div className="mt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                className="cursor-pointer inline-flex items-center gap-1.5 rounded-md border border-red-700/50 px-3 py-1.5 text-xs text-red-400 transition hover:bg-red-600/20"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Excluir inscrição
+              </button>
+            </div>
+          )}
         </div>
       )}
     </li>

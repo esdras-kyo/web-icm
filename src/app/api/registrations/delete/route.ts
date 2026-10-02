@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
+import { resolveEventAccess } from "@/utils/auth/resolveEventAccess";
+import { canDeleteRegistration } from "@/utils/auth/eventAccess";
 
 export async function POST(request: Request) {
   try {
@@ -7,6 +9,11 @@ export async function POST(request: Request) {
 
     if (!body.id) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
+
+    const access = await resolveEventAccess();
+    if (!canDeleteRegistration(access)) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const supabase = createSupabaseAdmin();

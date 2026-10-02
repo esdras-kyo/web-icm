@@ -1,6 +1,8 @@
 // app/api/registrations/set-status/route.ts
 import { NextResponse } from "next/server";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
+import { resolveEventAccess } from "@/utils/auth/resolveEventAccess";
+import { canSetStatus } from "@/utils/auth/eventAccess";
 
 export async function POST(request: Request) {
   try {
@@ -17,6 +19,26 @@ export async function POST(request: Request) {
     }
 
     const supabase = createSupabaseAdmin();
+
+    // Escopo é por evento; set-status só recebe o id do inscrito,
+    // então busca o event_id do registro antes de autorizar.
+    const { data: reg, error: regErr } = await supabase
+      .from("registrations")
+      .select("event_id")
+      .eq("id", body.id)
+      .maybeSingle();
+
+    if (regErr) {
+      return NextResponse.json({ error: regErr.message }, { status: 500 });
+    }
+    if (!reg) {
+      return NextResponse.json({ error: "Registro não encontrado" }, { status: 404 });
+    }
+
+    const access = await resolveEventAccess();
+    if (!canSetStatus(access, reg.event_id)) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
 
     const { error } = await supabase
       .from("registrations")
