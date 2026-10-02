@@ -33,6 +33,22 @@ export default clerkMiddleware(async (auth, req) => {
       }
   }
 
+  // 👁️ Conta monitor: trava sempre em /monitor (kiosk).
+  // Só roda se MONITOR_CLERK_USER_ID estiver setada (zero custo se não).
+  // Exclui /monitor (evita loop), /api (fetches da tela) e /sign- (login/logout).
+  const monitorId = process.env.MONITOR_CLERK_USER_ID;
+  if (
+    monitorId &&
+    !pathname.startsWith("/monitor") &&
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/sign-")
+  ) {
+    const { userId } = await auth();
+    if (userId === monitorId) {
+      return NextResponse.redirect(new URL("/monitor", req.url));
+    }
+  }
+
   // --- SUA LÓGICA ORIGINAL COM CLERK ---
   if (isProtectedRoute(req)) {
     const { userId /*, getToken*/ } = await auth();
