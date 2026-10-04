@@ -5,21 +5,23 @@ import Link from "next/link";
 import { CheckCircle2, HomeIcon } from "lucide-react";
 import { createSupabaseAdmin } from "@/utils/supabase/admin";
 import PixPaymentCard from "@/components/PixPaymentCard";
+import { registrationTotal } from "@/lib/eventPricing";
 
 type ConfirmationPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ shirt?: string }>;
 };
 
 export default async function ConfirmationPage(props: ConfirmationPageProps) {
-  const { params } = props;
-  const { slug } = await params;
+  const { slug } = await props.params;
+  const { shirt } = await props.searchParams;
 
   const supabase = createSupabaseAdmin();
 
   const { data: event, error } = await supabase
     .from("events")
     .select(
-      "id, title, price, image_key, address, description, payment_note, pix_key, pix_description"
+      "id, title, price, shirt_price, image_key, address, description, payment_note, pix_key, pix_description"
     )
     .eq("slug", slug)
     .single();
@@ -30,7 +32,12 @@ export default async function ConfirmationPage(props: ConfirmationPageProps) {
   }
 
   const basePrice = event.price ?? 0;
-  const isFree = !basePrice || basePrice <= 0;
+  const shirtPrice = event.shirt_price ?? 0;
+  const wantsShirt = shirt === "1";
+  const total = registrationTotal(basePrice, shirtPrice, wantsShirt);
+  const isFree = total <= 0;
+  // evento gratuito mas comprou a camiseta paga
+  const shirtOnly = basePrice <= 0 && wantsShirt && shirtPrice > 0;
 
   const imageUrl = event.image_key
     ? `https://worker-1.esdrascamel.workers.dev/${event.image_key}`
@@ -72,6 +79,12 @@ export default async function ConfirmationPage(props: ConfirmationPageProps) {
                   Sua vaga já está confirmada. Este evento é gratuito, não há
                   necessidade de pagamento.
                 </p>
+              ) : shirtOnly ? (
+                <p className="text-sm text-gray-300">
+                  Sua vaga já está confirmada e a inscrição é gratuita. Falta só
+                  o pagamento da camiseta via Pix — é opcional e não afeta sua
+                  inscrição.
+                </p>
               ) : (
                 <p className="text-sm text-gray-300">
                   Agora é só confirmar o pagamento via Pix para garantir sua
@@ -81,13 +94,13 @@ export default async function ConfirmationPage(props: ConfirmationPageProps) {
             </div>
           </div>
 
-          {/* BLOCO DE PAGAMENTO – só se evento tiver preço > 0 */}
+          {/* BLOCO DE PAGAMENTO – só quando há valor a pagar */}
           {!isFree && (
             <>
               {event.pix_key ? (
                 <PixPaymentCard
                   pixKey={event.pix_key}
-                  amount={basePrice}
+                  amount={total}
                   eventTitle={event.title}
                   pixDescription={event.pix_description}
                   paymentNote={event.payment_note}
@@ -97,11 +110,11 @@ export default async function ConfirmationPage(props: ConfirmationPageProps) {
                   <p className="text-sm text-gray-300">
                     As instruções de pagamento serão enviadas em breve.
                   </p>
-                  {basePrice > 0 && (
+                  {total > 0 && (
                     <p className="text-sm text-gray-300">
                       Valor a pagar:{" "}
                       <span className="font-semibold">
-                        R$ {basePrice.toFixed(2).replace(".", ",")}
+                        R$ {total.toFixed(2).replace(".", ",")}
                       </span>
                     </p>
                   )}

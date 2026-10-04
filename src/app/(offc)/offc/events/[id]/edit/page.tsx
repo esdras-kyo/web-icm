@@ -45,6 +45,7 @@ type EventEdit = {
   ends_at: string;
   capacity: number | null;
   price: number;
+  shirt_price: number | null;
   status: Status | null;
   visibility: Visibility;
   registration_starts_at: string | null;
@@ -153,6 +154,8 @@ export default function EditEventPage() {
             typeof json.price === "number"
               ? json.price
               : Number(json.price ?? 0),
+          shirt_price:
+            json.shirt_price == null ? null : Number(json.shirt_price),
           status: (json.status as Status) ?? null,
           visibility: normalizedVisibility,
           registration_starts_at: json.registration_starts_at ?? null,
@@ -308,6 +311,10 @@ export default function EditEventPage() {
       ends_at: event.ends_at,
       capacity: event.capacity,
       price: Number(event.price),
+      shirt_price:
+        event.shirt_price != null && event.shirt_price > 0
+          ? Number(event.shirt_price)
+          : null,
       status: event.status,
       visibility: event.visibility,
       registration_starts_at: event.registration_starts_at || null,
@@ -656,6 +663,40 @@ export default function EditEventPage() {
               </div>
               <p className="mt-1 text-xs text-zinc-500">
                 Use 0 para evento gratuito.
+              </p>
+            </div>
+
+            <div>
+              <FieldLabel>Preço da camiseta (opcional)</FieldLabel>
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-zinc-400">
+                  R$
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  placeholder="0,00"
+                  className={`${inputCls} pl-9`}
+                  value={event.shirt_price ?? ""}
+                  onChange={(e) =>
+                    setEvent((p) =>
+                      p
+                        ? {
+                            ...p,
+                            shirt_price:
+                              e.target.value === ""
+                                ? null
+                                : Number(e.target.value),
+                          }
+                        : p,
+                    )
+                  }
+                  disabled={isSaving}
+                />
+              </div>
+              <p className="mt-1 text-xs text-zinc-500">
+                Só se a camisa for paga à parte. Deixe vazio para grátis.
               </p>
             </div>
           </div>

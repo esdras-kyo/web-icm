@@ -41,6 +41,8 @@ const UpdateSchema = z.object({
 
   price: z.number().nonnegative(), // real NOT NULL
 
+  shirt_price: z.number().nonnegative().nullable().optional(),
+
   status: z.string().nullable().optional(), // se quiser travar enum, use StatusEnum.nullable().optional()
 
   visibility: VisibilityEnum,
@@ -82,6 +84,7 @@ export async function PATCH(request: Request) {
       capacity: v.capacity ?? null,
 
       price: v.price,
+      shirt_price: v.shirt_price ?? null,
 
       status: v.status ?? null,
 
@@ -114,7 +117,7 @@ export async function PATCH(request: Request) {
       .update(updatePayload)
       .eq("id", v.id)
       .select(
-        "id,title,description,starts_at,ends_at,capacity,price,status,visibility,registration_starts_at,registration_ends_at,address,registration_fields,payment_note,pix_key,pix_description"
+        "id,title,description,starts_at,ends_at,capacity,price,shirt_price,status,visibility,registration_starts_at,registration_ends_at,address,registration_fields,payment_note,pix_key,pix_description"
       )
       .single();
 

@@ -51,6 +51,7 @@ export async function POST(req: Request) {
         visibility: payload.visibility,
         status: payload.status,
         price: payload.price,
+        shirt_price: payload.shirt_price ?? null,
         capacity: payload.capacity,
         starts_at: payload.starts_at,
         ends_at: payload.ends_at,

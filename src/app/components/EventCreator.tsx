@@ -70,6 +70,7 @@ export type EventCreatePayload = {
   title: string;
   description: string;
   price: number;
+  shirt_price: number | null;
   capacity: number;
   starts_at: string;
   ends_at: string;
@@ -117,6 +118,10 @@ const formSchema = z
     visibility: z.enum(["ORG", "DEPARTMENT"]),
     status: z.enum(["ATIVO", "DESATIVADO"]),
     price: z
+      .union([z.coerce.number(), z.literal("")])
+      .transform((v) => (v === "" ? 0 : v))
+      .pipe(z.number().min(0, "Preço não pode ser negativo")),
+    shirt_price: z
       .union([z.coerce.number(), z.literal("")])
       .transform((v) => (v === "" ? 0 : v))
       .pipe(z.number().min(0, "Preço não pode ser negativo")),
@@ -191,6 +196,7 @@ function freshDefaults(): FormValues {
     visibility: "ORG",
     status: "ATIVO",
     price: 0,
+    shirt_price: 0,
     capacity: 50,
     image_key: "",
     address: "",
@@ -270,6 +276,7 @@ export default function EventCreateForm({
       title: values.title,
       description: values.description,
       price: values.price,
+      shirt_price: values.shirt_price > 0 ? values.shirt_price : null,
       capacity: values.capacity,
       starts_at: values.starts_at.toISOString(),
       ends_at: values.ends_at.toISOString(),
@@ -672,6 +679,59 @@ export default function EventCreateForm({
                             </FormControl>
                             <p className="text-xs text-zinc-500">
                               Número máximo de participantes.
+                            </p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name="shirt_price"
+                        render={({ field }) => (
+                          <FormItem className="md:col-span-2">
+                            <FormLabel>
+                              Preço da camiseta{" "}
+                              <span className="text-zinc-500 font-normal">
+                                (opcional)
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm text-zinc-400">
+                                  R$
+                                </span>
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  min={0}
+                                  placeholder="0,00"
+                                  className="pl-9"
+                                  {...field}
+                                  value={
+                                    field.value === 0 || field.value == null
+                                      ? ""
+                                      : field.value
+                                  }
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === "") {
+                                      field.onChange(0);
+                                      return;
+                                    }
+                                    const num = Number(val);
+                                    field.onChange(Number.isNaN(num) ? 0 : num);
+                                  }}
+                                  onBlur={(e) => {
+                                    if (e.target.value === "") field.onChange(0);
+                                  }}
+                                />
+                              </div>
+                            </FormControl>
+                            <p className="text-xs text-zinc-500">
+                              Só se a camisa for paga à parte. Deixe 0 para
+                              camisa grátis ou evento sem camisa. Habilite o
+                              campo &quot;Tamanho da camisa&quot; abaixo.
                             </p>
                             <FormMessage />
                           </FormItem>

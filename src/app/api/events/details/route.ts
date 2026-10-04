@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       ends_at,
       capacity,
       price,
+      shirt_price,
       status,
       visibility,
       registration_starts_at,

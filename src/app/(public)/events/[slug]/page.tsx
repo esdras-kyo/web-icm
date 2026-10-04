@@ -36,6 +36,7 @@ type Evento = {
   registration_ends_at?: string | null;
   capacity?: number | null;
   price?: number | null;
+  shirt_price?: number | null;
   pix_key?: string | null;
 };
 
@@ -249,8 +250,9 @@ export default function EventoInscricaoCard() {
       setStatus("ok");
       setLoading(false);
       if (slug) {
+        const boughtShirt = cfg.camisa.enabled && !!tshirt_size;
         router.push(
-          `/events/${slug}/confirmation`,
+          `/events/${slug}/confirmation${boughtShirt ? "?shirt=1" : ""}`,
         );
       }
     }
@@ -450,50 +452,78 @@ export default function EventoInscricaoCard() {
 
                   {/* Camiseta */}
                   {fieldConfig.camisa.enabled && (
-                    <div className="mt-1 grid grid-cols-1 gap-3 md:grid-cols-2">
-                      <label className="text-sm text-gray-300 md:col-span-2">
-                        Camiseta {fieldConfig.camisa.required && <span>*</span>}
-                      </label>
-                      {!fieldConfig.camisa.required && (
-                        <label className="inline-flex items-center gap-2 text-sm text-gray-300">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4 rounded border-white/20 bg-black/60"
-                            checked={camiseta}
+                    <div className="mt-1 rounded-xl border border-indigo-400/20 bg-indigo-500/5 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex min-w-0 flex-col">
+                          <span className="text-sm font-medium text-gray-100">
+                            Camiseta do evento{" "}
+                            {fieldConfig.camisa.required && (
+                              <span className="text-red-300">*</span>
+                            )}
+                          </span>
+                          {(evento?.shirt_price ?? 0) > 0 ? (
+                            <span className="mt-0.5 text-xs text-indigo-200/90">
+                              Opcional. Não é obrigatória para participar. Paga à
+                              parte via Pix após a inscrição.
+                            </span>
+                          ) : (
+                            <span className="mt-0.5 text-xs text-gray-400">
+                              {fieldConfig.camisa.required
+                                ? "Selecione o tamanho desejado."
+                                : "Opcional. Marque se quiser receber a camiseta."}
+                            </span>
+                          )}
+                        </div>
+                        {(evento?.shirt_price ?? 0) > 0 && (
+                          <span className="shrink-0 rounded-md bg-indigo-500/15 px-2.5 py-1 text-sm font-semibold text-indigo-200">
+                            R$ {(evento?.shirt_price ?? 0).toFixed(2).replace(".", ",")}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-3 flex flex-col gap-3">
+                        {!fieldConfig.camisa.required && (
+                          <label className="inline-flex items-center gap-2 text-sm text-gray-200 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 rounded border-white/20 bg-black/60"
+                              checked={camiseta}
+                              onChange={(e) => {
+                                setCamiseta(e.target.checked);
+                                if (!e.target.checked) {
+                                  setTshirtSize("");
+                                  setWaningCamiseta("");
+                                }
+                              }}
+                            />
+                            {(evento?.shirt_price ?? 0) > 0
+                              ? "Quero comprar a camiseta"
+                              : "Quero a camiseta"}
+                          </label>
+                        )}
+                        {(fieldConfig.camisa.required || camiseta) && (
+                          <select
+                            className={`w-full rounded-md border bg-black/40 px-3 py-2 text-sm text-white ${waningCamiseta ? "border-red-400" : "border-white/15"}`}
+                            value={tshirt_size}
                             onChange={(e) => {
-                              setCamiseta(e.target.checked);
-                              if (!e.target.checked) setWaningCamiseta("");
+                              setTshirtSize(e.target.value);
+                              setWaningCamiseta("");
                             }}
-                          />
-                          Quero camiseta
-                        </label>
-                      )}
-                      {(fieldConfig.camisa.required || camiseta) && (
-                        <select
-                          className={`rounded-md border bg-black/40 px-3 py-2 text-sm ${waningCamiseta ? "border-red-400" : "border-white/15"}`}
-                          value={tshirt_size}
-                          onChange={(e) => {
-                            setTshirtSize(e.target.value);
-                            setWaningCamiseta("");
-                          }}
-                        >
-                          <option value="">
-                            {fieldConfig.camisa.required
-                              ? "Selecione o tamanho"
-                              : "Tamanho (opcional)"}
-                          </option>
-                          <option value="PP">PP</option>
-                          <option value="P">P</option>
-                          <option value="M">M</option>
-                          <option value="G">G</option>
-                          <option value="GG">GG</option>
-                        </select>
-                      )}
-                      {waningCamiseta && (
-                        <p className="col-span-2 -mt-2 text-xs text-red-300">
-                          {waningCamiseta}
-                        </p>
-                      )}
+                          >
+                            <option value="">Selecione o tamanho</option>
+                            <option value="PP">PP</option>
+                            <option value="P">P</option>
+                            <option value="M">M</option>
+                            <option value="G">G</option>
+                            <option value="GG">GG</option>
+                          </select>
+                        )}
+                        {waningCamiseta && (
+                          <p className="-mt-1 text-xs text-red-300">
+                            {waningCamiseta}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
 
